@@ -1,4 +1,4 @@
-# CardioGuard - Frontend
+# CardioGuard — Frontend
 
 Interfaz web del sistema CardioGuard para evaluación de riesgo cardiovascular y formación en respuesta ante emergencias. Desarrollado como proyecto de tesis.
 
@@ -6,108 +6,23 @@ Interfaz web del sistema CardioGuard para evaluación de riesgo cardiovascular y
 
 ## Tecnologías
 
-- **React 19** — biblioteca de UI
-- **TypeScript 6** — tipado estático
-- **Vite 8** — bundler y servidor de desarrollo
-- **React Router DOM 7** — enrutamiento del lado del cliente
-- **Axios** — cliente HTTP con interceptores
-- **Tailwind CSS 3** — estilos utilitarios
-- **Inter** (Google Fonts) — tipografía principal
-
----
-
-## Estructura del proyecto
-
-```
-frontend/
-│
-├── public/                        # Archivos estáticos públicos
-│
-├── src/
-│   ├── api/                       # Capa de comunicación con el backend
-│   │   ├── client.ts              # Instancia Axios + interceptores de UUID
-│   │   ├── evaluation.ts          # predictEvaluation()
-│   │   └── history.ts             # getLastCycle(), getUserHistory()
-│   │
-│   ├── assets/                    # Recursos estáticos (imágenes, íconos)
-│   │
-│   ├── components/                # Componentes reutilizables globales
-│   │   ├── layout/
-│   │   │   └── AppLayout.tsx      # Layout principal: header, nav, footer, <Outlet>
-│   │   └── ui/
-│   │       ├── CheckboxCardGroup.tsx  # Grupo de selección múltiple con tarjetas
-│   │       ├── NumberField.tsx        # Input numérico con unidad y validación
-│   │       ├── OptionCard.tsx         # Tarjeta de opción (radio o checkbox)
-│   │       ├── ProgressBar.tsx        # Barra de progreso de pasos del formulario
-│   │       └── RadioCardGroup.tsx     # Grupo de selección única con tarjetas
-│   │
-│   ├── features/                  # Módulos de funcionalidad
-│   │   ├── evaluation/            # Módulo de evaluación (Módulo 1 — completo)
-│   │   │   ├── components/        # Componentes internos del módulo
-│   │   │   │   ├── AdvancedModePanel.tsx  # Panel de uso interno para forzar tipo de evaluación
-│   │   │   │   ├── EvaluationLayout.tsx   # Layout de paso: barra + contenido + navegación
-│   │   │   │   ├── FlowIntro.tsx          # Pantalla de bienvenida según flujo detectado
-│   │   │   │   └── PrefillNotice.tsx      # Aviso de datos pre-cargados del pre-test
-│   │   │   ├── hooks/
-│   │   │   │   ├── useAutoDetectEvaluationType.ts  # Detecta el flujo del usuario (first_time / continue_post_test / cycle_complete)
-│   │   │   │   ├── useEvaluationForm.ts            # Estado del formulario, validación por paso, navegación
-│   │   │   │   └── usePrefillFromPretest.ts        # Pre-rellena pasos 0–2 con datos del pre-test guardado
-│   │   │   ├── steps/             # Un componente por paso del formulario
-│   │   │   │   ├── Step0Control.tsx   # Paso 0: tipo de respondente, edad, sexo
-│   │   │   │   ├── Step1Health.tsx    # Paso 1: presión, colesterol, glucosa, dolor de pecho, peso, talla
-│   │   │   │   ├── Step2Habits.tsx    # Paso 2: actividad física, tabaco, alcohol, dieta, antecedentes
-│   │   │   │   ├── Step3Education.tsx # Paso 3: conocimiento cardiovascular y reconocimiento de síntomas
-│   │   │   │   └── Step4Emergency.tsx # Paso 4: entrenamiento, número de emergencias, acción ante crisis
-│   │   │   ├── constants.ts       # Opciones tipadas para cada pregunta del formulario
-│   │   │   └── EvaluationPage.tsx # Página principal: orquesta flujo, pasos, submit y navegación
-│   │   │
-│   │   └── results/               # Módulo de resultados (Módulo 2 — pendiente)
-│   │       └── ResultsPage.tsx    # Vista temporal: muestra JSON crudo del backend
-│   │
-│   ├── hooks/                     # Hooks globales
-│   │   └── useAnonymousUser.ts    # Garantiza la existencia del UUID en localStorage
-│   │
-│   ├── pages/                     # Páginas generales de la app
-│   │   ├── HomePage.tsx           # Pantalla de inicio con accesos rápidos
-│   │   └── NotFoundPage.tsx       # Página 404
-│   │
-│   ├── routes/
-│   │   └── AppRouter.tsx          # Definición de rutas con React Router
-│   │
-│   ├── styles/
-│   │   └── globals.css            # Estilos base, utilidades y variables Tailwind
-│   │
-│   ├── types/                     # Tipos TypeScript globales
-│   │   ├── evaluation.ts          # Tipos del formulario (espejo del schema Pydantic del backend)
-│   │   └── results.ts             # Tipos de respuesta de la API
-│   │
-│   ├── utils/                     # Utilidades transversales
-│   │   ├── scrollToError.ts       # Scroll al primer campo con error (via data-field)
-│   │   ├── storage.ts             # Abstracción de localStorage y sessionStorage
-│   │   └── uuid.ts                # Generador de UUID v4 (crypto.randomUUID con fallback)
-│   │
-│   ├── App.tsx                    # Raíz de la app: renderiza AppRouter
-│   └── main.tsx                   # Entry point: monta React, importa globals.css
-│
-├── index.html
-├── .env                           # Variables de entorno (no commitear)
-├── .env.example                   # Plantilla de variables de entorno
-├── package.json
-├── vite.config.ts
-├── tsconfig.json
-└── tailwind.config.js
-```
+| Componente | Versión |
+|---|---|
+| React | 19.2 |
+| TypeScript | 6 |
+| Vite | 8 |
+| React Router DOM | 7 |
+| Axios | 1.16 |
+| Tailwind CSS | 3.4 |
 
 ---
 
 ## Configuración e instalación
 
-### 1. Clonar el repositorio
+### 1. Requisitos previos
 
-```bash
-git clone https://github.com/John-OF/CardioGuard_System-frontend.git
-cd CardioGuard_System-frontend
-```
+- Node.js 18 o superior
+- Backend CardioGuard corriendo (ver `backend/README.md`)
 
 ### 2. Instalar dependencias
 
@@ -115,21 +30,15 @@ cd CardioGuard_System-frontend
 npm install
 ```
 
-### 3. Configurar variables de entorno
+### 3. Variables de entorno
 
-Copiar el archivo de ejemplo y completar los valores:
-
-```bash
-cp .env.example .env
-```
-
-Contenido del `.env`:
+Crear el archivo `.env` en la raíz del proyecto:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000
 ```
 
-> `VITE_API_URL` debe apuntar a la URL base del backend FastAPI (sin barra final).
+> Debe apuntar a la URL base del backend FastAPI, sin barra final.
 
 ### 4. Ejecutar en desarrollo
 
@@ -137,7 +46,7 @@ VITE_API_URL=http://127.0.0.1:8000
 npm run dev
 ```
 
-La app quedará disponible en `http://localhost:5173`.
+La app queda disponible en `http://localhost:5173`.
 
 ---
 
@@ -145,81 +54,194 @@ La app quedará disponible en `http://localhost:5173`.
 
 | Script | Descripción |
 |---|---|
-| `npm run dev` | Inicia el servidor de desarrollo en el puerto 5173 |
-| `npm run build` | Verifica tipos TypeScript y genera el build de producción |
+| `npm run dev` | Servidor de desarrollo con recarga en caliente |
+| `npm run build` | Verificación de tipos TypeScript + build de producción |
 | `npm run preview` | Sirve el build de producción localmente |
-| `npm run lint` | Ejecuta ESLint sobre todo el proyecto |
+| `npm run lint` | ESLint sobre todo el proyecto |
 
 ---
 
-## Rutas de la aplicación
+## Rutas y estado de implementación
 
 | Ruta | Componente | Estado |
 |---|---|---|
-| `/` | `HomePage` | ✅ Implementado |
-| `/evaluacion` | `EvaluationPage` | ✅ Implementado |
-| `/resultados/:id` | `ResultsPage` | 🔄 Vista temporal (Módulo 2) |
-| `/educacion` | — | ⏳ Pendiente |
-| `/simulador` | — | ⏳ Pendiente |
-| `/historial` | — | ⏳ Pendiente |
-| `*` | `NotFoundPage` | ✅ Implementado |
+| `/` | `HomePage` | Completo |
+| `/evaluacion` | `EvaluationPage` | Completo |
+| `/resultados/:id` | `ResultsPage` | Completo |
+| `/educacion` | `EducationPage` | Completo |
+| `/educacion/:topicSlug` | `TopicDetailPage` | Completo |
+| `/historial` | `HistoryPage` | Completo |
+| `/historial/comparacion/:postId` | `ComparisonPage` | Completo |
+| `/simulador` | — | Pendiente (placeholder) |
+| `*` | `NotFoundPage` | Completo |
 
 ---
 
 ## Estado del desarrollo
 
-### Módulo 1 — Evaluación ✅
+### Evaluación (`/evaluacion`) — Completo
 
-El flujo de evaluación está completo. Incluye:
+Flujo de evaluación de 5 pasos con detección automática del estado del usuario:
 
-- Detección automática del estado del usuario al ingresar (`first_time`, `continue_post_test`, `cycle_complete`)
-- Formulario de 5 pasos con validación por paso y scroll al primer error
-- Pre-relleno automático de datos del pre-test al iniciar un post-test
-- Envío al backend y persistencia del resultado en `sessionStorage`
-- Panel de modo avanzado para forzar tipo de evaluación (uso interno / demostración)
+- **Detección de flujo** al ingresar: primera vez (`first_time`), ciclo pendiente de post-test (`continue_post_test`) o ciclo ya completado (`cycle_complete`)
+- **Formulario en 5 pasos** con validación por paso y scroll automático al primer error
+  - Paso 0: datos de control (tipo de respondente, edad, sexo)
+  - Paso 1: salud (presión, colesterol, glucosa, dolor de pecho, peso, talla)
+  - Paso 2: hábitos (actividad física, tabaco, alcohol, dieta, antecedentes)
+  - Paso 3: conocimiento cardiovascular (infarto, síntomas, prevención, RCP)
+  - Paso 4: respuesta ante emergencias (entrenamiento, acción, tiempo de reacción)
+- **Pre-relleno automático** de los pasos 0–2 al iniciar un post-test, con los datos del pre-test guardados en sesión
+- **Panel de modo avanzado** para forzar tipo de evaluación (uso interno / demostración)
+- Envío al backend y almacenamiento del resultado en `sessionStorage`
 
-### Módulo 2 — Resultados ⏳
+### Resultados (`/resultados/:id`) — Completo
 
-La página de resultados muestra temporalmente el JSON crudo de la respuesta del backend. Será reemplazada por tarjetas visuales de riesgo, IMC, recomendaciones y tópicos educativos.
+Vista completa del resultado de la evaluación con tarjetas visuales:
 
-### Módulos pendientes ⏳
+- Nivel de riesgo cardiovascular (bajo / moderado / alto)
+- Probabilidad del modelo ML
+- Puntuación de preparación ante emergencias
+- IMC calculado y categoría
+- Lista de recomendaciones personalizadas
+- Vista previa de temas educativos prioritarios
+- Banner diferenciado para resultados de post-test
+- Redirige a `/evaluacion` si no hay resultado en sesión
 
-Las secciones de **Educación**, **Simulador** e **Historial** están en la navegación pero aún no tienen páginas implementadas.
+### Educación (`/educacion` y `/educacion/:topicSlug`) — Completo
+
+Sección de contenido educativo cardiovascular:
+
+- Muestra temas recomendados por el backend según brechas detectadas en la evaluación (con nivel de prioridad)
+- Lista completa de temas disponibles, ordenados por relevancia al resultado
+- Página de detalle por tema con contenido estructurado, nota de advertencia médica, sección de cierre y temas relacionados
+- CTA para realizar el post-test si el último resultado fue un pre-test pendiente
+
+### Historial (`/historial`) — Completo
+
+Vista del historial de evaluaciones del usuario:
+
+- Lista de ciclos completados (pre-test + post-test), ordenados del más reciente al más antiguo
+- Lista colapsable de evaluaciones individuales (`regular`)
+- Estado vacío cuando el usuario no tiene historial
+
+### Comparación (`/historial/comparacion/:postId`) — Completo
+
+Vista de comparación entre pre-test y post-test de un ciclo:
+
+- Encabezado con fechas y resumen de mejora general del ciclo
+- Comparación del nivel de riesgo y probabilidad ML entre ambas evaluaciones
+- Comparación de puntajes de conocimiento educativo y de emergencias
+
+### Simulador (`/simulador`) — Pendiente
+
+Muestra un placeholder "En construcción". No tiene implementación.
 
 ---
 
-## Decisiones técnicas clave
+## Arquitectura del frontend
 
-### Usuario anónimo
+### Módulos por funcionalidad
 
-El sistema no requiere registro. Cada sesión se identifica con un UUID v4 generado en el primer acceso y persistido en `localStorage`. El UUID se inyecta automáticamente en cada request al backend mediante un interceptor de Axios (`X-Anonymous-User-Id`). Si el backend retorna un UUID distinto en la respuesta, el interceptor lo sincroniza.
+Cada sección principal vive en su propio directorio bajo `src/features/`:
 
-### Estrategia de almacenamiento
+```
+src/features/
+├── evaluation/    # Formulario multi-paso + hooks de flujo
+├── results/       # Tarjetas de resultados
+├── education/     # Catálogo de temas + detalle de tema
+└── history/       # Historial + comparación de ciclos
+```
+
+### Componentes de formulario reutilizables
+
+Cuatro primitivos en `src/components/ui/` usados por todos los pasos del formulario:
+
+- `RadioCardGroup` — selección única con tarjetas visuales
+- `CheckboxCardGroup` — selección múltiple con tarjetas
+- `OptionCard` — tarjeta de opción individual (radio o checkbox)
+- `NumberField` — input numérico con unidad (ej. kg, cm, mmHg)
+
+Todos llevan `data-field={nombre}` para que `scrollToFirstError` pueda localizar el primer campo inválido en el DOM.
+
+### Estado y almacenamiento
 
 | Dato | Almacenamiento | Duración |
 |---|---|---|
 | UUID del usuario | `localStorage` | Persiste entre sesiones |
-| Resultado de evaluación | `sessionStorage` | Solo la pestaña actual |
-| Datos del último pre-test | `sessionStorage` | Solo la pestaña actual |
+| Resultado de la última evaluación | `sessionStorage` | Solo la pestaña actual |
+| Datos del último pre-test | `sessionStorage` | Hasta completar el post-test |
 
-### Pre-relleno del post-test
+Todo acceso a `localStorage` y `sessionStorage` va a través de `src/utils/storage.ts`.
 
-Al completar un pre-test, el formulario completo se guarda en `sessionStorage`. Si el usuario regresa a hacer el post-test en la misma sesión, los pasos 0, 1 y 2 (datos que no cambian en minutos: edad, sexo, salud, hábitos) se pre-rellenan automáticamente. El usuario puede corregirlos antes de continuar. Al cerrar el ciclo con el post-test, los datos guardados se limpian.
+### Usuario anónimo
 
-### Tipado del formulario
-
-Los tipos en `src/types/evaluation.ts` son un espejo directo del schema Pydantic `EvaluationRequest` del backend. Si el backend cambia, ese archivo es el primero a actualizar.
+El sistema no requiere registro. Cada usuario se identifica con un UUID v4 generado en el primer acceso (`crypto.randomUUID`) y almacenado en `localStorage`. El UUID se inyecta automáticamente en cada request mediante un interceptor de Axios (`X-Anonymous-User-Id`). Si el backend devuelve un UUID distinto en la respuesta, el interceptor lo sincroniza.
 
 ### Alias de importación
 
-Todas las importaciones internas usan el alias `@/` mapeado a `src/`, configurado en `vite.config.ts`:
+Todas las importaciones internas usan el alias `@/` mapeado a `src/`, configurado en `vite.config.ts`. No se usan rutas relativas entre módulos de `features/`.
 
-```ts
-resolve: {
-  alias: { '@': path.resolve(__dirname, './src') }
-}
+### Tipos TypeScript
+
+`src/types/evaluation.ts` es un espejo directo del schema Pydantic `EvaluationRequest` del backend. `src/types/results.ts` tipifica la respuesta de `POST /api/predict`. Si el backend cambia un campo, estos archivos son los primeros a actualizar.
+
+---
+
+## Estructura del proyecto
+
+```
+frontend/src/
+├── api/
+│   ├── client.ts              # Instancia Axios + interceptor de UUID
+│   ├── evaluation.ts          # predictEvaluation()
+│   └── history.ts             # getLastCycle(), getUserHistory(), getComparison()
+├── components/
+│   ├── layout/AppLayout.tsx   # Header, nav, <Outlet>
+│   └── ui/                    # RadioCardGroup, CheckboxCardGroup, OptionCard, NumberField, ProgressBar
+├── features/
+│   ├── evaluation/
+│   │   ├── steps/             # Step0Control … Step4Emergency
+│   │   ├── hooks/             # useEvaluationForm, useAutoDetectEvaluationType, usePrefillFromPretest
+│   │   ├── components/        # EvaluationLayout, FlowIntro, AdvancedModePanel, PrefillNotice
+│   │   ├── constants.ts
+│   │   └── EvaluationPage.tsx
+│   ├── results/
+│   │   ├── components/        # RiskLevelCard, MLProbabilityCard, PreparednessCard, BMICard,
+│   │   │                      #   RecommendationsList, EducationPreviewCard, PostTestBanner, ResultsActions
+│   │   └── ResultsPage.tsx
+│   ├── education/
+│   │   ├── components/        # EducationLayout, PriorityBanner, TopicGrid, TopicCard,
+│   │   │                      #   TopicContent, TopicTip, TopicSectionHeader, EducationFooter
+│   │   ├── data/              # topicContents.ts (catálogo de temas)
+│   │   ├── utils/             # priorityMatcher.ts
+│   │   ├── topics/TopicDetailPage.tsx
+│   │   └── EducationPage.tsx
+│   └── history/
+│       ├── components/        # CycleListItem, RegularEvaluationItem, ComparisonHeader,
+│       │                      #   RiskComparison, KnowledgeComparison, ChangePill, HistoryEmpty
+│       ├── hooks/             # useHistoryData, useComparisonData
+│       ├── HistoryPage.tsx
+│       └── ComparisonPage.tsx
+├── hooks/
+│   └── useAnonymousUser.ts
+├── pages/
+│   ├── HomePage.tsx
+│   └── NotFoundPage.tsx
+├── routes/AppRouter.tsx
+├── types/
+│   ├── evaluation.ts
+│   └── results.ts
+└── utils/
+    ├── storage.ts
+    ├── uuid.ts
+    ├── scrollToError.ts
+    └── dateFormat.ts
 ```
 
-### Componentes de formulario
+---
 
-Los campos del formulario están construidos sobre tres primitivos reutilizables (`OptionCard`, `RadioCardGroup`, `CheckboxCardGroup`, `NumberField`) que comparten estilo y accesibilidad. Cada campo lleva el atributo `data-field={nombre}` para que `scrollToFirstError` pueda localizarlo en el DOM.
+## Consideraciones de diseño
+
+- La interfaz está diseñada para usuarios de **60 años en adelante**: tipografía grande (base 18 px), botones de al menos 56 px de alto, alto contraste.
+- No hay layouts específicos para móvil; el diseño está optimizado para escritorio y tablets.
+- No hay suite de pruebas automatizadas configurada.

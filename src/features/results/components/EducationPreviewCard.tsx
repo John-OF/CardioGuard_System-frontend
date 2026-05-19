@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import type { Priority } from '@/types/results';
 import {
   PRIORITY_LABELS,
@@ -32,7 +31,6 @@ export function EducationPreviewCard({
   topics,
   priorityLevel,
 }: EducationPreviewCardProps) {
-  const navigate = useNavigate();
   const visibleTopics = topics.slice(0, TOPICS_PREVIEW_LIMIT);
   const remaining = topics.length - visibleTopics.length;
 
@@ -78,13 +76,6 @@ export function EducationPreviewCard({
         </ul>
       )}
 
-      <button
-        type="button"
-        onClick={() => navigate('/educacion')}
-        className="btn-primary mt-6 w-full sm:w-auto"
-      >
-        Ir al módulo educativo
-      </button>
     </section>
   );
 }

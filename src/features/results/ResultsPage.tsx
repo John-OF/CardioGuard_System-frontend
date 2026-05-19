@@ -53,7 +53,7 @@ export function ResultsPage() {
         topics={result.education.topics}
         priorityLevel={result.education.priority_level}
       />
-      <ResultsActions />
+      <ResultsActions evaluationType={result.evaluation_type} />
     </ResultsLayout>
   );
 }

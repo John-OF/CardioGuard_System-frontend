@@ -6,8 +6,9 @@ import { EvaluationPage } from '@/features/evaluation/EvaluationPage';
 import { ResultsPage } from '@/features/results/ResultsPage';
 import { HistoryPage } from '@/features/history/HistoryPage';
 import { ComparisonPage } from '@/features/history/ComparisonPage';
-import { EducationPage } from '@/features/education/EducationPage';
-import { TopicDetailPage } from '@/features/education/topics/TopicDetailPage';
+import { AlfabetizacionPage } from '@/features/alfabetizacion/AlfabetizacionPage';
+import { TopicDetailPage } from '@/features/alfabetizacion/topics/TopicDetailPage';
+import { CapacitacionPage } from '@/features/capacitacion/CapacitacionPage';
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="card text-center">
@@ -24,8 +25,9 @@ export function AppRouter() {
           <Route index element={<HomePage />} />
           <Route path="evaluacion" element={<EvaluationPage />} />
           <Route path="resultados/:evaluationId" element={<ResultsPage />} />
-          <Route path="/educacion" element={<EducationPage />} />
-          <Route path="/educacion/:topicSlug" element={<TopicDetailPage />} />
+          <Route path="alfabetizacion" element={<AlfabetizacionPage />} />
+          <Route path="alfabetizacion/:topicSlug" element={<TopicDetailPage />} />
+          <Route path="capacitacion" element={<CapacitacionPage />} />
           <Route path="simulador" element={<Placeholder title="Simulador" />} />
           <Route path="historial" element={<HistoryPage />} />
           <Route path="/historial/comparacion/:postId" element={<ComparisonPage />} />

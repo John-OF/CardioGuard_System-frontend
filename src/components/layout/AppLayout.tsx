@@ -18,8 +18,7 @@ export function AppLayout() {
           </Link>
           <nav className="hidden sm:flex gap-6 text-base font-medium">
             <Link to="/evaluacion" className="hover:text-primary">Evaluación</Link>
-            <Link to="/educacion" className="hover:text-primary">Aprender</Link>
-            <Link to="/simulador" className="hover:text-primary">Simulador</Link>
+            <Link to="/alfabetizacion" className="hover:text-primary">Alfabetización</Link>
             <Link to="/historial" className="hover:text-primary">Historial</Link>
           </nav>
         </div>
