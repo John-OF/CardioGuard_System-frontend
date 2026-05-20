@@ -6,6 +6,7 @@ const KEYS = {
   LAST_RESULT: 'cardioguard_last_result',
   LAST_PRETEST_FORM: 'cardioguard_last_pretest_form',
   ADMIN_TOKEN: 'cardioguard_admin_token',
+  ADVANCED_MODE: 'cardioguard_advanced_mode',
   // localStorage: payloads de pre-test indexados por evaluation_id.
   // Permite reanudar un ciclo huérfano (desde Historial) en el mismo
   // navegador sin re-ingresar los datos clínicos.
@@ -66,6 +67,25 @@ export const storage = {
   },
   clearLastPretestForm(): void {
     sessionStorage.removeItem(KEYS.LAST_PRETEST_FORM);
+  },
+
+  // === Modo avanzado (sessionStorage: solo esta pestaña) ===
+  // Toggle oculto que expone el panel de control manual del tipo de
+  // evaluación en EvaluationPage. Se activa con 5 taps en el logo.
+  getAdvancedMode(): boolean {
+    return sessionStorage.getItem(KEYS.ADVANCED_MODE) === '1';
+  },
+  setAdvancedMode(value: boolean): void {
+    if (value) {
+      sessionStorage.setItem(KEYS.ADVANCED_MODE, '1');
+    } else {
+      sessionStorage.removeItem(KEYS.ADVANCED_MODE);
+    }
+  },
+  // Un ciclo está activo si en sessionStorage hay un resultado de
+  // pre_test (el usuario ya hizo pre pero aún no cerró el ciclo).
+  isCycleActive(): boolean {
+    return this.getLastResult()?.evaluation_type === 'pre_test';
   },
 
   // === Token administrativo (sessionStorage: solo esta pestaña) ===

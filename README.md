@@ -67,13 +67,26 @@ La app queda disponible en `http://localhost:5173`.
 |---|---|---|
 | `/` | `HomePage` | Completo |
 | `/evaluacion` | `EvaluationPage` | Completo |
-| `/resultados/:id` | `ResultsPage` | Completo |
-| `/educacion` | `EducationPage` | Completo |
-| `/educacion/:topicSlug` | `TopicDetailPage` | Completo |
+| `/resultados/:evaluationId` | `ResultsPage` | Completo |
+| `/alfabetizacion` | `AlfabetizacionPage` | Completo |
+| `/alfabetizacion/:topicSlug` | `TopicDetailPage` | Completo |
+| `/capacitacion` | `CapacitacionPage` | Completo |
+| `/simulador` | `SimuladorPage` | Completo |
 | `/historial` | `HistoryPage` | Completo |
 | `/historial/comparacion/:postId` | `ComparisonPage` | Completo |
-| `/simulador` | — | Pendiente (placeholder) |
+| `/admin` | `AdminPage` | Completo (protegido por token) |
 | `*` | `NotFoundPage` | Completo |
+
+> `/admin` se monta **fuera** de `AppLayout`, sin cabecera ni navegación pública. Solo se accede escribiendo la URL.
+
+### Flujo completo del ciclo educativo
+
+```
+/evaluacion (pre_test)  →  /resultados/:id  →  /capacitacion  →  /simulador (post_test)
+   →  /resultados/:id (variante reducida)  →  /historial/comparacion/:postId
+```
+
+El simulador es **la única ruta** que genera un `post_test` en el flujo normal. Reutiliza los datos clínicos del pre-test guardados en `sessionStorage` (pasos 0–2) y solo pregunta los escenarios correspondientes a los pasos 3 y 4. El resultado se guarda con la variante `reduced`, que oculta la probabilidad ML y el panel de IMC en la página de resultados.
 
 ---
 
@@ -91,50 +104,85 @@ Flujo de evaluación de 5 pasos con detección automática del estado del usuari
   - Paso 3: conocimiento cardiovascular (infarto, síntomas, prevención, RCP)
   - Paso 4: respuesta ante emergencias (entrenamiento, acción, tiempo de reacción)
 - **Pre-relleno automático** de los pasos 0–2 al iniciar un post-test, con los datos del pre-test guardados en sesión
-- **Panel de modo avanzado** para forzar tipo de evaluación (uso interno / demostración)
+- **Panel de modo avanzado** (oculto por defecto): permite forzar el tipo de evaluación entre `regular` y `pre_test`. La opción `post_test` ya no se selecciona manualmente — siempre se origina desde `/simulador`.
 - Envío al backend y almacenamiento del resultado en `sessionStorage`
 
-### Resultados (`/resultados/:id`) — Completo
+### Resultados (`/resultados/:evaluationId`) — Completo
 
-Vista completa del resultado de la evaluación con tarjetas visuales:
+Vista del resultado de la evaluación. Tiene dos variantes que dependen de cómo se generó el resultado:
 
-- Nivel de riesgo cardiovascular (bajo / moderado / alto)
-- Probabilidad del modelo ML
-- Puntuación de preparación ante emergencias
-- IMC calculado y categoría
-- Lista de recomendaciones personalizadas
-- Vista previa de temas educativos prioritarios
-- Banner diferenciado para resultados de post-test
-- Redirige a `/evaluacion` si no hay resultado en sesión
+- **Variante completa** (`full`): se muestra para evaluaciones `regular` y `pre_test`. Incluye nivel de riesgo, probabilidad del modelo ML, preparación ante emergencias, IMC, recomendaciones y vista previa de temas educativos.
+- **Variante reducida** (`reduced`): se muestra al volver del simulador (post-test). Oculta la probabilidad ML y el IMC para presentar al usuario solo el feedback educativo. La variante se guarda en `sessionStorage` junto al resultado (`_variant`).
 
-### Educación (`/educacion` y `/educacion/:topicSlug`) — Completo
+Si no hay resultado en sesión, redirige a `/evaluacion`.
 
-Sección de contenido educativo cardiovascular:
+### Alfabetización (`/alfabetizacion` y `/alfabetizacion/:topicSlug`) — Completo
 
-- Muestra temas recomendados por el backend según brechas detectadas en la evaluación (con nivel de prioridad)
-- Lista completa de temas disponibles, ordenados por relevancia al resultado
-- Página de detalle por tema con contenido estructurado, nota de advertencia médica, sección de cierre y temas relacionados
-- CTA para realizar el post-test si el último resultado fue un pre-test pendiente
+Sección de contenido educativo cardiovascular de consulta libre:
+
+- Muestra temas recomendados por el backend según brechas detectadas en la evaluación, con nivel de prioridad (alta / media / baja).
+- Lista completa de temas disponibles, ordenados por relevancia frente al último resultado.
+- Página de detalle por tema con contenido estructurado, nota de advertencia médica, sección de cierre y temas relacionados.
+- Vista de glosario para términos cardiovasculares de uso frecuente.
+- CTA para realizar el post-test si el último resultado fue un pre-test pendiente.
+
+### Capacitación (`/capacitacion`) — Completo
+
+Wizard de lecciones que el usuario recorre entre el pre-test y el simulador. Es la antesala del post-test:
+
+- Avanza secuencialmente por las lecciones definidas en `data/lessons.ts` (componente `LessonCard` + `WizardProgress`).
+- Al finalizar, redirige al `/simulador` para ejecutar el post-test.
+- A diferencia de Alfabetización, no es navegación libre: tiene orden y progreso.
+
+### Simulador (`/simulador`) — Completo
+
+Wizard de escenarios que **genera el `post_test`** del ciclo. Es la única vía a un post-test dentro del flujo normal:
+
+- Acepta dos modos de entrada:
+  - **Flujo normal**: hay un `pre_test` reciente en `sessionStorage` (`LAST_RESULT` + `LAST_PRETEST_FORM`).
+  - **Ciclo huérfano**: `?continue=<preEvaluationId>` — recupera el pre-test desde `localStorage` (mapa `PRETEST_FORMS_BY_ID`) para usuarios que vuelven días después desde Historial.
+- Presenta escenarios definidos en `data/scenarios.ts`, cuyas respuestas sustituyen los pasos 3 y 4 del pre-test guardado.
+- Construye el payload final reutilizando los datos clínicos (pasos 0–2) del pre-test, evita re-preguntarlos.
+- Envía la evaluación con `evaluation_type: 'post_test'` + `previous_evaluation_id`, guarda el resultado con `_variant: 'reduced'` y limpia los rastros del pre-test (`LAST_PRETEST_FORM` + entrada en `PRETEST_FORMS_BY_ID`).
+- Redirige a `/resultados/:id` con la vista reducida.
 
 ### Historial (`/historial`) — Completo
 
 Vista del historial de evaluaciones del usuario:
 
-- Lista de ciclos completados (pre-test + post-test), ordenados del más reciente al más antiguo
-- Lista colapsable de evaluaciones individuales (`regular`)
-- Estado vacío cuando el usuario no tiene historial
+- Lista de ciclos completados (pre-test + post-test), ordenados del más reciente al más antiguo.
+- Botón de "reanudar" sobre ciclos pendientes que llevan a `/simulador?continue=<preId>`.
+- Lista colapsable de evaluaciones individuales (`regular`).
+- Estado vacío cuando el usuario no tiene historial.
 
 ### Comparación (`/historial/comparacion/:postId`) — Completo
 
 Vista de comparación entre pre-test y post-test de un ciclo:
 
-- Encabezado con fechas y resumen de mejora general del ciclo
-- Comparación del nivel de riesgo y probabilidad ML entre ambas evaluaciones
-- Comparación de puntajes de conocimiento educativo y de emergencias
+- Encabezado con fechas y resumen de mejora general del ciclo.
+- Comparación del nivel de riesgo y probabilidad ML entre ambas evaluaciones.
+- Comparación de puntajes de conocimiento educativo y de emergencias.
 
-### Simulador (`/simulador`) — Pendiente
+### Admin (`/admin`) — Completo
 
-Muestra un placeholder "En construcción". No tiene implementación.
+Panel administrativo para los tesistas. Vive fuera de `AppLayout` (sin cabecera ni navegación pública):
+
+- **Acceso por token**: pantalla `AdminLogin` solicita el `X-Admin-Token`; se guarda en `sessionStorage` mientras dure la pestaña.
+- **Estadísticas globales** (`StatsSection`): totales (evaluaciones, usuarios únicos, ciclos completos), distribución de riesgo, demografía (edad, sexo, IMC), métricas de mejora pre/post y tasa de completación de ciclos.
+- **Tabla de ciclos** (`CyclesTable`): listado paginado de ciclos pre/post completados con deltas de conocimiento, emergencias y nivel de riesgo. Soporta ordenamiento por más reciente o más antiguo.
+- Si el token resulta inválido durante una llamada, los hooks de datos disparan logout automático.
+
+### Modo avanzado — Completo
+
+Toggle oculto para demos y depuración. Se activa con **5 toques sobre el logo del header dentro de una ventana de 3 segundos**.
+
+- Estado guardado en `sessionStorage` como `cardioguard_advanced_mode`.
+- Indicador visual: un punto verde en la esquina superior derecha del logo cuando está activo.
+- Mientras está activo, `EvaluationPage` muestra el `AdvancedModePanel` en el último paso, exponiendo el control manual de `evaluation_type` (limitado a `regular` y `pre_test`).
+- **No se puede activar/desactivar durante un ciclo activo**: si hay un resultado de `pre_test` en sesión, el toggle se bloquea y muestra el mensaje "No se puede cambiar el modo durante un ciclo activo." Esto evita romper un ciclo en curso.
+- La sincronización entre componentes montados se hace con un evento `window` (`cardioguard:advanced-mode-changed`); no hay React Context.
+
+Implementación: hook `src/hooks/useAdvancedMode.ts` + helpers en `src/utils/storage.ts` (`getAdvancedMode`, `setAdvancedMode`, `isCycleActive`).
 
 ---
 
@@ -146,10 +194,13 @@ Cada sección principal vive en su propio directorio bajo `src/features/`:
 
 ```
 src/features/
-├── evaluation/    # Formulario multi-paso + hooks de flujo
-├── results/       # Tarjetas de resultados
-├── education/     # Catálogo de temas + detalle de tema
-└── history/       # Historial + comparación de ciclos
+├── evaluation/      # Formulario multi-paso + detección automática de flujo
+├── results/         # Tarjetas de resultados (variantes 'full' y 'reduced')
+├── alfabetizacion/  # Catálogo de temas + detalle + glosario
+├── capacitacion/    # Wizard de lecciones (gateway al simulador)
+├── simulador/       # Wizard de escenarios — genera el post_test
+├── history/         # Historial + comparación de ciclos
+└── admin/           # Panel de tesistas (fuera de AppLayout)
 ```
 
 ### Componentes de formulario reutilizables
@@ -165,11 +216,14 @@ Todos llevan `data-field={nombre}` para que `scrollToFirstError` pueda localizar
 
 ### Estado y almacenamiento
 
-| Dato | Almacenamiento | Duración |
-|---|---|---|
-| UUID del usuario | `localStorage` | Persiste entre sesiones |
-| Resultado de la última evaluación | `sessionStorage` | Solo la pestaña actual |
-| Datos del último pre-test | `sessionStorage` | Hasta completar el post-test |
+| Dato | Almacenamiento | Duración | Propósito |
+|---|---|---|---|
+| UUID del usuario | `localStorage` | Persiste entre sesiones | Identifica al usuario anónimo en cada request |
+| Pre-tests indexados por ID | `localStorage` | Persiste entre sesiones | Permite reanudar un ciclo huérfano desde Historial |
+| Resultado de la última evaluación | `sessionStorage` | Solo la pestaña actual | Renderiza la página de resultados (con variante `full` o `reduced`) |
+| Datos del último pre-test | `sessionStorage` | Hasta completar el post-test | Pre-llena pasos 0–2 y alimenta al simulador |
+| Token administrativo | `sessionStorage` | Solo la pestaña actual | Acceso al panel `/admin` |
+| Modo avanzado | `sessionStorage` | Solo la pestaña actual | Habilita el `AdvancedModePanel` |
 
 Todo acceso a `localStorage` y `sessionStorage` va a través de `src/utils/storage.ts`.
 
@@ -194,9 +248,10 @@ frontend/src/
 ├── api/
 │   ├── client.ts              # Instancia Axios + interceptor de UUID
 │   ├── evaluation.ts          # predictEvaluation()
-│   └── history.ts             # getLastCycle(), getUserHistory(), getComparison()
+│   ├── history.ts             # getLastCycle, getUserHistory, getComparison
+│   └── admin.ts               # getAdminStats, getAdminCycles
 ├── components/
-│   ├── layout/AppLayout.tsx   # Header, nav, <Outlet>
+│   ├── layout/AppLayout.tsx   # Header (con logo táctil), nav, <Outlet>
 │   └── ui/                    # RadioCardGroup, CheckboxCardGroup, OptionCard, NumberField, ProgressBar
 ├── features/
 │   ├── evaluation/
@@ -207,30 +262,51 @@ frontend/src/
 │   │   └── EvaluationPage.tsx
 │   ├── results/
 │   │   ├── components/        # RiskLevelCard, MLProbabilityCard, PreparednessCard, BMICard,
-│   │   │                      #   RecommendationsList, EducationPreviewCard, PostTestBanner, ResultsActions
+│   │   │                      #   RecommendationsList, EducationPreviewCard, PostTestBanner,
+│   │   │                      #   ResultsActions
 │   │   └── ResultsPage.tsx
-│   ├── education/
+│   ├── alfabetizacion/
 │   │   ├── components/        # EducationLayout, PriorityBanner, TopicGrid, TopicCard,
-│   │   │                      #   TopicContent, TopicTip, TopicSectionHeader, EducationFooter
+│   │   │                      #   TopicContent, TopicTip, TopicSectionHeader, GlosarioView,
+│   │   │                      #   EducationFooter
 │   │   ├── data/              # topicContents.ts (catálogo de temas)
 │   │   ├── utils/             # priorityMatcher.ts
 │   │   ├── topics/TopicDetailPage.tsx
-│   │   └── EducationPage.tsx
-│   └── history/
-│       ├── components/        # CycleListItem, RegularEvaluationItem, ComparisonHeader,
-│       │                      #   RiskComparison, KnowledgeComparison, ChangePill, HistoryEmpty
-│       ├── hooks/             # useHistoryData, useComparisonData
-│       ├── HistoryPage.tsx
-│       └── ComparisonPage.tsx
+│   │   ├── types.ts
+│   │   ├── EducationPage.tsx
+│   │   └── AlfabetizacionPage.tsx
+│   ├── capacitacion/
+│   │   ├── components/        # LessonCard, WizardProgress
+│   │   ├── data/lessons.ts
+│   │   └── CapacitacionPage.tsx
+│   ├── simulador/
+│   │   ├── components/        # SimuladorIntro, ScenarioScreen, ScenarioOption, WizardProgress
+│   │   ├── data/scenarios.ts
+│   │   ├── hooks/useSimuladorSubmit.ts
+│   │   └── SimuladorPage.tsx
+│   ├── history/
+│   │   ├── components/        # CycleListItem, RegularEvaluationItem, ComparisonHeader,
+│   │   │                      #   RiskComparison, KnowledgeComparison, ChangePill, HistoryEmpty
+│   │   ├── hooks/             # useHistoryData, useComparisonData
+│   │   ├── HistoryPage.tsx
+│   │   └── ComparisonPage.tsx
+│   └── admin/
+│       ├── components/        # AdminLogin, StatsSection, CyclesTable, StatCard,
+│       │                      #   DistributionBar, RiskBadge
+│       ├── hooks/             # useAdminAuth, useAdminStats, useAdminCycles
+│       ├── utils/format.ts
+│       └── AdminPage.tsx
 ├── hooks/
-│   └── useAnonymousUser.ts
+│   ├── useAnonymousUser.ts
+│   └── useAdvancedMode.ts     # Toggle de 5 taps + sincronización entre componentes
 ├── pages/
 │   ├── HomePage.tsx
 │   └── NotFoundPage.tsx
 ├── routes/AppRouter.tsx
 ├── types/
 │   ├── evaluation.ts
-│   └── results.ts
+│   ├── results.ts
+│   └── admin.ts
 └── utils/
     ├── storage.ts
     ├── uuid.ts
@@ -243,5 +319,10 @@ frontend/src/
 ## Consideraciones de diseño
 
 - La interfaz está diseñada para usuarios de **60 años en adelante**: tipografía grande (base 18 px), botones de al menos 56 px de alto, alto contraste.
-- No hay layouts específicos para móvil; el diseño está optimizado para escritorio y tablets.
-- No hay suite de pruebas automatizadas configurada.
+- El diseño está optimizado para escritorio y tablets; los formularios funcionan en móvil pero no hay layouts específicos para esa franja.
+
+---
+
+## Pendiente
+
+- **Despliegue en producción**: hosting de la SPA, configuración del `VITE_API_URL` definitivo y publicación junto al backend en un dominio con HTTPS. Es el único punto pendiente del frontend.

@@ -6,6 +6,7 @@ import { AdvancedModePanel } from './components/AdvancedModePanel';
 import { useEvaluationForm } from './hooks/useEvaluationForm';
 import { useAutoDetectEvaluationType } from './hooks/useAutoDetectEvaluationType';
 import { usePrefillFromPretest } from './hooks/usePrefillFromPretest';
+import { useAdvancedMode } from '@/hooks/useAdvancedMode';
 import { Step0Control } from './steps/Step0Control';
 import { Step1Health } from './steps/Step1Health';
 import { Step2Habits } from './steps/Step2Habits';
@@ -46,6 +47,7 @@ export function EvaluationPage() {
   const [view, setView] = useState<ViewState>('intro');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { enabled: advancedMode } = useAdvancedMode();
 
   // Pre-llenar pasos 1-3 si es post_test y hay datos en storage
   const { isPrefilled } = usePrefillFromPretest({
@@ -194,7 +196,7 @@ export function EvaluationPage() {
         {renderStep()}
       </EvaluationLayout>
 
-      {isLastStep && (
+      {isLastStep && advancedMode && (
         <AdvancedModePanel
           evaluationType={formData.evaluation_type ?? 'regular'}
           previousEvaluationId={formData.previous_evaluation_id ?? null}

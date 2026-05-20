@@ -54,7 +54,6 @@ export function AdvancedModePanel({
             >
               <option value="regular">Regular (sin ciclo educativo)</option>
               <option value="pre_test">Pre-test (antes de educación)</option>
-              <option value="post_test">Post-test (después de educación)</option>
             </select>
           </div>
 
