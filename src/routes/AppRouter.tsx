@@ -9,18 +9,16 @@ import { ComparisonPage } from '@/features/history/ComparisonPage';
 import { AlfabetizacionPage } from '@/features/alfabetizacion/AlfabetizacionPage';
 import { TopicDetailPage } from '@/features/alfabetizacion/topics/TopicDetailPage';
 import { CapacitacionPage } from '@/features/capacitacion/CapacitacionPage';
-
-const Placeholder = ({ title }: { title: string }) => (
-  <div className="card text-center">
-    <h2 className="text-2xl font-bold mb-2">{title}</h2>
-    <p className="text-slate-600">En construcción.</p>
-  </div>
-);
+import { SimuladorPage } from '@/features/simulador/SimuladorPage';
+import { AdminPage } from '@/features/admin/AdminPage';
 
 export function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Panel de tesistas: fuera de AppLayout (sin header/nav público),
+            solo accesible escribiendo /admin en la URL. */}
+        <Route path="/admin" element={<AdminPage />} />
         <Route element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="evaluacion" element={<EvaluationPage />} />
@@ -28,7 +26,7 @@ export function AppRouter() {
           <Route path="alfabetizacion" element={<AlfabetizacionPage />} />
           <Route path="alfabetizacion/:topicSlug" element={<TopicDetailPage />} />
           <Route path="capacitacion" element={<CapacitacionPage />} />
-          <Route path="simulador" element={<Placeholder title="Simulador" />} />
+          <Route path="simulador" element={<SimuladorPage />} />
           <Route path="historial" element={<HistoryPage />} />
           <Route path="/historial/comparacion/:postId" element={<ComparisonPage />} />
           <Route path="*" element={<NotFoundPage />} />

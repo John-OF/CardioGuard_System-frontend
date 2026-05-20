@@ -100,6 +100,8 @@ export function EvaluationPage() {
       if (payload.evaluation_type === 'pre_test') {
         // Guardamos el formulario para poder pre-rellenar el post-test
         storage.setLastPretestForm(payload);
+        // Y por evaluation_id, para reanudar un ciclo huérfano desde Historial
+        storage.savePretestFormById(result.evaluation_id, payload);
       } else if (payload.evaluation_type === 'post_test') {
         // Ciclo cerrado: limpiamos el pre-test guardado
         storage.clearLastPretestForm();

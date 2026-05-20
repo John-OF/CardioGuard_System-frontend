@@ -81,6 +81,8 @@ export interface HistoryResponse {
 // created_at en /predict, así que lo capturamos en el cliente).
 export interface StoredPredictResponseData extends PredictResponseData {
   _saved_at?: string;
+  // 'reduced' oculta ML e IMC en la página de resultados (flujo del simulador).
+  _variant?: 'full' | 'reduced';
 }
 
 // === Endpoints de Historial / Ciclos / Comparación ===

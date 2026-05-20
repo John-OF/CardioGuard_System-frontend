@@ -158,7 +158,7 @@ export function LessonCard({ lesson, step, total, onPrev, onNext, onFinish }: Le
             onClick={onFinish}
             className="btn-primary"
           >
-            Ir al simulador
+            Hacer la simulación
           </button>
         ) : (
           <button

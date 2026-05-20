@@ -5,6 +5,11 @@ const KEYS = {
   USER_ID: 'cardioguard_user_id',
   LAST_RESULT: 'cardioguard_last_result',
   LAST_PRETEST_FORM: 'cardioguard_last_pretest_form',
+  ADMIN_TOKEN: 'cardioguard_admin_token',
+  // localStorage: payloads de pre-test indexados por evaluation_id.
+  // Permite reanudar un ciclo huérfano (desde Historial) en el mismo
+  // navegador sin re-ingresar los datos clínicos.
+  PRETEST_FORMS_BY_ID: 'cardioguard_pretest_forms_by_id',
 } as const;
 
 export const storage = {
@@ -20,10 +25,14 @@ export const storage = {
   },
 
   // === Resultado de evaluación (sessionStorage: solo esta pestaña) ===
-  setLastResult(result: PredictResponseData): void {
+  setLastResult(
+    result: PredictResponseData,
+    variant: 'full' | 'reduced' = 'full'
+  ): void {
     const stored: StoredPredictResponseData = {
       ...result,
       _saved_at: new Date().toISOString(),
+      _variant: variant,
     };
     sessionStorage.setItem(KEYS.LAST_RESULT, JSON.stringify(stored));
   },
@@ -57,5 +66,46 @@ export const storage = {
   },
   clearLastPretestForm(): void {
     sessionStorage.removeItem(KEYS.LAST_PRETEST_FORM);
+  },
+
+  // === Token administrativo (sessionStorage: solo esta pestaña) ===
+  // No es para usuarios finales: solo los tesistas acceden a /admin.
+  getAdminToken(): string | null {
+    return sessionStorage.getItem(KEYS.ADMIN_TOKEN);
+  },
+  setAdminToken(token: string): void {
+    sessionStorage.setItem(KEYS.ADMIN_TOKEN, token);
+  },
+  clearAdminToken(): void {
+    sessionStorage.removeItem(KEYS.ADMIN_TOKEN);
+  },
+
+  // === Pre-tests por evaluation_id (localStorage: persiste entre sesiones) ===
+  // Usado por el simulador para reanudar un ciclo huérfano (?continue=<preId>)
+  // recuperando los datos clínicos del pre-test sin un endpoint backend.
+  _readPretestMap(): Record<string, EvaluationRequest> {
+    const raw = localStorage.getItem(KEYS.PRETEST_FORMS_BY_ID);
+    if (!raw) return {};
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
+  },
+  savePretestFormById(evaluationId: string, form: EvaluationRequest): void {
+    const map = this._readPretestMap();
+    map[evaluationId] = form;
+    localStorage.setItem(KEYS.PRETEST_FORMS_BY_ID, JSON.stringify(map));
+  },
+  getPretestFormById(evaluationId: string): EvaluationRequest | null {
+    return this._readPretestMap()[evaluationId] ?? null;
+  },
+  clearPretestFormById(evaluationId: string): void {
+    const map = this._readPretestMap();
+    if (evaluationId in map) {
+      delete map[evaluationId];
+      localStorage.setItem(KEYS.PRETEST_FORMS_BY_ID, JSON.stringify(map));
+    }
   },
 };

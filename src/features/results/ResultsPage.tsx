@@ -37,17 +37,21 @@ export function ResultsPage() {
 
   const evaluationDate = formatEvaluationDate(result._saved_at);
   const isPostTest = result.evaluation_type === 'post_test';
+  // Flujo del simulador: oculta ML e IMC.
+  const reduced = result._variant === 'reduced';
 
   return (
     <ResultsLayout evaluationDate={evaluationDate}>
       {isPostTest && <PostTestBanner />}
       <RiskLevelCard level={result.risk.level} />
-      <MLProbabilityCard probability={result.ml.probability} />
+      {!reduced && <MLProbabilityCard probability={result.ml.probability} />}
       <PreparednessCard
         score={result.preparedness.score}
         level={result.preparedness.level}
       />
-      <BMICard bmi={result.derived.bmi} category={result.derived.bmi_category} />
+      {!reduced && (
+        <BMICard bmi={result.derived.bmi} category={result.derived.bmi_category} />
+      )}
       <RecommendationsList recommendations={result.recommendations} />
       <EducationPreviewCard
         topics={result.education.topics}

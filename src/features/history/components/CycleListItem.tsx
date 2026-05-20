@@ -117,7 +117,7 @@ export function CycleListItem({ cycle, cycleNumber, historyById }: CycleListItem
           <button
             type="button"
             onClick={() =>
-              navigate(`/evaluacion?continue=${cycle.pre_test.evaluation_id}`)
+              navigate(`/simulador?continue=${cycle.pre_test.evaluation_id}`)
             }
             className="btn-primary w-full sm:w-auto"
           >
