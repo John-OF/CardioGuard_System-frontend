@@ -64,6 +64,8 @@ export function SimuladorPage() {
 
   if (session.status !== 'ready') return null;
 
+  const { pretestForm, previousEvaluationId } = session;
+
   const scenario = SCENARIOS[index];
   const isFirst = index === 0;
   const isLast = index === SCENARIOS.length - 1;
@@ -102,8 +104,8 @@ export function SimuladorPage() {
   function handleNext() {
     if (isLast) {
       void submit(answers, {
-        pretestForm: session.pretestForm,
-        previousEvaluationId: session.previousEvaluationId,
+        pretestForm,
+        previousEvaluationId,
       });
       return;
     }
