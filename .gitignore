@@ -52,3 +52,6 @@ Thumbs.db
 *.sw?
 .eslintcache
 .stylelintcache
+
+# Claude AI
+.claude/
