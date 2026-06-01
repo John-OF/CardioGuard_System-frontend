@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useAnonymousUser } from '@/hooks/useAnonymousUser';
 import { useAdvancedMode } from '@/hooks/useAdvancedMode';
-import { TOPIC_METAS } from '@/features/alfabetizacion/data/topicCatalog';
+import { TOPIC_METAS } from '@/features/educacion/data/topicCatalog';
+import { PREDICTIVE_MODELS } from '@/features/modelos/data/models';
+import { BackendStatusPill } from './BackendStatusPill';
+import {
+  IconHome,
+  IconActivity,
+  IconBookOpen,
+  IconBrain,
+  IconHistory,
+  IconClipboardCheck,
+  IconScale,
+} from '@/components/ui/icons';
+
+const NAV_ICON = 'w-5 h-5 shrink-0';
 
 const NAV_BASE =
-  'block rounded-lg px-3 py-2 text-base font-medium transition-colors';
+  'block rounded-lg px-3 py-2 text-base font-medium transition-colors whitespace-nowrap';
 const NAV_INACTIVE =
   'text-white/55 hover:bg-[rgba(255,255,255,0.06)] hover:text-white';
 const NAV_ACTIVE = 'bg-[#3d5af1] text-white font-semibold';
@@ -17,14 +30,21 @@ export function AppLayout() {
   const { enabled: advancedMode, notice, registerLogoClick } = useAdvancedMode();
   const location = useLocation();
 
-  const isAlfabetizacionRoute = location.pathname.startsWith('/alfabetizacion');
-  const [alfabetizacionOpen, setAlfabetizacionOpen] = useState(isAlfabetizacionRoute);
+  const isEducacionRoute = location.pathname.startsWith('/educacion');
+  const isModelosRoute = location.pathname.startsWith('/modelos');
+  const [educacionOpen, setEducacionOpen] = useState(isEducacionRoute);
+  const [modelosOpen, setModelosOpen] = useState(isModelosRoute);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Si el usuario navega a una ruta de alfabetización, abrir el dropdown.
+  // Si el usuario navega a una ruta de educación, abrir el dropdown.
   useEffect(() => {
-    if (isAlfabetizacionRoute) setAlfabetizacionOpen(true);
-  }, [isAlfabetizacionRoute]);
+    if (isEducacionRoute) setEducacionOpen(true);
+  }, [isEducacionRoute]);
+
+  // Si el usuario navega a una ruta de modelos, abrir el dropdown.
+  useEffect(() => {
+    if (isModelosRoute) setModelosOpen(true);
+  }, [isModelosRoute]);
 
   // Cerrar el drawer móvil al cambiar de ruta.
   useEffect(() => {
@@ -32,7 +52,7 @@ export function AppLayout() {
   }, [location.pathname]);
 
   const sidebarContent = (
-    <div className="w-64 h-full bg-[#1a1f35] flex flex-col">
+    <div className="w-72 h-full bg-[#1a1f35] flex flex-col">
       <div className="px-6 py-5 border-b border-[rgba(255,255,255,0.08)] flex items-center gap-3">
         <button
           type="button"
@@ -48,56 +68,82 @@ export function AppLayout() {
             />
           )}
         </button>
-        <Link to="/" className="text-xl font-bold text-white">
-          CardioGuard
-        </Link>
+        <span className="text-xl font-bold text-white">CardioGuard</span>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `${NAV_BASE} ${isActive ? NAV_ACTIVE : NAV_INACTIVE}`
+          }
+        >
+          <span className="flex items-center gap-3">
+            <IconHome className={NAV_ICON} />
+            Inicio
+          </span>
+        </NavLink>
+
         <NavLink
           to="/evaluacion"
           className={({ isActive }) =>
             `${NAV_BASE} ${isActive ? NAV_ACTIVE : NAV_INACTIVE}`
           }
         >
-          Evaluación
+          <span className="flex items-center gap-3">
+            <IconActivity className={NAV_ICON} />
+            Evaluación Preventiva
+          </span>
         </NavLink>
 
         <div>
-          <button
-            type="button"
-            onClick={() => setAlfabetizacionOpen((v) => !v)}
-            aria-expanded={alfabetizacionOpen}
-            aria-controls="alfabetizacion-submenu"
-            className={`w-full flex items-center justify-between ${NAV_BASE} ${
-              isAlfabetizacionRoute ? NAV_ACTIVE : NAV_INACTIVE
+          <div
+            className={`flex items-center rounded-lg whitespace-nowrap ${
+              isEducacionRoute ? NAV_ACTIVE : NAV_INACTIVE
             }`}
           >
-            <span>Alfabetización</span>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={`w-4 h-4 transition-transform ${
-                alfabetizacionOpen ? 'rotate-90' : ''
-              }`}
-              aria-hidden
+            <NavLink
+              to="/educacion"
+              end
+              className="flex items-center gap-3 flex-1 px-3 py-2 text-base font-medium rounded-l-lg"
             >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-          {alfabetizacionOpen && (
+              <IconBookOpen className={NAV_ICON} />
+              Educación
+            </NavLink>
+            <button
+              type="button"
+              onClick={() => setEducacionOpen((v) => !v)}
+              aria-expanded={educacionOpen}
+              aria-controls="educacion-submenu"
+              aria-label="Mostrar temas de educación"
+              className="px-3 py-2 self-stretch flex items-center rounded-r-lg"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`w-4 h-4 transition-transform ${
+                  educacionOpen ? 'rotate-90' : ''
+                }`}
+                aria-hidden
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+          {educacionOpen && (
             <ul
-              id="alfabetizacion-submenu"
+              id="educacion-submenu"
               className="mt-1 ml-4 pl-2 space-y-0.5"
             >
               {TOPIC_METAS.map((topic) => (
                 <li key={topic.slug}>
                   <NavLink
-                    to={`/alfabetizacion/${topic.slug}`}
+                    to={`/educacion/${topic.slug}`}
                     className={({ isActive }) =>
                       `flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors ${
                         isActive
@@ -117,15 +163,122 @@ export function AppLayout() {
           )}
         </div>
 
+        <div>
+          <div
+            className={`flex items-center rounded-lg whitespace-nowrap ${
+              isModelosRoute ? NAV_ACTIVE : NAV_INACTIVE
+            }`}
+          >
+            <NavLink
+              to="/modelos"
+              end
+              className="flex items-center gap-3 flex-1 px-3 py-2 text-base font-medium rounded-l-lg"
+            >
+              <IconBrain className={NAV_ICON} />
+              Modelos Predictivos
+            </NavLink>
+            <button
+              type="button"
+              onClick={() => setModelosOpen((v) => !v)}
+              aria-expanded={modelosOpen}
+              aria-controls="modelos-submenu"
+              aria-label="Mostrar modelos predictivos"
+              className="px-3 py-2 self-stretch flex items-center rounded-r-lg"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`w-4 h-4 transition-transform ${
+                  modelosOpen ? 'rotate-90' : ''
+                }`}
+                aria-hidden
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+          {modelosOpen && (
+            <ul id="modelos-submenu" className="mt-1 ml-4 pl-2 space-y-0.5">
+              <li>
+                <NavLink
+                  to="/modelos/sistema-hibrido"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors ${
+                      isActive
+                        ? 'bg-[#3d5af1] text-white font-semibold'
+                        : 'text-white/55 hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
+                    }`
+                  }
+                >
+                  <IconBrain aria-hidden className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Sistema Híbrido (RF + Difusa)</span>
+                </NavLink>
+              </li>
+              {PREDICTIVE_MODELS.map((model) => (
+                <li key={model.slug}>
+                  <NavLink
+                    to={`/modelos/${model.slug}`}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors ${
+                        isActive
+                          ? 'bg-[#3d5af1] text-white font-semibold'
+                          : 'text-white/55 hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
+                      }`
+                    }
+                  >
+                    <model.Icon aria-hidden className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{model.menuLabel}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         <NavLink
           to="/historial"
           className={({ isActive }) =>
             `${NAV_BASE} ${isActive ? NAV_ACTIVE : NAV_INACTIVE}`
           }
         >
-          Historial
+          <span className="flex items-center gap-3">
+            <IconHistory className={NAV_ICON} />
+            Historial
+          </span>
+        </NavLink>
+
+        <NavLink
+          to="/usabilidad"
+          className={({ isActive }) =>
+            `${NAV_BASE} ${isActive ? NAV_ACTIVE : NAV_INACTIVE}`
+          }
+        >
+          <span className="flex items-center gap-3">
+            <IconClipboardCheck className={NAV_ICON} />
+            Usabilidad
+          </span>
+        </NavLink>
+
+        <NavLink
+          to="/aviso-legal"
+          className={({ isActive }) =>
+            `${NAV_BASE} ${isActive ? NAV_ACTIVE : NAV_INACTIVE}`
+          }
+        >
+          <span className="flex items-center gap-3">
+            <IconScale className={NAV_ICON} />
+            Aviso legal
+          </span>
         </NavLink>
       </nav>
+
+      <div className="p-4 border-t border-[rgba(255,255,255,0.08)]">
+        <BackendStatusPill />
+      </div>
     </div>
   );
 
@@ -174,9 +327,7 @@ export function AppLayout() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <Link to="/" className="text-lg font-bold text-slate-800">
-            CardioGuard
-          </Link>
+          <span className="text-lg font-bold text-slate-800">CardioGuard</span>
         </div>
 
         {notice && (

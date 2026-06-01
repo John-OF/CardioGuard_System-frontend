@@ -33,10 +33,10 @@ export function ResultsActions({ evaluationType }: ResultsActionsProps) {
       </button>
       <button
         type="button"
-        onClick={() => navigate('/alfabetizacion')}
+        onClick={() => navigate('/educacion')}
         className="btn-secondary flex-1 sm:flex-none"
       >
-        Explorar Alfabetización
+        Explorar Educación
       </button>
       <button
         type="button"

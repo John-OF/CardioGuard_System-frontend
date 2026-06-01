@@ -66,14 +66,19 @@ La app queda disponible en `http://localhost:5173`.
 | Ruta | Componente | Estado |
 |---|---|---|
 | `/` | `HomePage` | Completo |
-| `/evaluacion` | `EvaluationPage` | Completo |
+| `/evaluacion` | `EvaluationPage` | Completo (en el menú: "Evaluación Preventiva") |
 | `/resultados/:evaluationId` | `ResultsPage` | Completo |
-| `/alfabetizacion` | `AlfabetizacionPage` | Completo |
-| `/alfabetizacion/:topicSlug` | `TopicDetailPage` | Completo |
+| `/educacion` | `EducacionPage` | Completo — portada de bienvenida de la sección (antes "Alfabetización") |
+| `/educacion/:topicSlug` | `TopicDetailPage` | Completo |
 | `/capacitacion` | `CapacitacionPage` | Completo |
 | `/simulador` | `SimuladorPage` | Completo |
+| `/modelos` | `ModelosHomePage` | Completo — portada de bienvenida a las métricas |
+| `/modelos/sistema-hibrido` | `PipelinePage` | Completo — explicación del pipeline RF + lógica difusa |
+| `/modelos/:modelSlug` | `ModelPage` | Completo |
 | `/historial` | `HistoryPage` | Completo |
 | `/historial/comparacion/:postId` | `ComparisonPage` | Completo |
+| `/usabilidad` | `UsabilidadPage` | Completo |
+| `/aviso-legal` | `AvisoLegalPage` | Completo |
 | `/admin` | `AdminPage` | Completo (protegido por token) |
 | `*` | `NotFoundPage` | Completo |
 
@@ -116,15 +121,15 @@ Vista del resultado de la evaluación. Tiene dos variantes que dependen de cómo
 
 Si no hay resultado en sesión, redirige a `/evaluacion`.
 
-### Alfabetización (`/alfabetizacion` y `/alfabetizacion/:topicSlug`) — Completo
+### Educación (`/educacion` y `/educacion/:topicSlug`) — Completo
 
-Sección de contenido educativo cardiovascular de consulta libre:
+Sección de contenido educativo cardiovascular de consulta libre (renombrada desde "Alfabetización"):
 
-- Muestra temas recomendados por el backend según brechas detectadas en la evaluación, con nivel de prioridad (alta / media / baja).
-- Lista completa de temas disponibles, ordenados por relevancia frente al último resultado.
-- Página de detalle por tema con contenido estructurado, nota de advertencia médica, sección de cierre y temas relacionados.
-- Vista de glosario para términos cardiovasculares de uso frecuente.
-- CTA para realizar el post-test si el último resultado fue un pre-test pendiente.
+- **Portada de bienvenida** (`EducacionPage`): intro accesible + sección "¿Cómo está organizado?" que describe las 4 categorías de contenido + CTA "Empezar por el primer tema". No es un catálogo de tarjetas (sería redundante con el submenú lateral).
+- El submenú "Educación" del sidebar lista todos los temas del catálogo (`data/topicCatalog.ts`).
+- Página de detalle por tema (`TopicDetailPage`) con contenido estructurado, nota de advertencia médica y sección de cierre.
+- **Navegación secuencial** entre temas (botón izquierdo al anterior, derecho "Continúe aprendiendo" al siguiente), siguiendo el orden del catálogo; el último paso es el glosario.
+- Vista de glosario para términos cardiovasculares de uso frecuente (`GlosarioView`).
 
 ### Capacitación (`/capacitacion`) — Completo
 
@@ -132,7 +137,7 @@ Wizard de lecciones que el usuario recorre entre el pre-test y el simulador. Es 
 
 - Avanza secuencialmente por las lecciones definidas en `data/lessons.ts` (componente `LessonCard` + `WizardProgress`).
 - Al finalizar, redirige al `/simulador` para ejecutar el post-test.
-- A diferencia de Alfabetización, no es navegación libre: tiene orden y progreso.
+- A diferencia de Educación, no es navegación libre: tiene orden y progreso.
 
 ### Simulador (`/simulador`) — Completo
 
@@ -160,8 +165,8 @@ Vista del historial de evaluaciones del usuario:
 Vista de comparación entre pre-test y post-test de un ciclo:
 
 - Encabezado con fechas y resumen de mejora general del ciclo.
-- Comparación del nivel de riesgo y probabilidad ML entre ambas evaluaciones.
-- Comparación de puntajes de conocimiento educativo y de emergencias.
+- **Riesgo cardiovascular: un único resultado** (no comparación). Como el ciclo no vuelve a pedir los datos clínicos (pasos 0–2), el resultado ML es idéntico en pre y post; se muestra una tarjeta de riesgo + una nota "Sobre este resultado" que aclara que el riesgo depende de datos clínicos fijos y que lo que evoluciona es el conocimiento.
+- Comparación de puntajes de conocimiento educativo y de emergencias (lo que sí cambia con la capacitación).
 
 ### Admin (`/admin`) — Completo
 
@@ -171,6 +176,36 @@ Panel administrativo para los tesistas. Vive fuera de `AppLayout` (sin cabecera 
 - **Estadísticas globales** (`StatsSection`): totales (evaluaciones, usuarios únicos, ciclos completos), distribución de riesgo, demografía (edad, sexo, IMC), métricas de mejora pre/post y tasa de completación de ciclos.
 - **Tabla de ciclos** (`CyclesTable`): listado paginado de ciclos pre/post completados con deltas de conocimiento, emergencias y nivel de riesgo. Soporta ordenamiento por más reciente o más antiguo.
 - Si el token resulta inválido durante una llamada, los hooks de datos disparan logout automático.
+
+### Modelos Predictivos (`/modelos`, `/modelos/sistema-hibrido` y `/modelos/:modelSlug`) — Completo
+
+Comparación de los 4 modelos de Machine Learning entrenados (RandomForest, XGBoost, SVM, MLP), con submenú colapsable en el sidebar:
+
+- **Portada `/modelos`** (`ModelosHomePage`): bienvenida a las métricas (aclara que son **reales**, no simuladas) + bloque "¿Cómo predice el sistema el riesgo?" con CTA a `/modelos/sistema-hibrido` + sección "¿Qué encontrará aquí?" + CTA al modelo seleccionado. Contenido editable.
+- **Sistema Híbrido `/modelos/sistema-hibrido`** (`PipelinePage`): página explicativa del **pipeline de predicción real** (primer ítem del submenú). Describe el flujo de 4 pasos (datos → Random Forest → lógica difusa → nivel de riesgo), con un diagrama, la tabla de reglas de puntaje reales (espejo de `backend/app/services/fuzzy_service.py`) y los umbrales (<6 bajo · 6–9 moderado · ≥10 alto). **No muestra métricas**: la lógica difusa es un puntaje por reglas, no un modelo entrenado (no tiene accuracy/AUC); enlaza al Random Forest para las métricas ML.
+- **Detalle `/modelos/:modelSlug`** (`ModelPage`): una sola página genérica dirigida por el slug.
+  - Métricas reales por modelo: exactitud, precisión, recall, F1 y validación cruzada (media y desviación F1).
+  - Matriz de confusión y reporte de clasificación (por clase + macro/ponderado).
+- Las métricas provienen de una **copia estática** del JSON del backend en `features/modelos/data/realMetrics.ts` (`form_model_metrics_7vars.json`). No incluye curva ROC/AUC ni importancia de características (el backend no las genera).
+- Cada modelo del submenú y la cabecera de su página usan un **ícono SVG** (lucide inline, en `components/ui/icons.tsx`), no emojis.
+- Pendiente futuro: servir las métricas vía endpoint `GET /api/models/metrics` (ver `INTEGRACION_MODELOS_PREDICTIVOS.md`). Las reglas de `PipelinePage` deben re-copiarse a mano si cambia `fuzzy_service.py`.
+
+> **Submenús con patrón split:** los ítems "Educación" y "Modelos Predictivos" del sidebar separan dos acciones: el **texto** es un enlace a la portada (`/educacion`, `/modelos`) y el **chevron `>`** es un botón aparte que solo abre/cierra el submenú.
+
+### Usabilidad (`/usabilidad`) — Completo
+
+Página que invita a responder un formulario de usabilidad del sistema. Botón que abre el Google Forms en una pestaña nueva (URL en la constante `USABILITY_FORM_URL`).
+
+### Aviso legal (`/aviso-legal`) — Completo
+
+Página de descargo: deja claro que CardioGuard es un **prototipo experimental**, que los resultados **no constituyen un diagnóstico médico** y que ante cualquier duda se debe **consultar a un médico**; incluye nota de emergencias (911) y manejo anónimo de datos.
+
+### Indicador de estado del servidor — Completo
+
+Al fondo del sidebar, `BackendStatusPill` (hook `useBackendStatus`) hace ping a `GET /api/health` y **revalida cada 30 s**:
+
+- 🟢 **Servidor activo** · 🔴 **Servidor inactivo** (local, backend apagado) · 🟡 **Servidor cargando…** (desplegado, cold-start de Render) · ⚪ **Verificando…**.
+- El entorno (local vs. desplegado) se infiere de `VITE_API_URL`. Es 100 % frontend (no toca el backend).
 
 ### Modo avanzado — Completo
 
@@ -196,10 +231,13 @@ Cada sección principal vive en su propio directorio bajo `src/features/`:
 src/features/
 ├── evaluation/      # Formulario multi-paso + detección automática de flujo
 ├── results/         # Tarjetas de resultados (variantes 'full' y 'reduced')
-├── alfabetizacion/  # Catálogo de temas + detalle + glosario
+├── educacion/       # Catálogo de temas + detalle + glosario (antes "alfabetizacion")
 ├── capacitacion/    # Wizard de lecciones (gateway al simulador)
 ├── simulador/       # Wizard de escenarios — genera el post_test
+├── modelos/         # Pantalla comparativa de modelos predictivos
 ├── history/         # Historial + comparación de ciclos
+├── usabilidad/      # CTA a formulario de usabilidad (Google Forms)
+├── aviso-legal/     # Página de descargo legal
 └── admin/           # Panel de tesistas (fuera de AppLayout)
 ```
 
@@ -249,9 +287,10 @@ frontend/src/
 │   ├── client.ts              # Instancia Axios + interceptor de UUID
 │   ├── evaluation.ts          # predictEvaluation()
 │   ├── history.ts             # getLastCycle, getUserHistory, getComparison
-│   └── admin.ts               # getAdminStats, getAdminCycles
+│   ├── admin.ts               # getAdminStats, getAdminCycles
+│   └── health.ts              # checkHealth() para el pill de estado del servidor
 ├── components/
-│   ├── layout/AppLayout.tsx   # Header (con logo táctil), nav, <Outlet>
+│   ├── layout/                # AppLayout (logo táctil, nav, <Outlet>) + BackendStatusPill
 │   └── ui/                    # RadioCardGroup, CheckboxCardGroup, OptionCard, NumberField, ProgressBar
 ├── features/
 │   ├── evaluation/
@@ -265,16 +304,12 @@ frontend/src/
 │   │   │                      #   RecommendationsList, EducationPreviewCard, PostTestBanner,
 │   │   │                      #   ResultsActions
 │   │   └── ResultsPage.tsx
-│   ├── alfabetizacion/
-│   │   ├── components/        # EducationLayout, PriorityBanner, TopicGrid, TopicCard,
-│   │   │                      #   TopicContent, TopicTip, TopicSectionHeader, GlosarioView,
-│   │   │                      #   EducationFooter
-│   │   ├── data/              # topicContents.ts (catálogo de temas)
-│   │   ├── utils/             # priorityMatcher.ts
+│   ├── educacion/
+│   │   ├── components/        # EducationLayout, TopicContent, TopicTip, GlosarioView
+│   │   ├── data/              # topicCatalog.ts (metadata) + topicContents.ts (currículo)
 │   │   ├── topics/TopicDetailPage.tsx
 │   │   ├── types.ts
-│   │   ├── EducationPage.tsx
-│   │   └── AlfabetizacionPage.tsx
+│   │   └── EducacionPage.tsx
 │   ├── capacitacion/
 │   │   ├── components/        # LessonCard, WizardProgress
 │   │   ├── data/lessons.ts
@@ -284,6 +319,16 @@ frontend/src/
 │   │   ├── data/scenarios.ts
 │   │   ├── hooks/useSimuladorSubmit.ts
 │   │   └── SimuladorPage.tsx
+│   ├── modelos/
+│   │   ├── components/        # MetricsCards, ConfusionMatrix, ClassificationReport
+│   │   ├── data/             # realMetrics.ts (copia del JSON del backend) + models.ts
+│   │   ├── ModelosHomePage.tsx  # Portada /modelos (bienvenida a las métricas)
+│   │   ├── PipelinePage.tsx     # /modelos/sistema-hibrido (pipeline RF + lógica difusa)
+│   │   └── ModelPage.tsx        # Detalle /modelos/:modelSlug
+│   ├── usabilidad/
+│   │   └── UsabilidadPage.tsx
+│   ├── aviso-legal/
+│   │   └── AvisoLegalPage.tsx
 │   ├── history/
 │   │   ├── components/        # CycleListItem, RegularEvaluationItem, ComparisonHeader,
 │   │   │                      #   RiskComparison, KnowledgeComparison, ChangePill, HistoryEmpty
@@ -298,9 +343,10 @@ frontend/src/
 │       └── AdminPage.tsx
 ├── hooks/
 │   ├── useAnonymousUser.ts
-│   └── useAdvancedMode.ts     # Toggle de 5 taps + sincronización entre componentes
+│   ├── useAdvancedMode.ts     # Toggle de 5 taps + sincronización entre componentes
+│   └── useBackendStatus.ts    # Ping a /api/health + revalidación periódica
 ├── pages/
-│   ├── HomePage.tsx
+│   ├── HomePage.tsx           # Landing: hero de tesis + stats, objetivo, módulos, cómo funciona, avisos legales, comparación de modelos
 │   └── NotFoundPage.tsx
 ├── routes/AppRouter.tsx
 ├── types/
@@ -325,4 +371,5 @@ frontend/src/
 
 ## Pendiente
 
-- **Despliegue en producción**: hosting de la SPA, configuración del `VITE_API_URL` definitivo y publicación junto al backend en un dominio con HTTPS. Es el único punto pendiente del frontend.
+- **Despliegue en producción**: hosting de la SPA, configuración del `VITE_API_URL` definitivo y publicación junto al backend en un dominio con HTTPS.
+- **Cifras del Home hardcodeadas (deuda técnica)**: las exactitudes y el total de registros del banner y la tabla comparativa de `pages/HomePage.tsx` (`83.6%`, `72.1%`, `72.1%`, `70.5%`, `303`, `4`) son **literales escritos a mano**, no derivados de `features/modelos/data/realMetrics.ts`. Hoy coinciden con el backend, pero si se reentrena el modelo y se actualiza `realMetrics.ts`, el Home queda desincronizado en silencio. Refactor pendiente: leer esas cifras desde `PREDICTIVE_MODELS` / `realMetrics.ts`. (El `303` no está en el JSON —solo los 61 de prueba— así que se dejaría como constante.) Detalle en `INTEGRACION_MODELOS_PREDICTIVOS.md`.
