@@ -1,3 +1,5 @@
+import type { ComponentType, SVGProps } from 'react';
+
 // Categorías para agrupar temas relacionados internamente
 export type TopicCategory =
   | 'enfermedad'      // qué es, factores de riesgo
@@ -22,7 +24,7 @@ export interface Topic {
 
   // Presentación
   category: TopicCategory;
-  icon: string;                      // emoji
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;  // ícono SVG inline
   title: string;                     // título largo en la página de detalle
   shortTitle: string;                // título corto en las cards
   subtitle: string;                  // subtítulo emotivo bajo el título principal

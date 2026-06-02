@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { storage } from '@/utils/storage';
+import { IconAlertTriangle } from '@/components/ui/icons';
 import type { EvaluationRequest, Symptom } from '@/types/evaluation';
 import { SCENARIOS } from './data/scenarios';
 import { WizardProgress } from './components/WizardProgress';
@@ -133,7 +134,10 @@ export function SimuladorPage() {
 
       {error && (
         <div className="card bg-red-50 border-2 border-red-200">
-          <p className="text-base text-red-800 font-medium">⚠ {error}</p>
+          <p className="text-base text-red-800 font-medium flex items-center gap-2">
+            <IconAlertTriangle aria-hidden className="w-5 h-5 shrink-0" />
+            {error}
+          </p>
           <p className="text-sm text-red-600 mt-1">
             Verifique su conexión y vuelva a intentarlo.
           </p>

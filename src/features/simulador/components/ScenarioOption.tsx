@@ -1,3 +1,5 @@
+import { IconCheck } from '@/components/ui/icons';
+
 interface ScenarioOptionProps {
   label: string;
   selected: boolean;
@@ -24,7 +26,7 @@ export function ScenarioOption({ label, selected, multi, onClick }: ScenarioOpti
           multi ? 'rounded-md' : 'rounded-full'
         } ${selected ? 'border-primary bg-primary text-white' : 'border-slate-300'}`}
       >
-        {selected ? '✓' : ''}
+        {selected && <IconCheck className="w-4 h-4" />}
       </span>
       <span className="flex-1">{label}</span>
     </button>

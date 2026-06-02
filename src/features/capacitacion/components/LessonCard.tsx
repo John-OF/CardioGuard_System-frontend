@@ -1,3 +1,4 @@
+import { IconCheck } from '@/components/ui/icons';
 import type { Lesson, LessonBlock } from '../data/lessons';
 
 interface LessonCardProps {
@@ -82,9 +83,10 @@ function BlockRenderer({ block }: { block: LessonBlock }) {
         {block.items.map((item, i) => (
           <li
             key={i}
-            className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-lg text-slate-800"
+            className="flex items-start gap-3 bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-lg text-slate-800"
           >
-            ✓ {item}
+            <IconCheck aria-hidden className="w-5 h-5 shrink-0 mt-1 text-primary" />
+            <span>{item}</span>
           </li>
         ))}
       </ul>
@@ -124,8 +126,8 @@ export function LessonCard({ lesson, step, total, onPrev, onNext, onFinish }: Le
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-      <div className="w-20 h-20 rounded-full bg-primary-light flex items-center justify-center text-4xl mb-5">
-        {lesson.icon}
+      <div className="w-20 h-20 rounded-full bg-primary-light flex items-center justify-center text-primary mb-5">
+        <lesson.Icon className="w-10 h-10" />
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-4 leading-tight">

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { IconCircleCheck } from '@/components/ui/icons';
 import { MODELS_BY_SLUG } from './data/models';
 import { MetricsCards } from './components/MetricsCards';
 import { ConfusionMatrix } from './components/ConfusionMatrix';
@@ -56,8 +57,9 @@ export function ModelPage() {
           <div className="mt-4 flex flex-wrap gap-3">
             {model.selected && (
               <div className="bg-white px-4 py-2 rounded-lg border border-emerald-300">
-                <span className="text-sm font-semibold text-emerald-700">
-                  ✓ Modelo seleccionado (en producción)
+                <span className="text-sm font-semibold text-emerald-700 inline-flex items-center gap-1.5">
+                  <IconCircleCheck aria-hidden className="w-4 h-4" />
+                  Modelo seleccionado (en producción)
                 </span>
               </div>
             )}

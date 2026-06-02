@@ -152,9 +152,7 @@ export function AppLayout() {
                       }`
                     }
                   >
-                    <span aria-hidden className="text-base shrink-0">
-                      {topic.icon}
-                    </span>
+                    <topic.Icon className="w-4 h-4 shrink-0" />
                     <span className="truncate">{topic.shortTitle}</span>
                   </NavLink>
                 </li>

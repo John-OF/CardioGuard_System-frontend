@@ -41,8 +41,8 @@ export function ScenarioScreen({
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-      <div className="w-20 h-20 rounded-full bg-primary-light flex items-center justify-center text-4xl mb-5">
-        {scenario.icon}
+      <div className="w-20 h-20 rounded-full bg-primary-light flex items-center justify-center text-primary mb-5">
+        <scenario.Icon className="w-10 h-10" />
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-4 leading-tight">

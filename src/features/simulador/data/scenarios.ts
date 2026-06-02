@@ -1,3 +1,17 @@
+import type { ComponentType, SVGProps } from 'react';
+import {
+  IconHeart,
+  IconEye,
+  IconAlertTriangle,
+  IconShield,
+  IconStethoscope,
+  IconHeartPulse,
+  IconGraduationCap,
+  IconPhone,
+  IconAlertCircle,
+  IconClock,
+  IconActivity,
+} from '@/components/ui/icons';
 import type {
   EvaluationRequest,
   InfarctionKnowledge,
@@ -11,6 +25,8 @@ import type {
   ReactionTime,
   EmergencySupportAction,
 } from '@/types/evaluation';
+
+type ScenarioIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 // Claves de EvaluationRequest que el simulador recoge (pasos 3 y 4).
 export type ScenarioField =
@@ -31,7 +47,7 @@ export type ScenarioField =
 interface SingleScenario<V extends string> {
   field: ScenarioField;
   kind: 'single';
-  icon: string;
+  Icon: ScenarioIcon;
   title: string;
   situation: string;
   question: string;
@@ -41,7 +57,7 @@ interface SingleScenario<V extends string> {
 interface MultiScenario {
   field: 'symptoms';
   kind: 'multi';
-  icon: string;
+  Icon: ScenarioIcon;
   title: string;
   situation: string;
   question: string;
@@ -70,7 +86,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'infarction_knowledge',
     kind: 'single',
-    icon: '🫀',
+    Icon: IconHeart,
     title: 'Una conversación en la sala de espera',
     situation:
       'En la sala de espera del centro de salud, una señora comenta: "Dicen que a mi vecino le dio un infarto, pero la verdad yo no sé bien qué es eso".',
@@ -84,7 +100,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'symptom_self_assessment',
     kind: 'single',
-    icon: '👀',
+    Icon: IconEye,
     title: 'Si pasara frente a usted',
     situation:
       'Imagine que alguien cerca de usted empieza a sentirse mal y podría estar sufriendo un infarto en ese momento.',
@@ -98,7 +114,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'symptoms',
     kind: 'multi',
-    icon: '⚠',
+    Icon: IconAlertTriangle,
     title: 'Las señales del cuerpo',
     situation:
       'Una persona mayor comienza a sentirse mal de repente. Usted observa con atención para decidir si pedir ayuda.',
@@ -118,7 +134,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'prevention_knowledge',
     kind: 'single',
-    icon: '🛡',
+    Icon: IconShield,
     title: 'Cuidarse antes de que pase',
     situation:
       'En una charla del barrio se habla de cómo evitar problemas del corazón antes de que ocurran.',
@@ -132,7 +148,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'risk_factor_knowledge',
     kind: 'single',
-    icon: '🩺',
+    Icon: IconStethoscope,
     title: 'Lo que aumenta el riesgo',
     situation:
       'El médico menciona que ciertos factores —presión alta, colesterol alto, tabaquismo, sedentarismo— hacen más probable un problema del corazón.',
@@ -146,7 +162,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'rcp_knowledge',
     kind: 'single',
-    icon: '🫶',
+    Icon: IconHeartPulse,
     title: 'Esa palabra: RCP',
     situation:
       'En la televisión muestran cómo alguien salva a una persona haciendo "RCP" mientras llega la ambulancia.',
@@ -162,7 +178,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'prior_training',
     kind: 'single',
-    icon: '🎓',
+    Icon: IconGraduationCap,
     title: 'Su preparación previa',
     situation:
       'Antes de practicar con los escenarios, conviene saber con qué preparación cuenta usted.',
@@ -175,7 +191,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'emergency_number_knowledge',
     kind: 'single',
-    icon: '📞',
+    Icon: IconPhone,
     title: 'El teléfono en la mano',
     situation:
       'Hay una emergencia y usted tiene el teléfono en la mano. Debe pedir ayuda de inmediato.',
@@ -188,7 +204,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'emergency_action',
     kind: 'single',
-    icon: '🚨',
+    Icon: IconAlertCircle,
     title: 'Dolor fuerte en el pecho',
     situation:
       'Está acompañando a una persona mayor. De pronto dice que siente presión fuerte en el pecho y le cuesta respirar.',
@@ -210,7 +226,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'reaction_time',
     kind: 'single',
-    icon: '⏱',
+    Icon: IconClock,
     title: 'El tiempo que tardaría',
     situation:
       'Las señales son claras y graves. Cada minuto cuenta para la persona afectada.',
@@ -225,7 +241,7 @@ export const SCENARIOS: Scenario[] = [
   {
     field: 'emergency_support_action',
     kind: 'single',
-    icon: '🫁',
+    Icon: IconActivity,
     title: 'La persona pierde el conocimiento',
     situation:
       'La persona deja de responder y pierde el conocimiento mientras espera la ayuda.',

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IconAlertTriangle } from '@/components/ui/icons';
 import { EvaluationLayout } from './components/EvaluationLayout';
 import { FlowIntro } from './components/FlowIntro';
 import { AdvancedModePanel } from './components/AdvancedModePanel';
@@ -174,7 +175,10 @@ export function EvaluationPage() {
     <div className="space-y-6">
       {submitError && (
         <div className="card bg-red-50 border-2 border-red-200">
-          <p className="text-base text-red-800 font-medium">⚠ {submitError}</p>
+          <p className="text-base text-red-800 font-medium flex items-center gap-2">
+            <IconAlertTriangle aria-hidden className="w-5 h-5 shrink-0" />
+            {submitError}
+          </p>
           <p className="text-sm text-red-600 mt-1">
             Verifique su conexión y vuelva a intentarlo.
           </p>

@@ -1,15 +1,18 @@
+import type { ComponentType, SVGProps } from 'react';
 import { Link } from 'react-router-dom';
 import {
   IconHeart,
   IconBrain,
   IconShield,
   IconActivity,
-  IconBookOpen,
-  IconClipboardCheck,
   IconAlertCircle,
   IconAlertTriangle,
   IconGraduationCap,
   IconDatabase,
+  IconClipboardCheck,
+  IconBookOpen,
+  IconHistory,
+  IconStar,
 } from '@/components/ui/icons';
 
 const features = [
@@ -39,36 +42,42 @@ const features = [
   },
 ];
 
-const quickLinks = [
+const quickLinks: {
+  to: string;
+  title: string;
+  description: string;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+}[] = [
   {
     to: '/evaluacion',
     title: 'Evaluación Preventiva',
     description: 'Evaluación completa de su riesgo cardiovascular.',
-    icon: '📋',
+    Icon: IconClipboardCheck,
   },
   {
     to: '/educacion',
     title: 'Educación',
     description: 'Material educativo sobre prevención cardiovascular.',
-    icon: '📚',
+    Icon: IconBookOpen,
   },
   {
     to: '/historial',
     title: 'Historial',
     description: 'Revise sus evaluaciones previas y su progreso.',
-    icon: '🕑',
+    Icon: IconHistory,
   },
   {
     to: '/modelos',
     title: 'Modelos Predictivos',
     description: 'Análisis con modelos de Machine Learning.',
-    icon: '🤖',
+    Icon: IconBrain,
   },
 ];
 
 const models = [
   {
-    name: 'Random Forest ⭐',
+    name: 'Random Forest',
+    selected: true,
     subtitle: 'Bosque aleatorio · seleccionado',
     accuracy: '83.6%',
     className: 'border-2 border-emerald-300 bg-emerald-50',
@@ -77,6 +86,7 @@ const models = [
   },
   {
     name: 'XGBoost',
+    selected: false,
     subtitle: 'Extreme Gradient Boosting',
     accuracy: '72.1%',
     className: 'border-orange-200',
@@ -85,6 +95,7 @@ const models = [
   },
   {
     name: 'SVM',
+    selected: false,
     subtitle: 'Support Vector Machine',
     accuracy: '72.1%',
     className: 'border-sky-200',
@@ -93,6 +104,7 @@ const models = [
   },
   {
     name: 'Redes Neuronales (MLP)',
+    selected: false,
     subtitle: 'Multi-Layer Perceptron',
     accuracy: '70.5%',
     className: 'border-purple-200',
@@ -191,8 +203,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Objetivo del proyecto + accesos rápidos */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Objetivo del proyecto */}
+      <section>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <IconHeart className="w-8 h-8 text-red-600" />
@@ -208,36 +220,78 @@ export function HomePage() {
             simulación de escenarios de emergencia.
           </p>
         </div>
+      </section>
 
-        <div className="flex flex-col gap-6">
-          <Link
-            to="/educacion"
-            className="flex-1 rounded-2xl bg-green-600 text-white p-6 shadow-sm hover:bg-green-700 transition-colors"
-          >
-            <div className="flex items-start gap-4">
-              <IconBookOpen className="w-9 h-9 shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold mb-1">Biblioteca educativa</h3>
-                <p className="text-base text-green-50">
-                  Acceso a contenidos, guías y material de capacitación.
-                </p>
+      {/* Acceso rápido */}
+      <section>
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
+          Acceso rápido
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {quickLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-blue-300 hover:shadow-lg transition-all"
+            >
+              <div className="flex items-start gap-4">
+                <span
+                  aria-hidden
+                  className="inline-flex w-12 h-12 shrink-0 rounded-xl bg-primary-light items-center justify-center text-primary"
+                >
+                  <link.Icon className="w-6 h-6" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    {link.title}
+                  </h3>
+                  <p className="text-base text-slate-600">{link.description}</p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-          <Link
-            to="/evaluacion"
-            className="flex-1 rounded-2xl bg-blue-600 text-white p-6 shadow-sm hover:bg-blue-700 transition-colors"
-          >
-            <div className="flex items-start gap-4">
-              <IconClipboardCheck className="w-9 h-9 shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold mb-1">Evaluación preventiva</h3>
-                <p className="text-base text-blue-50">
-                  Inicia el formulario de evaluación cardiovascular.
-                </p>
-              </div>
+      {/* Comparación de modelos */}
+      <section className="rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200 p-6 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+          Comparación de modelos
+        </h2>
+        <p className="text-lg text-slate-700 mb-6">
+          El sistema evalúa cuatro modelos de Machine Learning para garantizar la
+          mejor precisión en la predicción de riesgo cardiovascular:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {models.map((model) => (
+            <div
+              key={model.name}
+              className={`bg-white rounded-lg p-4 border ${model.className}`}
+            >
+              <h4
+                className={`font-bold text-lg mb-2 flex items-center gap-1.5 ${model.nameClass}`}
+              >
+                {model.name}
+                {model.selected && (
+                  <IconStar
+                    aria-hidden
+                    className="w-4 h-4 fill-current stroke-none text-emerald-500"
+                  />
+                )}
+              </h4>
+              <p className={`text-3xl font-bold mb-1 ${model.valueClass}`}>
+                {model.accuracy}
+              </p>
+              <p className="text-sm text-slate-600">{model.subtitle}</p>
             </div>
+          ))}
+        </div>
+        <div className="mt-6 text-center">
+          <Link
+            to="/modelos"
+            className="btn-primary inline-flex items-center justify-center"
+          >
+            Ver análisis detallado de modelos
           </Link>
         </div>
       </section>
@@ -300,69 +354,6 @@ export function HomePage() {
               <p className="text-base text-slate-700">{step.description}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Acceso rápido */}
-      <section>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
-          Acceso rápido
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {quickLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="rounded-2xl border-2 border-slate-200 bg-white p-6 hover:border-blue-300 hover:shadow-lg transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <span aria-hidden className="text-4xl">
-                  {link.icon}
-                </span>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-1">
-                    {link.title}
-                  </h3>
-                  <p className="text-base text-slate-600">{link.description}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Comparación de modelos */}
-      <section className="rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200 p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
-          Comparación de modelos
-        </h2>
-        <p className="text-lg text-slate-700 mb-6">
-          El sistema evalúa cuatro modelos de Machine Learning para garantizar la
-          mejor precisión en la predicción de riesgo cardiovascular:
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {models.map((model) => (
-            <div
-              key={model.name}
-              className={`bg-white rounded-lg p-4 border ${model.className}`}
-            >
-              <h4 className={`font-bold text-lg mb-2 ${model.nameClass}`}>
-                {model.name}
-              </h4>
-              <p className={`text-3xl font-bold mb-1 ${model.valueClass}`}>
-                {model.accuracy}
-              </p>
-              <p className="text-sm text-slate-600">{model.subtitle}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 text-center">
-          <Link
-            to="/modelos"
-            className="btn-primary inline-flex items-center justify-center"
-          >
-            Ver análisis detallado de modelos
-          </Link>
         </div>
       </section>
 

@@ -1,3 +1,6 @@
+import type { ComponentType, SVGProps } from 'react';
+import { IconAlertTriangle, IconLightbulb } from '@/components/ui/icons';
+
 interface TopicTipProps {
   variant: 'warning' | 'tip';
   title: string;
@@ -6,19 +9,24 @@ interface TopicTipProps {
 
 const VARIANT_STYLES: Record<
   TopicTipProps['variant'],
-  { wrapper: string; iconBg: string; title: string; icon: string }
+  {
+    wrapper: string;
+    iconBg: string;
+    title: string;
+    Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  }
 > = {
   warning: {
     wrapper: 'border-red-200 bg-red-50',
     iconBg: 'bg-red-600',
     title: 'text-red-900',
-    icon: '⚠',
+    Icon: IconAlertTriangle,
   },
   tip: {
     wrapper: 'border-primary/30 bg-primary-light',
     iconBg: 'bg-primary',
     title: 'text-slate-900',
-    icon: '💡',
+    Icon: IconLightbulb,
   },
 };
 
@@ -29,10 +37,10 @@ export function TopicTip({ variant, title, text }: TopicTipProps) {
       className={`rounded-2xl border-2 ${styles.wrapper} p-5 sm:p-6 flex gap-4 items-start`}
     >
       <span
-        className={`flex-shrink-0 w-10 h-10 rounded-full ${styles.iconBg} text-white flex items-center justify-center text-xl`}
+        className={`flex-shrink-0 w-10 h-10 rounded-full ${styles.iconBg} text-white flex items-center justify-center`}
         aria-hidden="true"
       >
-        {styles.icon}
+        <styles.Icon className="w-5 h-5" />
       </span>
       <div className="flex-1">
         <p className={`text-base font-bold ${styles.title}`}>{title}</p>

@@ -1,29 +1,40 @@
+import type { ComponentType, SVGProps } from 'react';
 import { Link } from 'react-router-dom';
 import { EducationLayout } from './components/EducationLayout';
 import { TOPIC_METAS, CATEGORY_LABELS } from './data/topicCatalog';
 import type { TopicCategory } from './types';
+import {
+  IconHeart,
+  IconTrees,
+  IconHeartPulse,
+  IconAlertCircle,
+} from '@/components/ui/icons';
 
 // Cómo se presenta la sección al usuario: cada categoría con una frase
 // que explica qué aprenderá ahí. El orden coincide con CATEGORY_LABELS.
-const CATEGORY_INTRO: { category: TopicCategory; icon: string; text: string }[] = [
+const CATEGORY_INTRO: {
+  category: TopicCategory;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  text: string;
+}[] = [
   {
     category: 'enfermedad',
-    icon: '🫀',
+    Icon: IconHeart,
     text: 'Qué es un infarto, por qué ocurre y los factores que ponen en riesgo a su corazón.',
   },
   {
     category: 'prevencion',
-    icon: '🌿',
+    Icon: IconTrees,
     text: 'Hábitos sencillos para cuidar su corazón en el día a día.',
   },
   {
     category: 'rcp',
-    icon: '🫶',
+    Icon: IconHeartPulse,
     text: 'Los fundamentos de la RCP y por qué vale la pena capacitarse.',
   },
   {
     category: 'emergencia',
-    icon: '🚨',
+    Icon: IconAlertCircle,
     text: 'Qué hacer en los primeros minutos de una emergencia y mientras llega la ayuda.',
   },
 ];
@@ -45,13 +56,13 @@ export function EducacionPage() {
             directo al tema que le interese desde el menú lateral.
           </p>
           <ul className="space-y-3 mt-2">
-            {CATEGORY_INTRO.map(({ category, icon, text }) => (
+            {CATEGORY_INTRO.map(({ category, Icon, text }) => (
               <li key={category} className="flex items-start gap-3">
                 <span
-                  className="inline-flex w-10 h-10 shrink-0 rounded-xl bg-primary-light items-center justify-center text-xl"
+                  className="inline-flex w-10 h-10 shrink-0 rounded-xl bg-primary-light items-center justify-center text-primary"
                   aria-hidden="true"
                 >
-                  {icon}
+                  <Icon className="w-5 h-5" />
                 </span>
                 <span className="text-base">
                   <span className="font-semibold text-slate-900">

@@ -1,3 +1,5 @@
+import { IconAlertTriangle, IconClipboardCheck } from '@/components/ui/icons';
+
 interface PrefillNoticeProps {
   emphasized?: boolean; // para el paso 0 (datos que casi nunca cambian)
 }
@@ -15,8 +17,15 @@ export function PrefillNotice({ emphasized = false }: PrefillNoticeProps) {
       role="status"
     >
       <div className="flex gap-3 items-start">
-        <span className="text-2xl flex-shrink-0" aria-hidden="true">
-          {emphasized ? '⚠️' : '📋'}
+        <span
+          className={`flex-shrink-0 ${emphasized ? 'text-amber-600' : 'text-blue-600'}`}
+          aria-hidden="true"
+        >
+          {emphasized ? (
+            <IconAlertTriangle className="w-6 h-6" />
+          ) : (
+            <IconClipboardCheck className="w-6 h-6" />
+          )}
         </span>
         <div className="flex-1">
           <p className={`text-lg font-semibold ${emphasized ? 'text-amber-900' : 'text-blue-900'}`}>

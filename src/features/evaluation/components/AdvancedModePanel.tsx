@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { IconSettings } from '@/components/ui/icons';
 import { getUserHistory } from '@/api/history';
 import { storage } from '@/utils/storage';
 import type { EvaluationType } from '@/types/results';
@@ -37,7 +38,10 @@ export function AdvancedModePanel({
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between text-left text-base text-slate-600 hover:text-slate-800"
       >
-        <span className="font-medium">⚙ Modo avanzado (uso interno)</span>
+        <span className="font-medium inline-flex items-center gap-2">
+          <IconSettings aria-hidden className="w-4 h-4" />
+          Modo avanzado (uso interno)
+        </span>
         <span className="text-xl">{open ? '−' : '+'}</span>
       </button>
 

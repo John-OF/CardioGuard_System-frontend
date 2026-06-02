@@ -1,33 +1,46 @@
+import type { ComponentType, SVGProps } from 'react';
+import {
+  IconCircleCheck,
+  IconTarget,
+  IconTrendingUp,
+  IconBarChart,
+} from '@/components/ui/icons';
 import type { ModelMetrics } from '../data/models';
 
 const pct = (value: number) => `${(value * 100).toFixed(2)}%`;
 
-const cards = [
+const cards: {
+  key: keyof ModelMetrics;
+  label: string;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  box: string;
+  description: string;
+}[] = [
   {
-    key: 'accuracy' as const,
+    key: 'accuracy',
     label: 'Exactitud (Accuracy)',
-    icon: '✓',
+    Icon: IconCircleCheck,
     box: 'bg-green-50 border-green-200 text-green-700',
     description: 'Predicciones correctas del total.',
   },
   {
-    key: 'precision' as const,
+    key: 'precision',
     label: 'Precisión (Precision)',
-    icon: '◎',
+    Icon: IconTarget,
     box: 'bg-blue-50 border-blue-200 text-blue-700',
     description: 'De los positivos predichos, cuántos son correctos.',
   },
   {
-    key: 'recall' as const,
+    key: 'recall',
     label: 'Sensibilidad (Recall)',
-    icon: '📈',
+    Icon: IconTrendingUp,
     box: 'bg-purple-50 border-purple-200 text-purple-700',
     description: 'De los positivos reales, cuántos fueron detectados.',
   },
   {
-    key: 'f1Score' as const,
+    key: 'f1Score',
     label: 'F1-Score',
-    icon: '📊',
+    Icon: IconBarChart,
     box: 'bg-orange-50 border-orange-200 text-orange-700',
     description: 'Media armónica de precisión y recall.',
   },
@@ -40,9 +53,7 @@ export function MetricsCards({ metrics }: { metrics: ModelMetrics }) {
         {cards.map((card) => (
           <div key={card.key} className={`rounded-2xl border-2 p-6 ${card.box}`}>
             <div className="flex items-start justify-between mb-4">
-              <span aria-hidden className="text-3xl">
-                {card.icon}
-              </span>
+              <card.Icon aria-hidden className="w-8 h-8" />
               <p className="text-3xl font-bold">{pct(metrics[card.key])}</p>
             </div>
             <h4 className="font-semibold text-lg mb-1">{card.label}</h4>

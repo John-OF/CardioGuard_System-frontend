@@ -1,21 +1,33 @@
+import type { ComponentType, SVGProps } from 'react';
+import {
+  IconClipboardCheck,
+  IconClock,
+  IconLock,
+  IconLightbulb,
+} from '@/components/ui/icons';
+
 // Enlace al formulario de usabilidad (Google Forms).
 // Si cambia el formulario, actualizar solo esta constante.
 const USABILITY_FORM_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLScq_N7ShT5Wfn5M2IaHE_SddWNPvFa7A_-ZGoKIgR3lc5w3qA/viewform?usp=header';
 
-const points = [
+const points: {
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  title: string;
+  text: string;
+}[] = [
   {
-    icon: '⏱',
+    Icon: IconClock,
     title: 'Toma pocos minutos',
     text: 'Son preguntas breves y sencillas sobre su experiencia usando el sistema.',
   },
   {
-    icon: '🔒',
+    Icon: IconLock,
     title: 'Es anónimo',
     text: 'No le pedimos su nombre ni datos personales. Sus respuestas son confidenciales.',
   },
   {
-    icon: '💡',
+    Icon: IconLightbulb,
     title: 'Nos ayuda a mejorar',
     text: 'Su opinión nos permite hacer la herramienta más clara y fácil de usar.',
   },
@@ -25,8 +37,11 @@ export function UsabilidadPage() {
   return (
     <div className="space-y-8">
       <header className="text-center max-w-2xl mx-auto">
-        <span aria-hidden className="text-5xl">
-          📝
+        <span
+          aria-hidden
+          className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary"
+        >
+          <IconClipboardCheck className="w-8 h-8" />
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-3">
           Cuéntenos su experiencia
@@ -44,8 +59,11 @@ export function UsabilidadPage() {
             key={point.title}
             className="rounded-2xl border border-slate-200 bg-white p-6 text-center"
           >
-            <span aria-hidden className="text-3xl">
-              {point.icon}
+            <span
+              aria-hidden
+              className="inline-flex w-12 h-12 rounded-xl bg-primary-light items-center justify-center text-primary"
+            >
+              <point.Icon className="w-6 h-6" />
             </span>
             <h3 className="text-lg font-bold text-slate-900 mt-3 mb-1">{point.title}</h3>
             <p className="text-base text-slate-600">{point.text}</p>

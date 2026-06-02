@@ -118,10 +118,10 @@ export function TopicDetailPage() {
       <article className="space-y-6">
         <header className="space-y-3">
           <span
-            className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-4xl"
+            className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary"
             aria-hidden="true"
           >
-            {topic.icon}
+            <topic.Icon className="w-8 h-8" />
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">{topic.title}</h1>
           <p className="text-lg text-slate-600 italic max-w-3xl">{topic.subtitle}</p>
@@ -136,10 +136,10 @@ export function TopicDetailPage() {
     <article className="space-y-6">
       <header className="space-y-3">
         <span
-          className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-4xl"
+          className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary"
           aria-hidden="true"
         >
-          {topic.icon}
+          <topic.Icon className="w-8 h-8" />
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">{topic.title}</h1>
         <p className="text-lg text-slate-600 italic max-w-3xl">{topic.subtitle}</p>

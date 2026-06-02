@@ -1,5 +1,11 @@
+import type { ComponentType, SVGProps } from 'react';
 import { Link } from 'react-router-dom';
-import { IconBrain } from '@/components/ui/icons';
+import {
+  IconBrain,
+  IconBarChart,
+  IconGrid,
+  IconClipboardCheck,
+} from '@/components/ui/icons';
 import { PREDICTIVE_MODELS } from './data/models';
 
 // Modelo seleccionado/productivo, para el CTA principal.
@@ -7,19 +13,23 @@ const selectedModel =
   PREDICTIVE_MODELS.find((m) => m.selected) ?? PREDICTIVE_MODELS[0];
 
 // Qué se muestra en la sección (placeholder editable).
-const WHAT_YOU_FIND: { icon: string; title: string; text: string }[] = [
+const WHAT_YOU_FIND: {
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  title: string;
+  text: string;
+}[] = [
   {
-    icon: '📊',
+    Icon: IconBarChart,
     title: 'Métricas de desempeño',
     text: 'Exactitud, precisión, sensibilidad (recall) y F1 de cada modelo, con su validación cruzada.',
   },
   {
-    icon: '🧩',
+    Icon: IconGrid,
     title: 'Matriz de confusión',
     text: 'Aciertos y errores por clase (con riesgo / sin riesgo) sobre el conjunto de prueba.',
   },
   {
-    icon: '📋',
+    Icon: IconClipboardCheck,
     title: 'Reporte de clasificación',
     text: 'Precisión, recall, F1 y soporte por clase, además de promedios macro y ponderado.',
   },
@@ -86,13 +96,13 @@ export function ModelosHomePage() {
             mismo conjunto de datos. Para cada uno podrá revisar:
           </p>
           <ul className="space-y-3 mt-2">
-            {WHAT_YOU_FIND.map(({ icon, title, text }) => (
+            {WHAT_YOU_FIND.map(({ Icon, title, text }) => (
               <li key={title} className="flex items-start gap-3">
                 <span
-                  className="inline-flex w-10 h-10 shrink-0 rounded-xl bg-primary-light items-center justify-center text-xl"
+                  className="inline-flex w-10 h-10 shrink-0 rounded-xl bg-primary-light items-center justify-center text-primary"
                   aria-hidden="true"
                 >
-                  {icon}
+                  <Icon className="w-5 h-5" />
                 </span>
                 <span className="text-base">
                   <span className="font-semibold text-slate-900">{title}.</span>{' '}

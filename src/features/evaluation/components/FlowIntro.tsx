@@ -1,3 +1,4 @@
+import { IconBookOpen, IconCircleCheck } from '@/components/ui/icons';
 import type { DetectedFlow } from '../hooks/useAutoDetectEvaluationType';
 
 interface FlowIntroProps {
@@ -10,7 +11,11 @@ export function FlowIntro({ flow, onContinue, onStartNew }: FlowIntroProps) {
   if (flow.type === 'continue_post_test') {
     return (
       <div className="card max-w-2xl mx-auto text-center space-y-6">
-        <div className="text-5xl">📚</div>
+        <div className="flex justify-center">
+          <span className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary">
+            <IconBookOpen className="w-8 h-8" />
+          </span>
+        </div>
         <div>
           <h1 className="text-3xl font-bold text-slate-800 mb-3">
             ¿Listo para la segunda evaluación?
@@ -35,7 +40,11 @@ export function FlowIntro({ flow, onContinue, onStartNew }: FlowIntroProps) {
   if (flow.type === 'cycle_complete') {
     return (
       <div className="card max-w-2xl mx-auto text-center space-y-6">
-        <div className="text-5xl">✅</div>
+        <div className="flex justify-center">
+          <span className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary">
+            <IconCircleCheck className="w-8 h-8" />
+          </span>
+        </div>
         <div>
           <h1 className="text-3xl font-bold text-slate-800 mb-3">
             Ya completó un ciclo completo

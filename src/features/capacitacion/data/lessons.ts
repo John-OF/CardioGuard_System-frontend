@@ -1,3 +1,14 @@
+import type { ComponentType, SVGProps } from 'react';
+import {
+  IconBookOpen,
+  IconHeart,
+  IconAlertTriangle,
+  IconPhone,
+  IconBan,
+  IconActivity,
+  IconCircleCheck,
+} from '@/components/ui/icons';
+
 export type LessonBlock =
   | { type: 'content-grid'; items: { title: string; text: string }[] }
   | { type: 'signal-list'; items: string[] }
@@ -9,7 +20,7 @@ export type LessonBlock =
   | { type: 'notice'; text: string };
 
 export interface Lesson {
-  icon: string;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
   title: string;
   text: string;
   keyMessage: string;
@@ -18,7 +29,7 @@ export interface Lesson {
 
 export const LESSONS: Lesson[] = [
   {
-    icon: '👋',
+    Icon: IconBookOpen,
     title: 'Antes de practicar, vamos a aprender',
     text: 'Esta capacitación no es un examen. Es una guía sencilla para recordar señales importantes, reconocer situaciones de riesgo y saber qué hacer primero.',
     keyMessage: 'Primero aprendemos. Después practicamos en el simulador.',
@@ -30,7 +41,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '❤',
+    Icon: IconHeart,
     title: '1. Cuidar el corazón todos los días',
     text: 'Con el paso de los años pueden aparecer condiciones que aumentan el riesgo cardiovascular. Algunas no se pueden cambiar, como la edad, pero muchos hábitos sí pueden mejorar.',
     keyMessage: 'Pequeñas acciones diarias ayudan a proteger el corazón.',
@@ -55,7 +66,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '⚠',
+    Icon: IconAlertTriangle,
     title: '2. Señales de alarma que no debe ignorar',
     text: 'Una emergencia cardiovascular no siempre se presenta igual en todas las personas. Algunas señales pueden ser fuertes y claras; otras pueden parecer menos evidentes.',
     keyMessage: 'Si una señal es fuerte, repentina o viene con falta de aire, pida ayuda de inmediato.',
@@ -77,7 +88,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '📞',
+    Icon: IconPhone,
     title: '3. Qué hacer primero ante una emergencia',
     text: 'Cuando hay señales graves, la respuesta debe ser rápida y ordenada. No es necesario hacer todo perfecto; lo más importante es pedir ayuda a tiempo.',
     keyMessage: 'No espere demasiado. Pedir ayuda rápido puede marcar la diferencia.',
@@ -98,7 +109,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '🚫',
+    Icon: IconBan,
     title: '4. Qué no hacer',
     text: 'Algunas acciones pueden retrasar la ayuda y aumentar el riesgo. Ante síntomas graves, es mejor actuar con prudencia y pedir apoyo.',
     keyMessage: 'Ante señales graves, actuar rápido es más seguro que esperar.',
@@ -119,7 +130,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '🫁',
+    Icon: IconActivity,
     title: '5. Si la persona no responde o respira mal',
     text: 'Si una persona pierde el conocimiento y no respira normalmente, puede tratarse de una emergencia grave. En ese caso se debe pedir ayuda, llamar a emergencias y seguir instrucciones.',
     keyMessage: 'Si sabe hacer RCP y puede realizarla, puede iniciarla mientras llega la ayuda.',
@@ -141,7 +152,7 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    icon: '✅',
+    Icon: IconCircleCheck,
     title: 'Capacitación completada',
     text: 'Ha terminado la capacitación. Ahora podrá practicar con casos simulados donde deberá elegir qué haría ante una emergencia.',
     keyMessage: 'El simulador será la evaluación final práctica de esta capacitación.',
