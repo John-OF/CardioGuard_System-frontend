@@ -108,6 +108,42 @@ export interface CyclesResponse {
   data: CycleItem[];
 }
 
+// Antecedente familiar: tri-estado (sabe que sí / que no / no sabe).
+export type FamilyHistory = 'si' | 'no' | 'no_sabe';
+
+// Detalle clínico del pre-test (solo lo devuelve `pre_test`). Datos ya
+// decodificados y listos para mostrar en la comparación del ciclo.
+export interface EvaluationDetails {
+  personal: {
+    age: number;
+    sex: string;                  // "Masculino" | "Femenino"
+  };
+  vitals: {
+    blood_pressure: string;       // categoría tal como la respondió el usuario
+    cholesterol: string;
+    glucose: string;
+    bmi: number;
+    bmi_category: BMICategory;
+  };
+  symptoms: {
+    chest_pain: boolean;          // cp != 0
+    chest_pain_type: string;      // texto original (para subtítulo)
+    effort_pain: boolean;         // exang == 1
+  };
+  habits: {
+    smoker: boolean;              // fuma actualmente
+    smoker_label: string;         // Nunca | Exfumador | Fuma actualmente
+    alcohol: boolean;             // consumo habitual
+    alcohol_label: string;        // No | Ocasionalmente | Sí
+    activity: string;             // No realiza | A veces | Regular
+    diet: string;                 // Saludable | Regular | Poco saludable
+  };
+  antecedents: {
+    family_history: FamilyHistory;
+  };
+  recommendations: string[];
+}
+
 // Detalle por evaluación dentro de una comparación
 export interface ComparisonEvalDetail {
   evaluation_id: string;
@@ -117,6 +153,7 @@ export interface ComparisonEvalDetail {
   ml_probability: number;         // 0..1
   risk_level: RiskLevel;
   education_priority: Priority;
+  details?: EvaluationDetails;    // solo presente en pre_test
 }
 
 export type ChangeResult = 'mejoró' | 'empeoró' | 'sin cambios';

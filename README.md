@@ -165,7 +165,7 @@ Vista del historial de evaluaciones del usuario:
 Vista de comparación entre pre-test y post-test de un ciclo:
 
 - Encabezado con fechas y resumen de mejora general del ciclo.
-- **Riesgo cardiovascular: un único resultado** (no comparación). Como el ciclo no vuelve a pedir los datos clínicos (pasos 0–2), el resultado ML es idéntico en pre y post; se muestra una tarjeta de riesgo + una nota "Sobre este resultado" que aclara que el riesgo depende de datos clínicos fijos y que lo que evoluciona es el conocimiento.
+- **Riesgo cardiovascular: un único resultado** (no comparación). Como el ciclo no vuelve a pedir los datos clínicos (pasos 0–2), el resultado ML es idéntico en pre y post; se muestra una tarjeta de riesgo (coloreada por nivel) con la Probabilidad ML y un botón **"Ver detalles"** que despliega el panel **"Detalles de la evaluación"** con los datos clínicos del pre-test (personales, signos vitales, síntomas, hábitos, antecedentes y recomendaciones). El detalle lo aporta `pre_test.details` del endpoint `GET /api/comparison/{post_id}`.
 - Comparación de puntajes de conocimiento educativo y de emergencias (lo que sí cambia con la capacitación).
 
 ### Admin (`/admin`) — Completo
