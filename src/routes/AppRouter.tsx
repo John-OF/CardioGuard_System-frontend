@@ -16,6 +16,13 @@ import { ModelPage } from '@/features/modelos/ModelPage';
 import { UsabilidadPage } from '@/features/usabilidad/UsabilidadPage';
 import { AvisoLegalPage } from '@/features/aviso-legal/AvisoLegalPage';
 import { AdminPage } from '@/features/admin/AdminPage';
+import { AnalysisLayout } from '@/features/admin/analysis/AnalysisLayout';
+import { AnalysisOverviewPage } from '@/features/admin/analysis/AnalysisOverviewPage';
+import { DescriptiveAnalysisPage } from '@/features/admin/analysis/DescriptiveAnalysisPage';
+import { PrePostAnalysisPage } from '@/features/admin/analysis/PrePostAnalysisPage';
+import { EmergencyAnalysisPage } from '@/features/admin/analysis/EmergencyAnalysisPage';
+import { ModelosRedirectPage } from '@/features/admin/analysis/ModelosRedirectPage';
+import { PendingAnalysisPage } from '@/features/admin/analysis/PendingAnalysisPage';
 
 export function AppRouter() {
   return (
@@ -23,7 +30,16 @@ export function AppRouter() {
       <Routes>
         {/* Panel de tesistas: fuera de AppLayout (sin header/nav público),
             solo accesible escribiendo /admin en la URL. */}
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin" element={<AdminPage />}>
+          <Route path="analisis" element={<AnalysisLayout />}>
+            <Route index element={<AnalysisOverviewPage />} />
+            <Route path="descriptivo" element={<DescriptiveAnalysisPage />} />
+            <Route path="pre-post" element={<PrePostAnalysisPage />} />
+            <Route path="emergencias" element={<EmergencyAnalysisPage />} />
+            <Route path="modelos" element={<ModelosRedirectPage />} />
+            <Route path="pendientes" element={<PendingAnalysisPage />} />
+          </Route>
+        </Route>
         <Route element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="evaluacion" element={<EvaluationPage />} />
@@ -45,3 +61,5 @@ export function AppRouter() {
     </BrowserRouter>
   );
 }
+
+
