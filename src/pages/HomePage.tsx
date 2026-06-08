@@ -14,6 +14,56 @@ import {
   IconHistory,
   IconStar,
 } from '@/components/ui/icons';
+import { PREDICTIVE_MODELS } from '@/features/modelos/data/models';
+
+// Exactitud, nº de modelos y comparativa se DERIVAN de las métricas reales
+// (features/modelos/data/realMetrics.ts) para no quedar desfasados tras un reentrenamiento.
+const formatPct = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+const SELECTED_MODEL = PREDICTIVE_MODELS.find((m) => m.selected) ?? PREDICTIVE_MODELS[0];
+const BEST_ACCURACY = formatPct(SELECTED_MODEL.metrics.accuracy);
+const MODEL_COUNT = PREDICTIVE_MODELS.length;
+// El tamaño del dataset (303, UCI Heart Disease) NO está en el JSON de métricas
+// (solo trae los 61 casos de prueba); se mantiene como constante documentada.
+const DATASET_SIZE = 303;
+
+// Estilos de presentación por modelo (color + subtítulo). Las cifras NO viven aquí.
+const MODEL_STYLES: Record<
+  string,
+  { className: string; valueClass: string; nameClass: string; subtitle: string }
+> = {
+  'random-forest': {
+    subtitle: 'Bosque aleatorio · seleccionado',
+    className: 'border-2 border-emerald-300 bg-emerald-50',
+    valueClass: 'text-emerald-600',
+    nameClass: 'text-emerald-900',
+  },
+  xgboost: {
+    subtitle: 'Extreme Gradient Boosting',
+    className: 'border-orange-200',
+    valueClass: 'text-orange-600',
+    nameClass: 'text-orange-900',
+  },
+  svm: {
+    subtitle: 'Support Vector Machine',
+    className: 'border-sky-200',
+    valueClass: 'text-sky-600',
+    nameClass: 'text-sky-900',
+  },
+  mlp: {
+    subtitle: 'Multi-Layer Perceptron',
+    className: 'border-purple-200',
+    valueClass: 'text-purple-600',
+    nameClass: 'text-purple-900',
+  },
+};
+
+const models = PREDICTIVE_MODELS.map((model) => ({
+  name: model.menuLabel,
+  selected: model.selected,
+  accuracy: formatPct(model.metrics.accuracy),
+  ...MODEL_STYLES[model.slug],
+}));
 
 const features = [
   {
@@ -74,43 +124,11 @@ const quickLinks: {
   },
 ];
 
-const models = [
-  {
-    name: 'Random Forest',
-    selected: true,
-    subtitle: 'Bosque aleatorio · seleccionado',
-    accuracy: '83.6%',
-    className: 'border-2 border-emerald-300 bg-emerald-50',
-    valueClass: 'text-emerald-600',
-    nameClass: 'text-emerald-900',
-  },
-  {
-    name: 'XGBoost',
-    selected: false,
-    subtitle: 'Extreme Gradient Boosting',
-    accuracy: '72.1%',
-    className: 'border-orange-200',
-    valueClass: 'text-orange-600',
-    nameClass: 'text-orange-900',
-  },
-  {
-    name: 'SVM',
-    selected: false,
-    subtitle: 'Support Vector Machine',
-    accuracy: '72.1%',
-    className: 'border-sky-200',
-    valueClass: 'text-sky-600',
-    nameClass: 'text-sky-900',
-  },
-  {
-    name: 'Redes Neuronales (MLP)',
-    selected: false,
-    subtitle: 'Multi-Layer Perceptron',
-    accuracy: '70.5%',
-    className: 'border-purple-200',
-    valueClass: 'text-purple-600',
-    nameClass: 'text-purple-900',
-  },
+const objetivosEspecificos = [
+  'Analizar los factores de riesgo cardiovascular y las necesidades de formación en soporte vital básico en adultos mayores para identificar los requerimientos funcionales y formativos que orienten el desarrollo del prototipo web inteligente.',
+  'Definir las variables clínicas, conductuales y educativas para estructurar el formulario de recolección de datos, el análisis estadístico y la lógica funcional del prototipo web, a fin de garantizar la pertinencia metodológica de la propuesta.',
+  'Diseñar el prototipo web inteligente integrando técnicas de machine learning y lógica difusa para apoyar la evaluación del riesgo cardiovascular y fortalecer la formación en soporte vital básico en adultos mayores.',
+  'Evaluar la pertinencia funcional y metodológica del prototipo web propuesto para determinar su correspondencia con las necesidades del contexto de estudio y su aporte al cumplimiento de los objetivos de la investigación.',
 ];
 
 // Módulos integrados: borde lateral izquierdo de color como indicador de categoría.
@@ -189,15 +207,15 @@ export function HomePage() {
 
         <div className="flex flex-wrap gap-4">
           <div className="bg-white/15 backdrop-blur-sm rounded-lg px-6 py-3">
-            <p className="text-3xl font-bold">83.6%</p>
+            <p className="text-3xl font-bold">{BEST_ACCURACY}</p>
             <p className="text-sm text-blue-50">Exactitud del mejor modelo</p>
           </div>
           <div className="bg-white/15 backdrop-blur-sm rounded-lg px-6 py-3">
-            <p className="text-3xl font-bold">4</p>
+            <p className="text-3xl font-bold">{MODEL_COUNT}</p>
             <p className="text-sm text-blue-50">Modelos ML</p>
           </div>
           <div className="bg-white/15 backdrop-blur-sm rounded-lg px-6 py-3">
-            <p className="text-3xl font-bold">303</p>
+            <p className="text-3xl font-bold">{DATASET_SIZE}</p>
             <p className="text-sm text-blue-50">Registros del dataset</p>
           </div>
         </div>
@@ -212,13 +230,35 @@ export function HomePage() {
               Objetivo del Proyecto
             </h2>
           </div>
-          <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-            Apoyar la orientación preventiva en cardioprotección vascular y
-            fortalecer la formación básica en soporte vital básico en adultos
-            mayores mediante un prototipo web que integra evaluación preventiva,
-            Machine Learning, lógica difusa, recomendaciones, capacitación y
-            simulación de escenarios de emergencia.
+
+          <h3 className="text-lg font-bold text-slate-900 mb-2">
+            Objetivo general
+          </h3>
+          <p className="text-base sm:text-lg text-slate-700 leading-relaxed mb-6">
+            Diseñar un prototipo web inteligente, basado en técnicas de machine
+            learning y lógica difusa, para apoyar la evaluación del riesgo
+            cardiovascular y la formación en soporte vital básico en adultos
+            mayores.
           </p>
+
+          <h3 className="text-lg font-bold text-slate-900 mb-3">
+            Objetivos específicos
+          </h3>
+          <ol className="space-y-3">
+            {objetivosEspecificos.map((objetivo, index) => (
+              <li key={index} className="flex items-start gap-3">
+                <span
+                  aria-hidden
+                  className="inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg bg-primary-light text-primary text-sm font-bold"
+                >
+                  {index + 1}
+                </span>
+                <p className="text-base text-slate-700 leading-relaxed">
+                  {objetivo}
+                </p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
