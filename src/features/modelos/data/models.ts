@@ -13,7 +13,7 @@ import type { RealModelData } from './realMetrics';
 
 export type { ModelMetrics, ClassMetrics, ClassificationReport } from './realMetrics';
 
-interface ModelMeta {
+export interface ModelMeta {
   slug: string;
   /** Clave del modelo en REAL_MODEL_METRICS (nombre real del backend). */
   backendName: string;
@@ -38,7 +38,7 @@ export interface PredictiveModel extends ModelMeta, RealModelData {
   selected: boolean;
 }
 
-const MODEL_META: ModelMeta[] = [
+export const MODEL_META: ModelMeta[] = [
   {
     slug: 'random-forest',
     backendName: 'RandomForest',
@@ -115,4 +115,20 @@ export const MODELS_BY_SLUG: Record<string, PredictiveModel> = PREDICTIVE_MODELS
     return acc;
   },
   {} as Record<string, PredictiveModel>,
+);
+
+export const MODEL_META_BY_SLUG: Record<string, ModelMeta> = MODEL_META.reduce(
+  (acc, model) => {
+    acc[model.slug] = model;
+    return acc;
+  },
+  {} as Record<string, ModelMeta>,
+);
+
+export const MODEL_META_BY_BACKEND_NAME: Record<string, ModelMeta> = MODEL_META.reduce(
+  (acc, model) => {
+    acc[model.backendName] = model;
+    return acc;
+  },
+  {} as Record<string, ModelMeta>,
 );

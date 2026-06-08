@@ -6,11 +6,8 @@ import {
   IconGrid,
   IconClipboardCheck,
 } from '@/components/ui/icons';
-import { PREDICTIVE_MODELS } from './data/models';
-
-// Modelo seleccionado/productivo, para el CTA principal.
-const selectedModel =
-  PREDICTIVE_MODELS.find((m) => m.selected) ?? PREDICTIVE_MODELS[0];
+import { MODEL_META_BY_BACKEND_NAME, PREDICTIVE_MODELS } from './data/models';
+import { useModelMetrics } from './hooks/useModelMetrics';
 
 // Qué se muestra en la sección (placeholder editable).
 const WHAT_YOU_FIND: {
@@ -36,8 +33,23 @@ const WHAT_YOU_FIND: {
 ];
 
 export function ModelosHomePage() {
+  const { metrics, loading, source } = useModelMetrics();
+  const selectedMetric =
+    metrics.models.find((model) => model.isSelected || model.name === metrics.selectedModel) ??
+    metrics.models[0];
+  const selectedModel =
+    (selectedMetric && MODEL_META_BY_BACKEND_NAME[selectedMetric.name]) ??
+    PREDICTIVE_MODELS.find((model) => model.selected) ??
+    PREDICTIVE_MODELS[0];
+
   return (
     <div className="space-y-6">
+      {source === 'fallback' && !loading && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-900">
+          Mostrando metricas locales de respaldo porque el backend de metricas no respondio.
+        </div>
+      )}
+
       <header>
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">
           Modelos Predictivos

@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 import { IconBrain, IconTrees, IconActivity } from '@/components/ui/icons';
+import { MODEL_META_BY_BACKEND_NAME } from './data/models';
+import { useModelMetrics } from './hooks/useModelMetrics';
+import { RocComparisonChart } from './components/RocComparisonChart';
+import { AucSummaryTable } from './components/AucSummaryTable';
 
 // Reglas de puntaje REALES, espejo de backend/app/services/fuzzy_service.py.
 // La lógica difusa NO es un modelo entrenado: es un puntaje por reglas clínicas
@@ -111,8 +115,24 @@ function Arrow() {
 }
 
 export function PipelinePage() {
+  const { metrics, loading, source } = useModelMetrics();
+  const comparisonModels = metrics.models.map((model) => ({
+    name: model.name,
+    displayName: MODEL_META_BY_BACKEND_NAME[model.name]?.name ?? model.name,
+    rocAuc: model.rocAuc,
+    rocCurve: model.rocCurve,
+    selected: model.isSelected || model.name === metrics.selectedModel,
+  }));
+  const selectedModel = comparisonModels.find((model) => model.selected);
+
   return (
     <div className="space-y-8">
+      {source === 'fallback' && !loading && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-base text-amber-900">
+          Mostrando metricas locales de respaldo porque el backend de metricas no respondio.
+        </div>
+      )}
+
       {/* Cabecera */}
       <div>
         <div className="flex items-center gap-3 mb-4">
@@ -183,6 +203,27 @@ export function PipelinePage() {
             text="Según el puntaje, el sistema clasifica el riesgo como bajo, moderado o alto."
             iconClass="bg-blue-100 text-blue-600"
           />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">
+            Analisis ROC/AUC de los modelos evaluados
+          </h2>
+          <p className="text-base text-slate-600">
+            Esta comparacion muestra la capacidad de cada modelo para distinguir entre
+            casos con riesgo y sin riesgo. El modelo seleccionado es{' '}
+            <strong>{selectedModel?.displayName ?? 'Random Forest'}</strong>.
+          </p>
+        </div>
+        <RocComparisonChart models={comparisonModels} />
+        <AucSummaryTable models={comparisonModels} />
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-base text-blue-900">
+          El analisis ROC/AUC pertenece a los modelos de aprendizaje automatico
+          evaluados. La capa de logica difusa no tiene una curva ROC propia porque es
+          una capa interpretativa basada en reglas aplicada despues del modelo de ML
+          seleccionado.
         </div>
       </section>
 
