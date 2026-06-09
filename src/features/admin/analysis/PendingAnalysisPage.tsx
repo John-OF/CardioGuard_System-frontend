@@ -1,15 +1,11 @@
 import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchFuzzyPending, fetchAnalysisReadiness } from '@/api/analysis';
+import type { AdminOutletContext } from '@/types/admin';
 import { PendingCard } from './components/PendingCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-
-interface OutletCtx {
-  token: string;
-  logout: () => void;
-}
 
 const PENDING_DESCRIPTIONS = [
   {
@@ -57,7 +53,7 @@ const FUZZY_PENDING = [
 ];
 
 export function PendingAnalysisPage() {
-  const { token, logout } = useOutletContext<OutletCtx>();
+  const { token, logout } = useOutletContext<AdminOutletContext>();
 
   const fuzzy = useAnalysisQuery(() => fetchFuzzyPending(token), [token]);
   const readiness = useAnalysisQuery(

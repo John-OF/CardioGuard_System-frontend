@@ -1,16 +1,14 @@
+import { useOutletContext } from 'react-router-dom';
 import { useAdminStats } from './hooks/useAdminStats';
 import { useAdminCycles } from './hooks/useAdminCycles';
+import type { AdminOutletContext } from '@/types/admin';
 import { StatsSection } from './components/StatsSection';
 import { CyclesTable } from './components/CyclesTable';
 
-interface AdminDashboardProps {
-  token: string;
-  onLogout: () => void;
-}
-
-export function AdminDashboard({ token, onLogout }: AdminDashboardProps) {
-  const stats = useAdminStats(token, onLogout);
-  const cycles = useAdminCycles(token, onLogout);
+export function AdminDashboard() {
+  const { token, logout } = useOutletContext<AdminOutletContext>();
+  const stats = useAdminStats(token, logout);
+  const cycles = useAdminCycles(token, logout);
 
   return (
     <div className="space-y-10">

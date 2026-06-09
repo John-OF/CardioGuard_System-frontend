@@ -2,6 +2,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchEmergencyAnalysis } from '@/api/analysis';
 import type { EmergencyAnalysisData } from '@/types/analysis';
+import type { AdminOutletContext } from '@/types/admin';
 import { MetricCard } from './components/MetricCard';
 import { NumericStatsCard } from './components/NumericStatsCard';
 import { FrequencyTable } from './components/FrequencyTable';
@@ -10,13 +11,8 @@ import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 
-interface OutletCtx {
-  token: string;
-  logout: () => void;
-}
-
 export function EmergencyAnalysisPage() {
-  const { token, logout } = useOutletContext<OutletCtx>();
+  const { token, logout } = useOutletContext<AdminOutletContext>();
   const query = useAnalysisQuery(
     () => fetchEmergencyAnalysis(token),
     [token],

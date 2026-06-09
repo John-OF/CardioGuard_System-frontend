@@ -67,3 +67,9 @@ export interface AdminCyclesResponse {
 }
 
 export type CyclesOrder = 'recent' | 'oldest';
+
+/** Contexto compartido por el layout administrativo hacia todas las rutas hijas. */
+export interface AdminOutletContext {
+  token: string;
+  logout: () => void;
+}

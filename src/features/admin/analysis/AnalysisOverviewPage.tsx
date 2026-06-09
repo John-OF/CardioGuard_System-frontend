@@ -5,14 +5,10 @@ import { StatusBadge } from './components/StatusBadge';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-
-interface OutletCtx {
-  token: string;
-  logout: () => void;
-}
+import type { AdminOutletContext } from '@/types/admin';
 
 export function AnalysisOverviewPage() {
-  const { token, logout } = useOutletContext<OutletCtx>();
+  const { token, logout } = useOutletContext<AdminOutletContext>();
 
   const overview = useAnalysisQuery(
     () => fetchAnalysisOverview(token),

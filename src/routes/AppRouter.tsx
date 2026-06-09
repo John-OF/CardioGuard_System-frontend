@@ -16,6 +16,7 @@ import { ModelPage } from '@/features/modelos/ModelPage';
 import { UsabilidadPage } from '@/features/usabilidad/UsabilidadPage';
 import { AvisoLegalPage } from '@/features/aviso-legal/AvisoLegalPage';
 import { AdminPage } from '@/features/admin/AdminPage';
+import { AdminDashboard } from '@/features/admin/AdminDashboard';
 import { AnalysisLayout } from '@/features/admin/analysis/AnalysisLayout';
 import { AnalysisOverviewPage } from '@/features/admin/analysis/AnalysisOverviewPage';
 import { DescriptiveAnalysisPage } from '@/features/admin/analysis/DescriptiveAnalysisPage';
@@ -31,6 +32,7 @@ export function AppRouter() {
         {/* Panel de tesistas: fuera de AppLayout (sin header/nav público),
             solo accesible escribiendo /admin en la URL. */}
         <Route path="/admin" element={<AdminPage />}>
+          <Route index element={<AdminDashboard />} />
           <Route path="analisis" element={<AnalysisLayout />}>
             <Route index element={<AnalysisOverviewPage />} />
             <Route path="descriptivo" element={<DescriptiveAnalysisPage />} />

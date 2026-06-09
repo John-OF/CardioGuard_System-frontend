@@ -2,6 +2,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchDescriptiveAnalysis } from '@/api/analysis';
 import type { DescriptiveAnalysisData } from '@/types/analysis';
+import type { AdminOutletContext } from '@/types/admin';
 import { MetricCard } from './components/MetricCard';
 import { NumericStatsCard } from './components/NumericStatsCard';
 import { FrequencyTable } from './components/FrequencyTable';
@@ -9,11 +10,6 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-
-interface OutletCtx {
-  token: string;
-  logout: () => void;
-}
 
 const GROUP_LABELS: Record<string, string> = {
   evaluations: 'Evaluaciones',
@@ -27,7 +23,7 @@ const GROUP_LABELS: Record<string, string> = {
 const EXCLUDED_GROUPS = ['system'];
 
 export function DescriptiveAnalysisPage() {
-  const { token, logout } = useOutletContext<OutletCtx>();
+  const { token, logout } = useOutletContext<AdminOutletContext>();
   const query = useAnalysisQuery(
     () => fetchDescriptiveAnalysis(token),
     [token],

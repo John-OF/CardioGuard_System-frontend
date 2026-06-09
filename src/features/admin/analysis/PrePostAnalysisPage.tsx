@@ -2,6 +2,7 @@ import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchPrePostAnalysis } from '@/api/analysis';
 import type { PrePostAnalysisData } from '@/types/analysis';
+import type { AdminOutletContext } from '@/types/admin';
 import { MetricCard } from './components/MetricCard';
 import { NumericStatsCard } from './components/NumericStatsCard';
 import { NoticeBox } from './components/NoticeBox';
@@ -9,13 +10,8 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 
-interface OutletCtx {
-  token: string;
-  logout: () => void;
-}
-
 export function PrePostAnalysisPage() {
-  const { token, logout } = useOutletContext<OutletCtx>();
+  const { token, logout } = useOutletContext<AdminOutletContext>();
   const query = useAnalysisQuery(
     () => fetchPrePostAnalysis(token),
     [token],
