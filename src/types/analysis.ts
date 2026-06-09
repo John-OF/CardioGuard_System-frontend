@@ -500,3 +500,80 @@ export interface CorrelationAnalysisData {
   limitations?: string[];
   non_diagnostic_notice?: string;
 }
+
+export interface LogisticRegressionOutcomeInfo {
+  name?: string;
+  label?: string;
+  positive_class?: string;
+  definition?: string;
+}
+
+export interface LogisticRegressionPredictorResult {
+  name?: string;
+  label?: string;
+  coefficient?: number | null;
+  odds_ratio?: number | null;
+  p_value?: number | null;
+  confidence_interval?: [number, number] | null;
+  interpretation?: string;
+}
+
+export interface LogisticRegressionModelResult {
+  id: string;
+  title?: string;
+  description?: string;
+  category?: 'fuzzy_independent' | 'fuzzy_dependent' | string;
+  outcome?: LogisticRegressionOutcomeInfo;
+  predictors?: LogisticRegressionPredictorResult[];
+  intercept?: number | null;
+  accuracy?: number | null;
+  sample_size?: number;
+  excluded_rows?: number;
+  positive_cases?: number;
+  negative_cases?: number;
+  events_per_variable?: number | null;
+  model_valid?: boolean;
+  warnings?: string[];
+  predictors_removed?: string[];
+  assumptions?: string[];
+  methodology_notes?: string[];
+  non_diagnostic_notice?: string;
+}
+
+export interface LogisticRegressionSummary {
+  total_models?: number;
+  valid_models?: number;
+  invalid_models?: number;
+  fuzzy_independent_models?: number;
+  fuzzy_dependent_models?: number;
+}
+
+export interface LogisticRegressionMethodology {
+  test?: string;
+  purpose?: string;
+  notes?: string[];
+  safety_rules?: string[];
+  hypotheses?: {
+    h0?: string;
+    h1?: string;
+  };
+}
+
+export interface LogisticRegressionDataConsistencyWarning {
+  applies_to_fuzzy_dependent_models?: boolean;
+  message?: string;
+  recommended_for_final_thesis?: string[];
+}
+
+export interface LogisticRegressionAnalysisData {
+  summary?: LogisticRegressionSummary;
+  models?: LogisticRegressionModelResult[];
+  groups?: {
+    fuzzy_independent?: LogisticRegressionModelResult[];
+    fuzzy_dependent?: LogisticRegressionModelResult[];
+  };
+  methodology?: LogisticRegressionMethodology;
+  data_consistency_warning?: LogisticRegressionDataConsistencyWarning;
+  limitations?: string[];
+  non_diagnostic_notice?: string;
+}

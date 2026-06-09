@@ -8,6 +8,7 @@ import type {
   EmergencyAnalysisData,
   ChiSquareAnalysisData,
   CorrelationAnalysisData,
+  LogisticRegressionAnalysisData,
   FuzzyPendingData,
 } from '@/types/analysis';
 import { AdminUnauthorizedError } from './admin';
@@ -61,6 +62,10 @@ export function fetchChiSquareAnalysis(token: string) {
 
 export function fetchCorrelationAnalysis(token: string) {
   return getWithToken<CorrelationAnalysisData>('/api/admin/analysis/correlations', token);
+}
+
+export function fetchLogisticRegressionAnalysis(token: string) {
+  return getWithToken<LogisticRegressionAnalysisData>('/api/admin/analysis/logistic-regression', token);
 }
 
 export function fetchFuzzyPending(token: string) {

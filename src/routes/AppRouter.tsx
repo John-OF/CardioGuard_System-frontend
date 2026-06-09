@@ -24,6 +24,7 @@ import { PrePostAnalysisPage } from '@/features/admin/analysis/PrePostAnalysisPa
 import { EmergencyAnalysisPage } from '@/features/admin/analysis/EmergencyAnalysisPage';
 import { ChiSquareAnalysisPage } from '@/features/admin/analysis/ChiSquareAnalysisPage';
 import { CorrelationAnalysisPage } from '@/features/admin/analysis/CorrelationAnalysisPage';
+import { LogisticRegressionAnalysisPage } from '@/features/admin/analysis/LogisticRegressionAnalysisPage';
 import { ModelosRedirectPage } from '@/features/admin/analysis/ModelosRedirectPage';
 import { PendingAnalysisPage } from '@/features/admin/analysis/PendingAnalysisPage';
 
@@ -42,6 +43,7 @@ export function AppRouter() {
             <Route path="emergencias" element={<EmergencyAnalysisPage />} />
             <Route path="chi-cuadrado" element={<ChiSquareAnalysisPage />} />
             <Route path="correlaciones" element={<CorrelationAnalysisPage />} />
+            <Route path="regresion-logistica" element={<LogisticRegressionAnalysisPage />} />
             <Route path="modelos" element={<ModelosRedirectPage />} />
             <Route path="pendientes" element={<PendingAnalysisPage />} />
           </Route>

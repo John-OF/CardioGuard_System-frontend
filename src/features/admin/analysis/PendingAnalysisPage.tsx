@@ -10,12 +10,6 @@ import { ErrorState } from './components/ErrorState';
 
 const PENDING_DESCRIPTIONS = [
   {
-    title: 'Regresion logistica',
-    description:
-      'Modelos de regresion logistica para estimar odds ratios de factores asociados a prediccion ML positiva y respuesta adecuada en emergencias.',
-    reason: 'Requiere el bloque 7, pendiente de implementacion.',
-  },
-  {
     title: 'Exportacion anonima de datos',
     description:
       'Exportacion de datos anonimizados en formato CSV/JSON para analisis externo por parte del equipo de investigacion.',
