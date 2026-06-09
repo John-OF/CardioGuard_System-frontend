@@ -10,22 +10,16 @@ import { ErrorState } from './components/ErrorState';
 
 const PENDING_DESCRIPTIONS = [
   {
-    title: 'Correlaciones inferenciales completas',
+    title: 'Regresion logistica',
     description:
-      'Coeficientes de correlación (Pearson / Spearman) entre variables continuas como edad, IMC, probabilidad ML y puntajes educativos.',
-    reason: 'Requiere el bloque 6, pendiente de implementación.',
+      'Modelos de regresion logistica para estimar odds ratios de factores asociados a prediccion ML positiva y respuesta adecuada en emergencias.',
+    reason: 'Requiere el bloque 7, pendiente de implementacion.',
   },
   {
-    title: 'Regresión logística',
+    title: 'Exportacion anonima de datos',
     description:
-      'Modelos de regresión logística para estimar odds ratios de factores asociados a predicción ML positiva y respuesta adecuada en emergencias.',
-    reason: 'Requiere el bloque 7, pendiente de implementación.',
-  },
-  {
-    title: 'Exportación anónima de datos',
-    description:
-      'Exportación de datos anonimizados en formato CSV/JSON para análisis externo por parte del equipo de investigación.',
-    reason: 'Requiere el bloque 8, pendiente de implementación.',
+      'Exportacion de datos anonimizados en formato CSV/JSON para analisis externo por parte del equipo de investigacion.',
+    reason: 'Requiere el bloque 8, pendiente de implementacion.',
   },
 ];
 
@@ -192,14 +186,6 @@ export function PendingAnalysisPage() {
               title: 'Distribución de riesgo difuso',
               description:
                 'Distribución de niveles bajo, moderado y alto de riesgo interpretativo.',
-              reason: isFuzzyValidated
-                ? 'Condicionalmente habilitado tras validación Mamdani.'
-                : 'Pendiente de formalización de lógica difusa.',
-            },
-            {
-              title: 'Comparación ML vs lógica difusa',
-              description:
-                'Comparación entre la probabilidad ML continua y el puntaje difuso.',
               reason: isFuzzyValidated
                 ? 'Condicionalmente habilitado tras validación Mamdani.'
                 : 'Pendiente de formalización de lógica difusa.',

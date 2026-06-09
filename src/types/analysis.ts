@@ -426,3 +426,77 @@ export interface ChiSquareAnalysisData {
   limitations?: string[];
   non_diagnostic_notice?: string;
 }
+
+export interface CorrelationVariableInfo {
+  name?: string;
+  label?: string;
+}
+
+export interface CorrelationTestResult {
+  id: string;
+  title: string;
+  description?: string;
+  category?: 'fuzzy_independent' | 'fuzzy_dependent' | string;
+  method?: 'pearson' | 'spearman' | string;
+  variables?: {
+    x?: CorrelationVariableInfo;
+    y?: CorrelationVariableInfo;
+  };
+  hypotheses?: {
+    h0?: string;
+    h1?: string;
+  };
+  sample_size?: number;
+  coefficient?: number | null;
+  p_value?: number | null;
+  alpha?: number;
+  decision?: string;
+  interpretation?: string;
+  direction?: string;
+  strength?: string;
+  strength_note?: string;
+  valid?: boolean;
+  warnings?: (string | { message?: string })[];
+  assumptions?: Record<string, unknown>;
+  data_points_preview?: { x: number; y: number }[];
+  non_diagnostic_notice?: string;
+}
+
+export interface CorrelationSummary {
+  total_tests?: number;
+  valid_tests?: number;
+  invalid_tests?: number;
+  significant_tests?: number;
+  fuzzy_independent_tests?: number;
+  fuzzy_dependent_tests?: number;
+  alpha?: number;
+}
+
+export interface CorrelationMethodology {
+  test?: string;
+  alpha?: number;
+  hypotheses?: {
+    h0?: string;
+    h1?: string;
+  };
+  interpretation_guidelines?: Record<string, string>;
+}
+
+export interface CorrelationDataConsistencyWarning {
+  applies_to_fuzzy_dependent_tests?: boolean;
+  message?: string;
+  recommended_for_final_thesis?: string[];
+}
+
+export interface CorrelationAnalysisData {
+  summary?: CorrelationSummary;
+  tests?: CorrelationTestResult[];
+  groups?: {
+    fuzzy_independent?: CorrelationTestResult[];
+    fuzzy_dependent?: CorrelationTestResult[];
+  };
+  methodology?: CorrelationMethodology;
+  data_consistency_warning?: CorrelationDataConsistencyWarning;
+  limitations?: string[];
+  non_diagnostic_notice?: string;
+}
