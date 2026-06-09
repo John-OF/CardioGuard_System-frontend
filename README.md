@@ -165,7 +165,7 @@ Vista del historial de evaluaciones del usuario:
 Vista de comparación entre pre-test y post-test de un ciclo:
 
 - Encabezado con fechas y resumen de mejora general del ciclo.
-- **Riesgo cardiovascular: un único resultado** (no comparación). Como el ciclo no vuelve a pedir los datos clínicos (pasos 0–2), el resultado ML es idéntico en pre y post; se muestra una tarjeta de riesgo + una nota "Sobre este resultado" que aclara que el riesgo depende de datos clínicos fijos y que lo que evoluciona es el conocimiento.
+- **Riesgo cardiovascular: un único resultado** (no comparación). Como el ciclo no vuelve a pedir los datos clínicos (pasos 0–2), el resultado ML es idéntico en pre y post; se muestra una tarjeta de riesgo (coloreada por nivel) con la Probabilidad ML y un botón **"Ver detalles"** que despliega el panel **"Detalles de la evaluación"** con los datos clínicos del pre-test (personales, signos vitales, síntomas, hábitos, antecedentes y recomendaciones). El detalle lo aporta `pre_test.details` del endpoint `GET /api/comparison/{post_id}`.
 - Comparación de puntajes de conocimiento educativo y de emergencias (lo que sí cambia con la capacitación).
 
 ### Admin (`/admin`) — Completo
@@ -182,13 +182,13 @@ Panel administrativo para los tesistas. Vive fuera de `AppLayout` (sin cabecera 
 Comparación de los 4 modelos de Machine Learning entrenados (RandomForest, XGBoost, SVM, MLP), con submenú colapsable en el sidebar:
 
 - **Portada `/modelos`** (`ModelosHomePage`): bienvenida a las métricas (aclara que son **reales**, no simuladas) + bloque "¿Cómo predice el sistema el riesgo?" con CTA a `/modelos/sistema-hibrido` + sección "¿Qué encontrará aquí?" + CTA al modelo seleccionado. Contenido editable.
-- **Sistema Híbrido `/modelos/sistema-hibrido`** (`PipelinePage`): página explicativa del **pipeline de predicción real** (primer ítem del submenú). Describe el flujo de 4 pasos (datos → Random Forest → lógica difusa → nivel de riesgo), con un diagrama, la tabla de reglas de puntaje reales (espejo de `backend/app/services/fuzzy_service.py`) y los umbrales (<6 bajo · 6–9 moderado · ≥10 alto). **No muestra métricas**: la lógica difusa es un puntaje por reglas, no un modelo entrenado (no tiene accuracy/AUC); enlaza al Random Forest para las métricas ML.
+- **Sistema Híbrido `/modelos/sistema-hibrido`** (`PipelinePage`): página explicativa del **pipeline de predicción real** (primer ítem del submenú). Describe el flujo de 4 pasos (datos → Random Forest → inferencia difusa → nivel de riesgo), con un diagrama, las variables y sus conjuntos difusos, las reglas IF-THEN representativas (espejo de `backend/app/services/fuzzy_service.py`) y la defuzzificación por centroide → nivel (bajo · moderado · alto). **No muestra métricas**: la lógica difusa es un sistema de inferencia (Mamdani), no un modelo entrenado (no tiene accuracy/AUC); enlaza al Random Forest para las métricas ML.
 - **Detalle `/modelos/:modelSlug`** (`ModelPage`): una sola página genérica dirigida por el slug.
   - Métricas reales por modelo: exactitud, precisión, recall, F1 y validación cruzada (media y desviación F1).
   - Matriz de confusión y reporte de clasificación (por clase + macro/ponderado).
 - Las métricas provienen de una **copia estática** del JSON del backend en `features/modelos/data/realMetrics.ts` (`form_model_metrics_7vars.json`). No incluye curva ROC/AUC ni importancia de características (el backend no las genera).
 - Cada modelo del submenú y la cabecera de su página usan un **ícono SVG** (lucide inline, en `components/ui/icons.tsx`), no emojis.
-- Pendiente futuro: servir las métricas vía endpoint `GET /api/models/metrics` (ver `INTEGRACION_MODELOS_PREDICTIVOS.md`). Las reglas de `PipelinePage` deben re-copiarse a mano si cambia `fuzzy_service.py`.
+- Pendiente futuro: servir las métricas vía endpoint `GET /api/models/metrics` (ver `INTEGRACION_MODELOS_PREDICTIVOS.md`). Las variables, conjuntos difusos y reglas de `PipelinePage` deben re-copiarse a mano si cambia `fuzzy_service.py`.
 
 > **Submenús con patrón split:** los ítems "Educación" y "Modelos Predictivos" del sidebar separan dos acciones: el **texto** es un enlace a la portada (`/educacion`, `/modelos`) y el **chevron `>`** es un botón aparte que solo abre/cierra el submenú.
 

@@ -5,65 +5,80 @@ import { useModelMetrics } from './hooks/useModelMetrics';
 import { RocComparisonChart } from './components/RocComparisonChart';
 import { AucSummaryTable } from './components/AucSummaryTable';
 
-// Reglas de puntaje REALES, espejo de backend/app/services/fuzzy_service.py.
-// La lógica difusa NO es un modelo entrenado: es un puntaje por reglas clínicas
-// que se aplica DESPUÉS del Random Forest. Por eso no tiene accuracy/AUC/matriz.
-const SCORING_RULES: { factor: string; rules: { when: string; points: string }[] }[] = [
+// Documentación del sistema de inferencia difusa (Mamdani), espejo de
+// backend/app/services/fuzzy_service.py. La lógica difusa NO es un modelo
+// entrenado: combina la probabilidad del Random Forest con variables clínicas
+// mediante funciones de membresía + reglas IF-THEN + inferencia + defuzzificación.
+// Por eso no tiene accuracy/AUC/matriz de confusión.
+
+// Variables de entrada y sus conjuntos difusos (etiquetas lingüísticas de las
+// funciones de membresía definidas en fuzzy_service.py).
+const FUZZY_VARIABLES: { variable: string; sets: { label: string; when: string }[] }[] = [
   {
-    factor: 'Probabilidad del Random Forest',
-    rules: [
-      { when: '≥ 75 %', points: '+4' },
-      { when: '50 – 74 %', points: '+3' },
-      { when: '25 – 49 %', points: '+2' },
-      { when: '< 25 %', points: '+1' },
+    variable: 'Probabilidad del Random Forest',
+    sets: [
+      { label: 'Baja', when: 'alrededor de 0 – 40 %' },
+      { label: 'Media', when: 'alrededor de 30 – 70 %' },
+      { label: 'Alta', when: 'alrededor de 60 – 100 %' },
     ],
   },
   {
-    factor: 'Edad',
-    rules: [
-      { when: '≥ 80 años', points: '+2' },
-      { when: '70 – 79 años', points: '+1' },
-      { when: '< 70 años', points: '0' },
+    variable: 'Edad',
+    sets: [
+      { label: 'Joven', when: 'hasta ~60 años' },
+      { label: 'Mayor', when: 'alrededor de 60 – 82 años' },
+      { label: 'Muy mayor', when: 'desde ~78 años' },
     ],
   },
   {
-    factor: 'Índice de masa corporal (IMC)',
-    rules: [
-      { when: '≥ 30 (obesidad)', points: '+2' },
-      { when: '25 – 29.9 (sobrepeso)', points: '+1' },
-      { when: '< 25', points: '0' },
+    variable: 'Índice de masa corporal (IMC)',
+    sets: [
+      { label: 'Normal', when: 'hasta ~25' },
+      { label: 'Sobrepeso', when: 'alrededor de 23 – 31' },
+      { label: 'Obesidad', when: 'desde ~29' },
     ],
   },
   {
-    factor: 'Actividad física',
-    rules: [
-      { when: 'Sedentario / nula', points: '+2' },
-      { when: 'Baja', points: '+1' },
-      { when: 'Regular', points: '0' },
+    variable: 'Actividad física',
+    sets: [
+      { label: 'Sedentario', when: 'poca o nula actividad' },
+      { label: 'Moderado', when: 'actividad ocasional' },
+      { label: 'Activo', when: 'actividad regular' },
     ],
   },
   {
-    factor: 'Presión arterial (sistólica)',
-    rules: [
-      { when: '≥ 140 mmHg', points: '+2' },
-      { when: '130 – 139 mmHg', points: '+1' },
-      { when: '< 130 mmHg', points: '0' },
+    variable: 'Presión arterial (sistólica)',
+    sets: [
+      { label: 'Normal', when: 'hasta ~128 mmHg' },
+      { label: 'Elevada', when: 'alrededor de 125 – 148 mmHg' },
+      { label: 'Alta', when: 'desde ~140 mmHg' },
     ],
   },
   {
-    factor: 'Colesterol',
-    rules: [
-      { when: '≥ 240 mg/dL', points: '+2' },
-      { when: '220 – 239 mg/dL', points: '+1' },
-      { when: '< 220 mg/dL', points: '0' },
+    variable: 'Colesterol',
+    sets: [
+      { label: 'Normal', when: 'hasta ~210 mg/dL' },
+      { label: 'Límite', when: 'alrededor de 200 – 240 mg/dL' },
+      { label: 'Alto', when: 'desde ~230 mg/dL' },
     ],
   },
 ];
 
-const RISK_THRESHOLDS = [
-  { level: 'Bajo', range: 'Puntaje < 6', className: 'border-green-200 bg-green-50 text-green-700' },
-  { level: 'Moderado', range: 'Puntaje 6 – 9', className: 'border-amber-200 bg-amber-50 text-amber-700' },
-  { level: 'Alto', range: 'Puntaje ≥ 10', className: 'border-red-200 bg-red-50 text-red-700' },
+// Reglas IF-THEN representativas (espejo de la base de reglas en fuzzy_service.py).
+const FUZZY_RULES: string[] = [
+  'SI la probabilidad del Random Forest es ALTA → el riesgo es ALTO.',
+  'SI la probabilidad es MEDIA → el riesgo es MODERADO.',
+  'SI la probabilidad es BAJA → el riesgo es BAJO.',
+  'SI la probabilidad es MEDIA Y algún factor clínico es severo (edad muy mayor, obesidad, sedentarismo, presión alta o colesterol alto) → el riesgo es ALTO.',
+  'SI la probabilidad es BAJA Y algún factor clínico es severo → el riesgo sube a MODERADO.',
+  'SI la probabilidad es ALTA PERO todo el perfil clínico es sano → el riesgo baja a MODERADO.',
+  'SI la presión es ALTA Y el colesterol es ALTO → el riesgo es ALTO.',
+];
+
+const RISK_LEVELS = [
+  { level: 'Bajo', className: 'border-green-200 bg-green-50 text-green-700' },
+  { level: 'Moderado', className: 'border-amber-200 bg-amber-50 text-amber-700' },
+  { level: 'Alto', className: 'border-red-200 bg-red-50 text-red-700' },
 ];
 
 function StageCard({
@@ -159,11 +174,12 @@ export function PipelinePage() {
           <p className="text-base text-slate-700 leading-relaxed">
             CardioGuard combina dos etapas. Primero, un modelo de{' '}
             <strong>Random Forest</strong> (aprendizaje automático) estima una{' '}
-            <strong>probabilidad</strong> a partir de sus datos clínicos. Luego, una{' '}
-            <strong>lógica difusa</strong> —un sistema de reglas clínicas— combina
-            esa probabilidad con su edad, IMC, actividad física, presión arterial y
-            colesterol para asignar un <strong>nivel de riesgo</strong> final: bajo,
-            moderado o alto.
+            <strong>probabilidad</strong> a partir de sus datos clínicos. Luego, un{' '}
+            <strong>sistema de lógica difusa</strong> combina esa probabilidad con su
+            edad, IMC, actividad física, presión arterial y colesterol para asignar un{' '}
+            <strong>nivel de riesgo</strong> final: bajo, moderado o alto. En lugar de
+            cortes rígidos, la lógica difusa razona con <strong>grados de pertenencia</strong>{' '}
+            (por ejemplo, una presión puede ser «en parte elevada y en parte alta»).
           </p>
         </div>
       </div>
@@ -191,8 +207,8 @@ export function PipelinePage() {
           <StageCard
             step={3}
             Icon={IconBrain}
-            title="Lógica difusa"
-            text="Reglas clínicas combinan esa probabilidad con edad, IMC, actividad, presión y colesterol en un puntaje de 0 a 12."
+            title="Inferencia difusa"
+            text="Funciones de membresía y reglas IF-THEN combinan la probabilidad con edad, IMC, actividad, presión y colesterol."
             iconClass="bg-purple-100 text-purple-600"
           />
           <Arrow />
@@ -200,7 +216,7 @@ export function PipelinePage() {
             step={4}
             Icon={IconActivity}
             title="Nivel de riesgo"
-            text="Según el puntaje, el sistema clasifica el riesgo como bajo, moderado o alto."
+            text="El resultado difuso se concreta (defuzzificación) en un riesgo continuo y se clasifica en bajo, moderado o alto."
             iconClass="bg-blue-100 text-blue-600"
           />
         </div>
@@ -227,32 +243,31 @@ export function PipelinePage() {
         </div>
       </section>
 
-      {/* Tabla de reglas */}
+      {/* Variables y conjuntos difusos */}
       <section>
         <h2 className="text-2xl font-bold text-slate-900 mb-2">
-          Cómo se calcula el puntaje
+          Las variables y sus niveles difusos
         </h2>
         <p className="text-base text-slate-600 mb-4">
-          Cada factor suma puntos. La probabilidad del Random Forest es el factor de
-          mayor peso (hasta 4 puntos); los demás aportan hasta 2 cada uno.
+          Cada variable se describe con etiquetas que se solapan: un valor puede
+          pertenecer en cierto grado a más de una (eso son las{' '}
+          <strong>funciones de membresía</strong>).
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {SCORING_RULES.map((group) => (
+          {FUZZY_VARIABLES.map((group) => (
             <div
-              key={group.factor}
+              key={group.variable}
               className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
             >
-              <h3 className="text-base font-bold text-slate-900 mb-3">{group.factor}</h3>
+              <h3 className="text-base font-bold text-slate-900 mb-3">{group.variable}</h3>
               <ul className="space-y-1.5">
-                {group.rules.map((rule) => (
+                {group.sets.map((s) => (
                   <li
-                    key={rule.when}
-                    className="flex items-center justify-between text-sm border-b border-slate-100 pb-1.5 last:border-0 last:pb-0"
+                    key={s.label}
+                    className="flex items-center justify-between gap-3 text-sm border-b border-slate-100 pb-1.5 last:border-0 last:pb-0"
                   >
-                    <span className="text-slate-600">{rule.when}</span>
-                    <span className="font-semibold text-slate-900 tabular-nums">
-                      {rule.points}
-                    </span>
+                    <span className="font-semibold text-slate-900">{s.label}</span>
+                    <span className="text-slate-500 text-right">{s.when}</span>
                   </li>
                 ))}
               </ul>
@@ -261,14 +276,42 @@ export function PipelinePage() {
         </div>
       </section>
 
-      {/* Umbrales de nivel */}
+      {/* Reglas IF-THEN */}
       <section>
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Del puntaje al nivel</h2>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">
+          Algunas reglas del sistema
+        </h2>
+        <p className="text-base text-slate-600 mb-4">
+          El motor de inferencia evalúa reglas de tipo «SI… ENTONCES…» y las combina
+          según el grado con que se cumplen.
+        </p>
+        <ul className="space-y-2">
+          {FUZZY_RULES.map((rule) => (
+            <li
+              key={rule}
+              className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
+              <span className="mt-0.5 inline-flex w-6 h-6 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                <IconBrain className="w-4 h-4" />
+              </span>
+              <span className="text-sm text-slate-700 leading-relaxed">{rule}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Niveles de salida */}
+      <section>
+        <h2 className="text-2xl font-bold text-slate-900 mb-4">El resultado final</h2>
+        <p className="text-base text-slate-600 mb-4">
+          Tras combinar las reglas, el sistema <strong>defuzzifica</strong> (método del
+          centroide) para obtener un riesgo continuo, que finalmente se expresa como uno
+          de estos tres niveles:
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {RISK_THRESHOLDS.map((t) => (
+          {RISK_LEVELS.map((t) => (
             <div key={t.level} className={`rounded-2xl border-2 p-5 ${t.className}`}>
               <p className="text-2xl font-bold">{t.level}</p>
-              <p className="text-sm mt-1 opacity-90">{t.range}</p>
             </div>
           ))}
         </div>
@@ -293,8 +336,8 @@ export function PipelinePage() {
           </svg>
           <div>
             <p className="text-base text-slate-700 leading-relaxed">
-              La lógica difusa <strong>no es un modelo entrenado</strong>: es un
-              conjunto de reglas clínicas, por lo que no tiene métricas de desempeño
+              La lógica difusa <strong>no es un modelo entrenado</strong>: es un sistema
+              de reglas con inferencia difusa, por lo que no tiene métricas de desempeño
               (exactitud, AUC) propias. Las métricas de aprendizaje automático
               corresponden al <strong>Random Forest</strong>, que puede consultar en
               su página.

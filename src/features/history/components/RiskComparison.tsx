@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import type { ComparisonEvalDetail, ComparisonSummary, RiskLevel } from '@/types/results';
 import { RISK_THEMES } from '@/features/results/utils/riskTheme';
+import { IconFileText, IconChevronDown } from '@/components/ui/icons';
+import { EvaluationDetailsPanel } from './EvaluationDetailsPanel';
 
 interface RiskComparisonProps {
   pre: ComparisonEvalDetail;
@@ -13,67 +16,80 @@ const RISK_LABEL: Record<RiskLevel, string> = {
   alto: 'Alto',
 };
 
-function RiskCard({ detail }: { detail: ComparisonEvalDetail }) {
+function RiskCard({
+  detail,
+  expanded,
+  onToggle,
+  canToggle,
+}: {
+  detail: ComparisonEvalDetail;
+  expanded: boolean;
+  onToggle: () => void;
+  canToggle: boolean;
+}) {
   const theme = RISK_THEMES[detail.risk_level];
   return (
-    <div className={`rounded-2xl border-2 ${theme.borderClass} ${theme.bgClass} p-5`}>
+    <div className={`rounded-2xl border-2 ${theme.borderClass} ${theme.bgClass} p-5 sm:p-6`}>
+      {/* Línea 1: etiqueta */}
       <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
         Nivel de riesgo
       </p>
-      <p className={`text-3xl font-bold mt-1 ${theme.titleColorClass}`}>
-        {RISK_LABEL[detail.risk_level]}
-      </p>
-      <div className="mt-4">
-        <p className="text-sm text-slate-600">Probabilidad ML</p>
-        <p className="text-2xl font-bold text-slate-900">
-          {(detail.ml_probability * 100).toFixed(0)}%
+
+      {/* Línea 2: nivel (izquierda) + botón "Ver detalles" (derecha, centrado vertical) */}
+      <div className="flex items-center justify-between gap-4 mt-1">
+        <p className={`text-3xl sm:text-4xl font-bold ${theme.titleColorClass}`}>
+          {RISK_LABEL[detail.risk_level]}
         </p>
+
+        {canToggle && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={expanded}
+            className="shrink-0 inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-base font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            <IconFileText className="w-5 h-5" />
+            Ver detalles
+            <IconChevronDown
+              className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+            />
+          </button>
+        )}
       </div>
+
+      {/* Línea 3: probabilidad ML como una sola línea de texto */}
+      <p className="text-base text-slate-700 mt-3">
+        Probabilidad ML:{' '}
+        <span className="font-bold text-slate-900">
+          {(detail.ml_probability * 100).toFixed(0)}%
+        </span>
+      </p>
     </div>
   );
 }
 
 export function RiskComparison({ pre, post }: RiskComparisonProps) {
+  const [expanded, setExpanded] = useState(false);
+
   // El riesgo se calcula con los datos clínicos (pasos 0-2), que el ciclo no vuelve
   // a pedir, por lo que pre y post son idénticos. Se muestra un único resultado.
   const detail = post ?? pre;
+  const details = pre.details;
 
   return (
-    <section aria-labelledby="risk-cmp-title">
-      <h2 id="risk-cmp-title" className="text-xl font-semibold text-slate-900 mb-4">
+    <section aria-labelledby="risk-cmp-title" className="space-y-4">
+      <h2 id="risk-cmp-title" className="text-xl font-semibold text-slate-900">
         Riesgo cardiovascular
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <RiskCard detail={detail} />
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <div className="flex items-center gap-2 mb-2">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5 text-slate-500 shrink-0"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" x2="12" y1="16" y2="12" />
-              <line x1="12" x2="12.01" y1="8" y2="8" />
-            </svg>
-            <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-              Sobre este resultado
-            </p>
-          </div>
-          <p className="text-base text-slate-600 leading-relaxed">
-            El riesgo cardiovascular se calcula a partir de sus datos clínicos, que
-            no cambian dentro de un ciclo de aprendizaje. Por eso se muestra un
-            único resultado. Lo que evoluciona con la capacitación es su{' '}
-            <span className="font-semibold text-slate-700">conocimiento</span>, que
-            puede comparar más abajo.
-          </p>
-        </div>
-      </div>
+
+      <RiskCard
+        detail={detail}
+        expanded={expanded}
+        onToggle={() => setExpanded((v) => !v)}
+        canToggle={Boolean(details)}
+      />
+
+      {expanded && details && <EvaluationDetailsPanel details={details} />}
     </section>
   );
 }
