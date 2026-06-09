@@ -1,5 +1,5 @@
 interface StatusBadgeProps {
-  status: 'implemented' | 'pending' | 'postponed' | 'planned';
+  status: 'implemented' | 'pending' | 'postponed' | 'planned' | 'insufficient_data';
 }
 
 const STYLES: Record<string, string> = {
@@ -7,6 +7,7 @@ const STYLES: Record<string, string> = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
   postponed: 'bg-slate-100 text-slate-500 border-slate-200',
   planned: 'bg-blue-50 text-blue-700 border-blue-200',
+  insufficient_data: 'bg-slate-100 text-slate-500 border-slate-200',
 };
 
 const LABELS: Record<string, string> = {
@@ -14,6 +15,7 @@ const LABELS: Record<string, string> = {
   pending: 'Pendiente',
   postponed: 'Pausado',
   planned: 'Planificado',
+  insufficient_data: 'Datos insuficientes',
 };
 
 export function StatusBadge({ status }: StatusBadgeProps) {

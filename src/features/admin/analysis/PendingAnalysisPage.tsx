@@ -10,12 +10,6 @@ import { ErrorState } from './components/ErrorState';
 
 const PENDING_DESCRIPTIONS = [
   {
-    title: 'Chi-cuadrado inferencial completo',
-    description:
-      'Pruebas de asociación entre variables categóricas del estudio (actividad física, presión arterial, tabaquismo, etc.) y la predicción ML.',
-    reason: 'Requiere el bloque 5, pendiente de implementación.',
-  },
-  {
     title: 'Correlaciones inferenciales completas',
     description:
       'Coeficientes de correlación (Pearson / Spearman) entre variables continuas como edad, IMC, probabilidad ML y puntajes educativos.',

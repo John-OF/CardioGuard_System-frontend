@@ -324,3 +324,105 @@ export interface FuzzyPendingData {
   historical_data_options?: string[];
   non_diagnostic_notice?: string;
 }
+
+export interface ChiSquareLabelEntry {
+  value: string | number;
+  label: string;
+}
+
+export interface ChiSquareVariableInfo {
+  name: string;
+  label: string;
+  labels?: ChiSquareLabelEntry[];
+}
+
+export interface ChiSquareTableRow {
+  value: string | number;
+  label: string;
+  cells: number[];
+}
+
+export interface ChiSquareObservedTable {
+  row_headers?: ChiSquareLabelEntry[];
+  column_headers?: ChiSquareLabelEntry[];
+  rows?: ChiSquareTableRow[];
+}
+
+export type ChiSquareExpectedTable = ChiSquareObservedTable;
+
+export interface ChiSquareWarning {
+  message?: string;
+}
+
+export interface ChiSquareTestResult {
+  id: string;
+  title: string;
+  description?: string;
+  category: 'fuzzy_independent' | 'fuzzy_dependent' | string;
+  variables?: {
+    x?: ChiSquareVariableInfo;
+    y?: ChiSquareVariableInfo;
+  };
+  hypotheses?: {
+    h0?: string;
+    h1?: string;
+  };
+  observed_table?: ChiSquareObservedTable;
+  expected_table?: ChiSquareExpectedTable;
+  row_totals?: { value: string | number; label: string; total: number }[];
+  column_totals?: { value: string | number; label: string; total: number }[];
+  grand_total?: number;
+  chi_square_statistic?: number | null;
+  degrees_of_freedom?: number | null;
+  p_value?: number | null;
+  alpha?: number;
+  decision?: string;
+  interpretation?: string;
+  cramer_v?: number | null;
+  effect_size_interpretation?: string;
+  assumptions?: {
+    expected_frequency_cells_below_5?: number;
+    expected_frequency_percentage_below_5?: number;
+    [key: string]: unknown;
+  };
+  warnings?: (string | ChiSquareWarning)[];
+  sample_size?: number;
+  valid?: boolean;
+  not_diagnostic_notice?: string;
+}
+
+export interface ChiSquareMethodology {
+  test?: string;
+  effect_size?: string;
+  alpha?: number;
+  hypotheses?: {
+    h0?: string;
+    h1?: string;
+  };
+  effect_size_guidelines?: Record<string, string>;
+}
+
+export interface ChiSquareAnalysisData {
+  summary?: {
+    total_tests?: number;
+    valid_tests?: number;
+    invalid_tests?: number;
+    significant_tests?: number;
+    fuzzy_independent_tests?: number;
+    fuzzy_dependent_tests?: number;
+    alpha?: number;
+  };
+  tests?: ChiSquareTestResult[];
+  groups?: {
+    fuzzy_independent?: ChiSquareTestResult[];
+    fuzzy_dependent?: ChiSquareTestResult[];
+  };
+  methodology?: ChiSquareMethodology;
+  data_consistency_warning?: {
+    applies_to_fuzzy_dependent_tests?: boolean;
+    message?: string;
+    recommended_for_final_thesis?: string[];
+  };
+  limitations?: string[];
+  non_diagnostic_notice?: string;
+}

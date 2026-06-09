@@ -57,6 +57,14 @@ function HeartPulseIcon() {
   );
 }
 
+function ChiSquareIcon() {
+  return (
+    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 7h14M5 12h14M5 17h14M8 4l8 16M16 4L8 20" />
+    </svg>
+  );
+}
+
 function BrainIcon() {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -90,6 +98,7 @@ const analysisItems = [
   { to: '/admin/analisis/descriptivo', label: 'Descriptivo', icon: DatabaseIcon },
   { to: '/admin/analisis/pre-post', label: 'Pre-test / Post-test', icon: FlaskIcon },
   { to: '/admin/analisis/emergencias', label: 'Emergencias', icon: HeartPulseIcon },
+  { to: '/admin/analisis/chi-cuadrado', label: 'Chi-cuadrado', icon: ChiSquareIcon },
   { to: '/admin/analisis/modelos', label: 'Modelos ML', icon: BrainIcon },
   { to: '/admin/analisis/pendientes', label: 'Pendientes', icon: ClockIcon },
 ];

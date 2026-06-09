@@ -22,6 +22,7 @@ import { AnalysisOverviewPage } from '@/features/admin/analysis/AnalysisOverview
 import { DescriptiveAnalysisPage } from '@/features/admin/analysis/DescriptiveAnalysisPage';
 import { PrePostAnalysisPage } from '@/features/admin/analysis/PrePostAnalysisPage';
 import { EmergencyAnalysisPage } from '@/features/admin/analysis/EmergencyAnalysisPage';
+import { ChiSquareAnalysisPage } from '@/features/admin/analysis/ChiSquareAnalysisPage';
 import { ModelosRedirectPage } from '@/features/admin/analysis/ModelosRedirectPage';
 import { PendingAnalysisPage } from '@/features/admin/analysis/PendingAnalysisPage';
 
@@ -38,6 +39,7 @@ export function AppRouter() {
             <Route path="descriptivo" element={<DescriptiveAnalysisPage />} />
             <Route path="pre-post" element={<PrePostAnalysisPage />} />
             <Route path="emergencias" element={<EmergencyAnalysisPage />} />
+            <Route path="chi-cuadrado" element={<ChiSquareAnalysisPage />} />
             <Route path="modelos" element={<ModelosRedirectPage />} />
             <Route path="pendientes" element={<PendingAnalysisPage />} />
           </Route>
