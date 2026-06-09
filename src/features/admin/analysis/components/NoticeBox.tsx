@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
+
 interface NoticeBoxProps {
   variant?: 'info' | 'warning' | 'academic';
-  children: string;
+  children: ReactNode;
 }
 
 const VARIANTS: Record<string, string> = {

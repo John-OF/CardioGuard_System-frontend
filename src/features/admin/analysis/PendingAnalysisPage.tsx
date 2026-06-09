@@ -13,7 +13,7 @@ const PENDING_DESCRIPTIONS = [
     title: 'Exportacion anonima de datos',
     description:
       'Exportacion de datos anonimizados en formato CSV/JSON para analisis externo por parte del equipo de investigacion.',
-    reason: 'Requiere el bloque 8, pendiente de implementacion.',
+    reason: 'Opcional / no prioritario para la tesis.',
   },
 ];
 
@@ -139,7 +139,8 @@ export function PendingAnalysisPage() {
           Análisis pendientes
         </h1>
         <p className="mt-1 text-base text-slate-600">
-          Estos análisis se implementarán en bloques posteriores del módulo.
+          Elementos opcionales o dependientes de lógica difusa no implementados
+          como parte del alcance principal de la tesis.
         </p>
       </header>
 
