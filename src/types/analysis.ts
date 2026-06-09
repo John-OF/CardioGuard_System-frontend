@@ -8,25 +8,37 @@ export interface AnalysisOverviewData {
   module: string;
   non_diagnostic_notice: string;
   available_blocks: AnalysisBlock[];
-  fuzzy_blocked_count: number;
+  fuzzy_blocked_count?: number;
+  fuzzy_conditionally_ready_count?: number;
+  fuzzy_validation_note?: string;
   ml_metrics_endpoint: string;
   ml_metrics_note: string;
 }
 
 export interface AnalysisBlock {
   id: string;
-  title: string;
-  description: string;
-  depends_on_fuzzy: boolean;
-  implementation_block: number;
+  title?: string;
+  description?: string;
+  depends_on_fuzzy?: boolean;
+  implementation_block?: number;
+  block?: number;
+  endpoint?: string;
+  status?: string;
 }
 
 export interface AnalysisReadinessData {
   ready_for_implementation: string[];
-  blocked_by_fuzzy_logic: string[];
-  unavailable_due_to_missing_data: string[];
-  fuzzy_postponement_reason: string;
-  unavailable_data_detail: Record<string, string>;
+  blocked_by_fuzzy_logic?: string[];
+  conditionally_ready_after_fuzzy_validation?: string[];
+  unavailable_due_to_missing_data?: string[];
+  fuzzy_postponement_reason?: string;
+  fuzzy_validation_summary?: {
+    status: string;
+    implementation: string;
+    contract: Record<string, unknown>;
+    data_consistency_warning: string;
+  };
+  unavailable_data_detail?: Record<string, unknown>;
 }
 
 export interface NumericStats {
@@ -247,16 +259,68 @@ export interface FuzzyExclusion {
   future_block: string;
 }
 
+export interface FuzzyEngineInfo {
+  implementation: string;
+  library: string;
+  library_version?: string;
+  validated: boolean;
+  validation_date?: string;
+  defuzzification: string;
+  membership_functions?: string[];
+  number_of_rules?: number;
+  contract: {
+    function: string;
+    file: string;
+    input: string;
+    output: {
+      level: string[];
+      score_range: number[];
+    };
+  };
+}
+
+export interface FuzzyInputInfo {
+  name: string;
+  source: string;
+  type: string;
+  range: number[];
+}
+
+export interface FuzzyOutputInfo {
+  name: string;
+  type: string;
+  values?: string[];
+  range?: number[];
+  db_column?: string;
+}
+
+export interface FuzzyEnabledAnalysis {
+  id: string;
+  description: string;
+}
+
+export interface FuzzyDataConsistencyWarning {
+  risk: string;
+  recommendation: string;
+}
+
 export interface FuzzyPendingData {
-  depends_on: string[];
-  current_implementation: {
+  depends_on?: string[];
+  current_implementation?: {
     description: string;
     file: string;
     function: string;
     score_range: string;
     levels: Record<string, string>;
   };
-  postponement_reason: string;
-  planned_block: number;
-  pending_analyses: { id: string; description: string }[];
+  postponement_reason?: string;
+  planned_block?: number;
+  pending_analyses?: { id: string; description: string }[];
+  fuzzy_engine?: FuzzyEngineInfo;
+  inputs?: FuzzyInputInfo[];
+  outputs?: FuzzyOutputInfo[];
+  enabled_after_validation?: FuzzyEnabledAnalysis[];
+  data_consistency_warning?: FuzzyDataConsistencyWarning;
+  historical_data_options?: string[];
+  non_diagnostic_notice?: string;
 }
