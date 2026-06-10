@@ -10,6 +10,8 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
+import { CategoricalBarChart } from './components/charts/CategoricalBarChart';
+import { transformEmergencyPreparedness } from './components/charts/chartTransformers';
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -68,6 +70,7 @@ export function EmergencyAnalysisPage() {
 
       <SummarySection d={d} />
       <ScoreSection d={d} />
+      <EmergencyIndicatorsSection profile={d.emergency_action_profile} />
       <PreparednessLevelsSection levels={d.preparedness_levels} />
       <AdequateResponseSection ar={d.adequate_response} />
       <FieldFrequenciesSection ff={d.field_frequencies} />
@@ -113,6 +116,24 @@ function ScoreSection({ d }: { d: EmergencyAnalysisData }) {
         />
       </div>
     </section>
+  );
+}
+
+function EmergencyIndicatorsSection({
+  profile,
+}: {
+  profile: EmergencyAnalysisData['emergency_action_profile'];
+}) {
+  const chartData = transformEmergencyPreparedness(profile);
+  return (
+    <CategoricalBarChart
+      title="Indicadores de preparación ante emergencias"
+      subtitle="Resume respuestas clave relacionadas con el reconocimiento y actuación ante una emergencia."
+      data={chartData}
+      valueLabel="%"
+      emptyMessage="No hay datos suficientes para generar este gráfico."
+      methodologicalNote="Este gráfico resume respuestas educativas y de simulación. No representa diagnóstico clínico."
+    />
   );
 }
 
