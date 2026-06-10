@@ -126,6 +126,43 @@ export function transformPreparednessLevels(data: unknown): CategoricalBarItem[]
     .filter((item): item is CategoricalBarItem => item !== null);
 }
 
+export function transformAdequateResponseDistribution(data: unknown): CategoricalBarItem[] {
+  if (!data || typeof data !== 'object') return [];
+
+  const d = data as Record<string, unknown>;
+  const adequate = d.adequate_count;
+  const nonAdequate = d.non_adequate_count;
+  const adequatePct = d.adequate_percentage;
+  const nonAdequatePct = d.non_adequate_percentage;
+
+  if (typeof adequate !== 'number' && typeof nonAdequate !== 'number') return [];
+
+  const total = (typeof adequate === 'number' ? adequate : 0) + (typeof nonAdequate === 'number' ? nonAdequate : 0);
+  if (total === 0) return [];
+
+  const result: CategoricalBarItem[] = [];
+
+  if (typeof adequate === 'number') {
+    result.push({
+      label: 'Respuesta adecuada',
+      value: adequate,
+      percentage: typeof adequatePct === 'number' ? adequatePct : (total > 0 ? (adequate / total) * 100 : undefined),
+      tone: 'adequate',
+    });
+  }
+
+  if (typeof nonAdequate === 'number') {
+    result.push({
+      label: 'Respuesta no adecuada',
+      value: nonAdequate,
+      percentage: typeof nonAdequatePct === 'number' ? nonAdequatePct : (total > 0 ? (nonAdequate / total) * 100 : undefined),
+      tone: 'notAdequate',
+    });
+  }
+
+  return result;
+}
+
 export function transformContingencyTable(data: unknown): CategoricalBarItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];

@@ -11,7 +11,7 @@ import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { CategoricalBarChart } from './components/charts/CategoricalBarChart';
-import { transformEmergencyPreparedness, transformPreparednessLevels } from './components/charts/chartTransformers';
+import { transformEmergencyPreparedness, transformPreparednessLevels, transformAdequateResponseDistribution } from './components/charts/chartTransformers';
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -73,6 +73,7 @@ export function EmergencyAnalysisPage() {
       <EmergencyIndicatorsSection profile={d.emergency_action_profile} />
       <PreparednessLevelsChartSection levels={d.preparedness_levels} />
       <PreparednessLevelsSection levels={d.preparedness_levels} />
+      <AdequateResponseChartSection ar={d.adequate_response} />
       <AdequateResponseSection ar={d.adequate_response} />
       <FieldFrequenciesSection ff={d.field_frequencies} />
       <ByEvalTypeSection byType={d.by_evaluation_type} />
@@ -191,6 +192,25 @@ function PreparednessLevelsSection({
         </table>
       </div>
     </section>
+  );
+}
+
+function AdequateResponseChartSection({
+  ar,
+}: {
+  ar: EmergencyAnalysisData['adequate_response'];
+}) {
+  const chartData = transformAdequateResponseDistribution(ar);
+  return (
+    <CategoricalBarChart
+      title="Respuesta adecuada ante emergencia"
+      subtitle="Compara las respuestas clasificadas como adecuadas frente a no adecuadas."
+      data={chartData}
+      valueLabel="casos"
+      showPercentages
+      emptyMessage="No hay datos suficientes para generar este gráfico."
+      methodologicalNote="Este gráfico resume criterios de actuación ante emergencia dentro del simulador. No representa diagnóstico clínico."
+    />
   );
 }
 
