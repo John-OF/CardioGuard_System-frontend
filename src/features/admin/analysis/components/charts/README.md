@@ -148,8 +148,8 @@ Tres gráficos CategoricalBarChart:
 3. **Respuesta adecuada ante emergencia** — adecuado vs no adecuado (conteo + porcentaje)
 
 ### /admin/analisis/pre-post (PrePostAnalysisPage)
-Un gráfico ComparisonBarChart (vía PrePostScoreChart wrapper):
-- **Comparación pre-test/post-test** — Educación, Emergencia y Total combinado
+Un gráfico Chart.js (vía PrePostScoreChart):
+- **Comparación pre-test/post-test** — barras agrupadas horizontales con puntajes promedio pre-test y post-test para Educación, Emergencia y Total combinado
 
 ### /admin/analisis/correlaciones (CorrelationAnalysisPage)
 Un gráfico HorizontalMetricChart:

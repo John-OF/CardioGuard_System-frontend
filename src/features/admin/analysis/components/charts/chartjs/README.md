@@ -25,7 +25,7 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── ChartJsEmptyState.tsx              # Delegates to CSS ChartEmptyState
 ├── ChartJsTheme.ts                    # Map project ChartTone to Chart.js colors
 ├── ChartJsRegistry.ts                 # Central Chart.js component registration
-├── ChiSquareObservedExpectedChart.tsx # First production Chart.js chart
+├── ChiSquareObservedExpectedChart.tsx # Production Chart.js chart (chi-square contingency)
 ├── ChartJsSmokeTest.tsx               # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
@@ -59,6 +59,12 @@ import { BaseChartJsCard } from './chartjs/BaseChartJsCard';
 Integrated into `ChiSquareAnalysisPage.tsx`. Shows a grouped bar chart comparing observed vs. expected frequencies from the first valid chi-square test.
 
 Transformer: `transformChiSquareObservedExpectedChart` in `chartTransformers.ts`
+
+### PrePostScoreChart
+
+Integrated into `PrePostAnalysisPage.tsx` (migrated from CSS ComparisonBarChart in Block 21). Shows a horizontal grouped bar chart comparing average pre-test vs. post-test scores for Education, Emergency, and Combined dimensions.
+
+Uses `transformPrePostToComparison` from `chartTransformers.ts`.
 
 ## CSS Chart Fallback
 
