@@ -10,6 +10,8 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
+import { EmergencyPreparednessChart } from './components/charts/EmergencyPreparednessChart';
+import { transformEmergencyPreparedness } from './components/charts/chartTransformers';
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -74,6 +76,7 @@ export function EmergencyAnalysisPage() {
       <ByEvalTypeSection byType={d.by_evaluation_type} />
       <TrainingRelationSection tr={d.training_relation_descriptive} />
       <ProfileSection profile={d.emergency_action_profile} />
+      <EmergencyPreparednessSection data={d.emergency_action_profile} />
       <QualitySection dq={d.data_quality} />
       <LimitationsSection limitations={d.limitations} />
     </div>
@@ -331,6 +334,16 @@ function ProfileSection({
       </div>
     </section>
   );
+}
+
+function EmergencyPreparednessSection({
+  data,
+}: {
+  data: EmergencyAnalysisData['emergency_action_profile'];
+}) {
+  const chartData = transformEmergencyPreparedness(data);
+  if (chartData.length === 0) return null;
+  return <EmergencyPreparednessChart data={chartData} />;
 }
 
 function QualitySection({
