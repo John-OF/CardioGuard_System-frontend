@@ -11,6 +11,8 @@ import { LoadingState } from './components/LoadingState';
 import { MetricCard } from './components/MetricCard';
 import { NoticeBox } from './components/NoticeBox';
 import { StatusBadge } from './components/StatusBadge';
+import { HorizontalMetricChart } from './components/charts/HorizontalMetricChart';
+import { transformCorrelationStrengths } from './components/charts/chartTransformers';
 
 function asArray<T>(value: T[] | undefined | null): T[] {
   return Array.isArray(value) ? value : [];
@@ -78,6 +80,8 @@ export function CorrelationAnalysisPage() {
       )}
 
       <SummaryCards data={data} />
+
+      <CorrelationStrengthSection data={data} />
 
       {validTests.length === 0 && (
         <NoticeBox variant="warning">
@@ -169,6 +173,21 @@ function SummaryCards({ data }: { data: CorrelationAnalysisData }) {
         />
       </div>
     </section>
+  );
+}
+
+function CorrelationStrengthSection({ data }: { data: CorrelationAnalysisData }) {
+  const chartData = transformCorrelationStrengths(data);
+  return (
+    <HorizontalMetricChart
+      title="Fuerza de correlación entre variables"
+      subtitle="Muestra la magnitud y dirección de las relaciones estadísticas calculadas."
+      data={chartData}
+      centerAtZero
+      valueFormatter={(value) => value.toFixed(2)}
+      emptyMessage="No hay datos suficientes para generar este gráfico."
+      methodologicalNote="Las correlaciones describen asociación estadística, no causalidad."
+    />
   );
 }
 

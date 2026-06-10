@@ -80,8 +80,77 @@ export function transformEmergencyPreparedness(data: unknown): CategoricalBarIte
 }
 
 export function transformCorrelationStrengths(data: unknown): HorizontalMetricItem[] {
-  if (!data || !Array.isArray(data)) return [];
-  return [];
+  if (!data || typeof data !== 'object') return [];
+
+  const d = data as Record<string, unknown>;
+  const groups = d.groups as Record<string, unknown> | null | undefined;
+  if (!groups) return [];
+
+  const allTests: Record<string, unknown>[] = [];
+
+  const independent = groups.fuzzy_independent;
+  if (Array.isArray(independent)) {
+    allTests.push(...independent);
+  }
+
+  const dependent = groups.fuzzy_dependent;
+  if (Array.isArray(dependent)) {
+    allTests.push(...dependent);
+  }
+
+  const result: HorizontalMetricItem[] = [];
+
+  for (const test of allTests) {
+    if (test.valid !== true) continue;
+    const coefficient = test.coefficient;
+    if (typeof coefficient !== 'number') continue;
+
+    const variables = test.variables as Record<string, unknown> | undefined;
+    const x = variables?.x as Record<string, unknown> | undefined;
+    const y = variables?.y as Record<string, unknown> | undefined;
+    const xLabel = String(x?.label ?? x?.name ?? 'Variable X');
+    const yLabel = String(y?.label ?? y?.name ?? 'Variable Y');
+
+    const pValue = test.p_value;
+    const strength = String(test.strength ?? '');
+    const direction = String(test.direction ?? '');
+    const method = String(test.method ?? '');
+
+    const parts: string[] = [];
+    if (strength) {
+      parts.push(strength.charAt(0).toUpperCase() + strength.slice(1));
+    }
+    if (direction) {
+      parts.push(direction);
+    }
+    if (typeof pValue === 'number') {
+      parts.push(`p=${pValue.toFixed(3)}`);
+    }
+    if (method) {
+      parts.push(`(${methodLabel(method)})`);
+    }
+
+    let tone: ChartTone = 'neutral';
+    if (coefficient > 0.5) tone = 'success';
+    else if (coefficient > 0) tone = 'primary';
+    else if (coefficient < -0.5) tone = 'danger';
+    else tone = 'info';
+
+    result.push({
+      label: `${xLabel} vs ${yLabel}`,
+      value: coefficient,
+      helperText: parts.length > 0 ? parts.join(' · ') : undefined,
+      tone,
+    });
+  }
+
+  return result;
+}
+
+function methodLabel(method: string): string {
+  if (method === 'pearson') return 'Pearson';
+  if (method === 'spearman') return 'Spearman';
+  return method;
 }
 
 export function transformLogisticOddsRatios(data: unknown): HorizontalMetricItem[] {
