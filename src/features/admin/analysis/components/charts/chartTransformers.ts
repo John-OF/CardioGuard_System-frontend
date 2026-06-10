@@ -1,3 +1,7 @@
+import type { CategoricalBarItem } from './CategoricalBarChart';
+import type { HorizontalMetricItem } from './HorizontalMetricChart';
+import type { ComparisonBarItem } from './ComparisonBarChart';
+
 export interface ChartPoint {
   time: string | number;
   value: number;
@@ -9,12 +13,12 @@ export interface PrePostScoreSet {
   postMean: number;
 }
 
-export function transformRiskLevelDistribution(data: unknown): ChartPoint[] {
+export function transformRiskLevelDistribution(data: unknown): CategoricalBarItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
 }
 
-export function transformMLProbabilityBuckets(data: unknown): ChartPoint[] {
+export function transformMLProbabilityBuckets(data: unknown): CategoricalBarItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
 }
@@ -49,17 +53,53 @@ export function transformPrePostScores(data: unknown): PrePostScoreSet[] {
   return result;
 }
 
-export function transformEmergencyPreparedness(data: unknown): ChartPoint[] {
+export function transformEmergencyPreparedness(data: unknown): CategoricalBarItem[] {
+  if (!data || typeof data !== 'object') return [];
+
+  const d = data as Record<string, unknown>;
+
+  const fields: { key: string; label: string; tone?: 'success' | 'warning' | 'primary' | 'danger' | 'info' }[] = [
+    { key: 'knows_emergency_number_percentage', label: 'Conoce número emergencia', tone: 'primary' },
+    { key: 'calls_immediately_percentage', label: 'Llama inmediatamente', tone: 'success' },
+    { key: 'acts_immediately_percentage', label: 'Actúa inmediatamente', tone: 'warning' },
+    { key: 'adequate_support_action_percentage', label: 'Apoyo adecuado', tone: 'danger' },
+    { key: 'has_prior_training_percentage', label: 'Capacitación previa', tone: 'info' },
+  ];
+
+  const result: CategoricalBarItem[] = [];
+
+  for (const { key, label, tone } of fields) {
+    const val = d[key];
+    if (typeof val === 'number') {
+      result.push({ label, value: val, tone });
+    }
+  }
+
+  return result;
+}
+
+export function transformCorrelationStrengths(data: unknown): HorizontalMetricItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
 }
 
-export function transformCorrelationStrengths(data: unknown): ChartPoint[] {
+export function transformLogisticOddsRatios(data: unknown): HorizontalMetricItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
 }
 
-export function transformLogisticOddsRatios(data: unknown): ChartPoint[] {
+export function transformContingencyTable(data: unknown): CategoricalBarItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
+}
+
+export function transformPrePostToComparison(data: unknown): ComparisonBarItem[] {
+  const scores = transformPrePostScores(data);
+  return scores.map((s) => ({
+    label: s.category,
+    firstLabel: 'Pre-test',
+    firstValue: s.preMean,
+    secondLabel: 'Post-test',
+    secondValue: s.postMean,
+  }));
 }

@@ -1,71 +1,123 @@
-# Charts — CardioGuard / Lightweight Charts
+# Charts — CardioGuard / CSS + Lightweight Charts
 
-## ¿Por qué Lightweight Charts™?
-Lightweight Charts™ es una biblioteca de gráficos financieros liviana, mantenida por TradingView, ideal para visualizar datos de análisis en aplicaciones web. Se eligió porque:
-- No requiere WebGL ni canvas complejo.
-- Es compatible con React mediante un wrapper simple.
-- Ofrece series de línea, área, histograma y barras.
-- Tiene buen rendimiento con conjuntos de datos moderados.
-- No depende de D3.js ni de bibliotecas pesadas.
+## Estrategia de gráficos (Block 11F)
 
-## Ubicación
+CardioGuard usa dos enfoques de visualización:
+
+| Enfoque | Propósito | Implementación |
+|---------|-----------|----------------|
+| **CSS Charts** | Principal — gráficos académicos categóricos (barras categorizadas, comparaciones agrupadas, métricas horizontales) | Componentes React + Tailwind CSS |
+| **Lightweight Charts** | Secundario — series de tiempo, tendencias, histogramas numéricos, evolución por fecha (uso futuro) | `lightweight-charts` |
+
+~~Recharts~~ fue eliminado (Block 11F) por incompatibilidad en tiempo de ejecución (`require_isUnsafeProperty is not a function`) derivada de su dependencia `es-toolkit` al ser pre-bundled por Vite.
+
+## Componentes CSS reutilizables
+
 ```
 src/features/admin/analysis/components/charts/
-├── BaseLightweightChart.tsx   # Wrapper base (creación, resize, limpieza)
-├── ChartEmptyState.tsx        # Estado vacío para gráficos sin datos
-├── ChartCard.tsx              # Contenedor visual con título, nota, footer
-├── chartTypes.ts              # Tipos compartidos (ChartPoint, ChartBucket, etc.)
-├── chartTransformers.ts       # Transformers placeholder (devuelven arreglo vacío)
-└── README.md                  # Este archivo
+├── BaseLightweightChart.tsx     # Wrapper base para Lightweight Charts
+├── CategoricalBarChart.tsx      # Barras horizontales categóricas (nivel, frecuencia, porcentaje)
+├── ComparisonBarChart.tsx       # Barras agrupadas para comparación por pares (pre/post, antes/después)
+├── HorizontalMetricChart.tsx    # Barras de métricas numéricas con soporte centerAtZero (correlaciones, odds ratios)
+├── ChartCard.tsx                # Contenedor visual con título, nota, footer
+├── ChartEmptyState.tsx          # Estado vacío para gráficos sin datos
+├── ChartLegend.tsx              # Leyenda reutilizable con códigos de color semánticos
+├── chartTheme.ts                # Paleta de colores semánticos (ChartTone) para barras
+├── chartTypes.ts                # Tipos compartidos para Lightweight Charts
+├── chartTransformers.ts         # Transformadores de datos API → formato de gráfico
+├── PrePostScoreChart.tsx        # Gráfico específico pre-test/post-test (CSS, estable)
+└── README.md                    # Este archivo
 ```
 
-## Cómo usar BaseLightweightChart
-```tsx
-import { BaseLightweightChart } from './charts/BaseLightweightChart';
-import { LineSeries } from 'lightweight-charts';
+## Cómo usar CategoricalBarChart
 
-<BaseLightweightChart
-  height={350}
-  dataAvailable={data.length > 0}
-  onInit={(chart) => {
-    const series = chart.addSeries(LineSeries, { color: '#2563eb' });
-    series.setData(data);
-  }}
+```tsx
+import { CategoricalBarChart } from './charts/CategoricalBarChart';
+
+<CategoricalBarChart
+  title="Niveles de preparación"
+  subtitle="Distribución de participantes por nivel"
+  data={[
+    { label: 'Bajo', value: 15, tone: 'highRisk' },
+    { label: 'Medio', value: 30, tone: 'moderateRisk' },
+    { label: 'Alto', value: 55, tone: 'lowRisk' },
+  ]}
+  showPercentages
+  methodologicalNote="Datos simulados con fines ilustrativos."
 />
 ```
 
-El callback `onInit` recibe la instancia `IChartApi` ya creada. Dentro de él se agregan las series y se asignan los datos. La limpieza (`chart.remove()`) se maneja automáticamente al desmontar.
+## Cómo usar ComparisonBarChart
 
-## Cuándo usar Lightweight Charts
-- Visualización de tendencias (puntajes pre/post, evolución temporal).
-- Distribuciones (histogramas de frecuencias, buckets de probabilidad).
-- Comparaciones numéricas (odds ratios, fortaleza de correlación).
-- Indicadores de panel (métricas de ML, niveles de riesgo).
+```tsx
+import { ComparisonBarChart } from './charts/ComparisonBarChart';
 
-## Cuándo NO usar Lightweight Charts
-- Tablas grandes de datos (usar componentes de tabla).
-- Diagramas de torta (no soportados; considerar alternativa futura).
-- Gráficos de dispersión puros (usar data_points_preview si aplica).
-- Visualizaciones que requieren interacción compleja (zooming extremo, dragging).
+<ComparisonBarChart
+  title="Pre-test vs Post-test"
+  subtitle="Comparación de puntajes por categoría"
+  data={[
+    { label: 'Educación', firstLabel: 'Pre-test', firstValue: 65, secondLabel: 'Post-test', secondValue: 82 },
+    { label: 'Emergencia', firstLabel: 'Pre-test', firstValue: 58, secondLabel: 'Post-test', secondValue: 79 },
+  ]}
+/>
+```
 
-## Estado vacío
-Cada gráfico debe verificar si hay datos disponibles antes de renderizar. Si no hay datos, `BaseLightweightChart` muestra automáticamente `ChartEmptyState` con un mensaje en español. Los mensajes disponibles:
+## Cómo usar HorizontalMetricChart
+
+```tsx
+import { HorizontalMetricChart } from './charts/HorizontalMetricChart';
+
+<HorizontalMetricChart
+  title="Coeficientes de correlación"
+  subtitle="Fortaleza de asociación"
+  data={[
+    { label: 'Edad vs Conocimiento', value: 0.45, tone: 'primary' },
+    { label: 'Capacitación vs Emergencia', value: 0.72, tone: 'success' },
+  ]}
+  centerAtZero
+/>
+```
+
+## Cómo usar ChartLegend
+
+```tsx
+import { ChartLegend } from './charts/ChartLegend';
+
+<ChartLegend
+  items={[
+    { label: 'Pre-test', tone: 'preTest' },
+    { label: 'Post-test', tone: 'postTest' },
+  ]}
+/>
+```
+
+## Cuándo usar cada componente
+
+| Componente | Caso de uso |
+|------------|-------------|
+| `CategoricalBarChart` | Distribuciones de frecuencia, niveles (bajo/medio/alto), respuestas (adecuado/no adecuado), porcentajes por categoría |
+| `ComparisonBarChart` | Comparación pre-test/post-test, antes/después, dos grupos por categoría |
+| `HorizontalMetricChart` | Correlaciones, odds ratios, importancia de características, métricas numéricas con soporte de valores negativos |
+| `BaseLightweightChart` | Series de tiempo, tendencias, histogramas numéricos, evolución temporal |
+| `ChartEmptyState` | Estado vacío para cualquier gráfico sin datos |
+
+## Reglas
+
+### Estado vacío
+Cada gráfico debe verificar si hay datos disponibles antes de renderizar. Usar `ChartEmptyState` con mensaje en español. Mensajes disponibles:
 - `no_data`: "No hay datos suficientes para generar este gráfico."
 - `insufficient_data`: "Este gráfico se activará cuando existan más registros."
 - `endpoint_not_ready`: "El endpoint actual no expone los datos agregados necesarios."
 - `feature_not_implemented`: "Esta visualización estará disponible en un próximo bloque."
 
-## Estrategia de gráficos (Block 11C)
+### Texto visible en español
+Todo texto visible al usuario debe estar en español, incluyendo títulos, etiquetas, notas y mensajes de estado vacío.
 
-CardioGuard usa tres enfoques de visualización:
+### Nota metodológica no diagnóstica
+Los gráficos académicos deben incluir una nota metodológica que aclare el propósito no clínico de la visualización.
 
-| Enfoque | Propósito | Biblioteca |
-|---------|-----------|------------|
-| **Recharts** | Primario — gráficos académicos categóricos (barras agrupadas, barras horizontales, distribuciones, comparaciones) | `recharts` |
-| **Lightweight Charts** | Secundario — series de tiempo, tendencias, histogramas numéricos, evolución por fecha, probabilidades ML | `lightweight-charts` |
-| **CSS Charts** | Visualizaciones simples y controladas donde una biblioteca sería excesiva | Tailwind CSS |
+### Sin dependencias externas
+Los componentes CSS no agregan dependencias nuevas. Usan solo React y Tailwind CSS.
 
-Recharts es la biblioteca principal porque la mayoría de los gráficos de tesis son categóricos, comparativos y académicos. Lightweight Charts se mantiene instalado y puede evaluarse su eliminación en el futuro si no se utiliza.
-
-## Nota importante
-Este bloque (Block 11A) solo instala la dependencia y crea la infraestructura base de gráficos. **No se integran gráficos en las páginas de análisis existentes.** La integración ocurrirá en bloques posteriores (11B, 11C, etc.).
+### Sin datos mock
+Los transformadores retornan arreglos vacíos cuando los datos de API no están disponibles. No se usan valores inventados en páginas de producción.
