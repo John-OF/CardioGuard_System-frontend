@@ -55,5 +55,17 @@ Cada gráfico debe verificar si hay datos disponibles antes de renderizar. Si no
 - `endpoint_not_ready`: "El endpoint actual no expone los datos agregados necesarios."
 - `feature_not_implemented`: "Esta visualización estará disponible en un próximo bloque."
 
+## Estrategia de gráficos (Block 11C)
+
+CardioGuard usa tres enfoques de visualización:
+
+| Enfoque | Propósito | Biblioteca |
+|---------|-----------|------------|
+| **Recharts** | Primario — gráficos académicos categóricos (barras agrupadas, barras horizontales, distribuciones, comparaciones) | `recharts` |
+| **Lightweight Charts** | Secundario — series de tiempo, tendencias, histogramas numéricos, evolución por fecha, probabilidades ML | `lightweight-charts` |
+| **CSS Charts** | Visualizaciones simples y controladas donde una biblioteca sería excesiva | Tailwind CSS |
+
+Recharts es la biblioteca principal porque la mayoría de los gráficos de tesis son categóricos, comparativos y académicos. Lightweight Charts se mantiene instalado y puede evaluarse su eliminación en el futuro si no se utiliza.
+
 ## Nota importante
 Este bloque (Block 11A) solo instala la dependencia y crea la infraestructura base de gráficos. **No se integran gráficos en las páginas de análisis existentes.** La integración ocurrirá en bloques posteriores (11B, 11C, etc.).
