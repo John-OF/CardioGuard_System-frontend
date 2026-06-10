@@ -25,8 +25,9 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── ChartJsEmptyState.tsx              # Delegates to CSS ChartEmptyState
 ├── ChartJsTheme.ts                    # Map project ChartTone to Chart.js colors
 ├── ChartJsRegistry.ts                 # Central Chart.js component registration
-├── ChiSquareObservedExpectedChart.tsx # Production Chart.js chart (chi-square contingency)
-├── ChartJsSmokeTest.tsx               # Minimal isolated verification (not in production)
+├── ChiSquareObservedExpectedChart.tsx     # Production Chart.js chart (chi-square contingency)
+├── PreparednessLevelsDoughnutChart.tsx    # Production Chart.js chart (preparedness donut)
+├── ChartJsSmokeTest.tsx                   # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
 
@@ -65,6 +66,12 @@ Transformer: `transformChiSquareObservedExpectedChart` in `chartTransformers.ts`
 Integrated into `PrePostAnalysisPage.tsx` (migrated from CSS ComparisonBarChart in Block 21). Shows a horizontal grouped bar chart comparing average pre-test vs. post-test scores for Education, Emergency, and Combined dimensions.
 
 Uses `transformPrePostToComparison` from `chartTransformers.ts`.
+
+### PreparednessLevelsDoughnutChart
+
+Integrated into `EmergencyAnalysisPage.tsx` (migrated from CSS CategoricalBarChart in Block 22). Shows a doughnut chart with proportional distribution of emergency preparedness levels (baja/media/alta).
+
+Uses `transformPreparednessLevels` from `chartTransformers.ts` and color tones from `chartTheme.ts` (highRisk, moderateRisk, lowRisk).
 
 ## CSS Chart Fallback
 
