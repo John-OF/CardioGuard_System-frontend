@@ -12,6 +12,8 @@ import { LoadingState } from './components/LoadingState';
 import { MetricCard } from './components/MetricCard';
 import { NoticeBox } from './components/NoticeBox';
 import { StatusBadge } from './components/StatusBadge';
+import { HorizontalMetricChart } from './components/charts/HorizontalMetricChart';
+import { transformLogisticOddsRatios } from './components/charts/chartTransformers';
 
 function asArray<T>(value: T[] | undefined | null): T[] {
   return Array.isArray(value) ? value : [];
@@ -74,6 +76,8 @@ export function LogisticRegressionAnalysisPage() {
       )}
 
       <SummaryCards data={data} />
+
+      <OddsRatioChartSection data={data} />
 
       {validModels.length === 0 && (
         <NoticeBox variant="warning">
@@ -152,6 +156,21 @@ function SummaryCards({ data }: { data: LogisticRegressionAnalysisData }) {
         />
       </div>
     </section>
+  );
+}
+
+function OddsRatioChartSection({ data }: { data: LogisticRegressionAnalysisData }) {
+  const chartData = transformLogisticOddsRatios(data);
+  return (
+    <HorizontalMetricChart
+      title="Razón de momios por variable"
+      subtitle="Muestra qué variables aumentan o reducen la probabilidad del evento modelado."
+      data={chartData}
+      centerAtZero
+      valueFormatter={(value) => value.toFixed(2)}
+      emptyMessage="No hay datos suficientes para generar este gráfico."
+      methodologicalNote="Los odds ratio describen asociación dentro del modelo ajustado. No representan causalidad ni diagnóstico clínico. Escala centrada en OR=1 mediante log(OR): valores a la derecha indican OR&gt;1 y valores a la izquierda indican OR&lt;1."
+    />
   );
 }
 

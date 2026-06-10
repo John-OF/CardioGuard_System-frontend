@@ -154,8 +154,69 @@ function methodLabel(method: string): string {
 }
 
 export function transformLogisticOddsRatios(data: unknown): HorizontalMetricItem[] {
-  if (!data || !Array.isArray(data)) return [];
-  return [];
+  if (!data || typeof data !== 'object') return [];
+
+  const d = data as Record<string, unknown>;
+  const groups = d.groups as Record<string, unknown> | null | undefined;
+  if (!groups) return [];
+
+  const allPredictors: Record<string, unknown>[] = [];
+
+  const independent = groups.fuzzy_independent;
+  if (Array.isArray(independent)) {
+    for (const model of independent) {
+      const m = model as Record<string, unknown>;
+      if (m.model_valid !== true) continue;
+      const preds = m.predictors;
+      if (Array.isArray(preds)) {
+        allPredictors.push(...preds);
+      }
+    }
+  }
+
+  const dependent = groups.fuzzy_dependent;
+  if (Array.isArray(dependent)) {
+    for (const model of dependent) {
+      const m = model as Record<string, unknown>;
+      if (m.model_valid !== true) continue;
+      const preds = m.predictors;
+      if (Array.isArray(preds)) {
+        allPredictors.push(...preds);
+      }
+    }
+  }
+
+  const result: HorizontalMetricItem[] = [];
+
+  for (const predictor of allPredictors) {
+    const odds = predictor.odds_ratio;
+    if (typeof odds !== 'number' || odds <= 0 || !Number.isFinite(odds)) continue;
+
+    const label = String(predictor.label ?? predictor.name ?? 'Variable');
+    const logOr = Math.log(odds);
+    const interpretation = String(predictor.interpretation ?? '');
+
+    const directionText = interpretation || (
+      odds > 1
+        ? 'Aumenta la probabilidad del evento modelado'
+        : odds < 1
+          ? 'Reduce la probabilidad del evento modelado'
+          : 'No cambia significativamente la probabilidad');
+
+    let tone: ChartTone = 'neutral';
+    if (odds > 1.2) tone = 'danger';
+    else if (odds < 0.85) tone = 'success';
+    else tone = 'neutral';
+
+    result.push({
+      label,
+      value: logOr,
+      helperText: `OR=${odds.toFixed(2)} · ${directionText}`,
+      tone,
+    });
+  }
+
+  return result;
 }
 
 export function transformPreparednessLevels(data: unknown): CategoricalBarItem[] {
