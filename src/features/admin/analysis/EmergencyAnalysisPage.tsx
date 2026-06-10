@@ -10,9 +10,9 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-import { CategoricalBarChart } from './components/charts/CategoricalBarChart';
 import { PreparednessLevelsDoughnutChart } from './components/charts/chartjs/PreparednessLevelsDoughnutChart';
-import { transformEmergencyPreparedness, transformAdequateResponseDistribution } from './components/charts/chartTransformers';
+import { EmergencyIndicatorsBarChart } from './components/charts/chartjs/EmergencyIndicatorsBarChart';
+import { AdequateResponseBarChart } from './components/charts/chartjs/AdequateResponseBarChart';
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -127,16 +127,8 @@ function EmergencyIndicatorsSection({
 }: {
   profile: EmergencyAnalysisData['emergency_action_profile'];
 }) {
-  const chartData = transformEmergencyPreparedness(profile);
   return (
-    <CategoricalBarChart
-      title="Indicadores de preparación ante emergencias"
-      subtitle="Resume respuestas clave relacionadas con el reconocimiento y actuación ante una emergencia."
-      data={chartData}
-      valueLabel="%"
-      emptyMessage="No hay datos suficientes para generar este gráfico."
-      methodologicalNote="Este gráfico resume respuestas educativas y de simulación. No representa diagnóstico clínico."
-    />
+    <EmergencyIndicatorsBarChart profile={profile} />
   );
 }
 
@@ -192,17 +184,8 @@ function AdequateResponseChartSection({
 }: {
   ar: EmergencyAnalysisData['adequate_response'];
 }) {
-  const chartData = transformAdequateResponseDistribution(ar);
   return (
-    <CategoricalBarChart
-      title="Respuesta adecuada ante emergencia"
-      subtitle="Compara las respuestas clasificadas como adecuadas frente a no adecuadas."
-      data={chartData}
-      valueLabel="casos"
-      showPercentages
-      emptyMessage="No hay datos suficientes para generar este gráfico."
-      methodologicalNote="Este gráfico resume criterios de actuación ante emergencia dentro del simulador. No representa diagnóstico clínico."
-    />
+    <AdequateResponseBarChart data={ar} />
   );
 }
 

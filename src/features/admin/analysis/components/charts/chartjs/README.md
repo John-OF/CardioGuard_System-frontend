@@ -26,7 +26,9 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── ChartJsTheme.ts                    # Map project ChartTone to Chart.js colors
 ├── ChartJsRegistry.ts                 # Central Chart.js component registration
 ├── ChiSquareObservedExpectedChart.tsx     # Production Chart.js chart (chi-square contingency)
+├── EmergencyIndicatorsBarChart.tsx        # Production Chart.js chart (emergency indicators bar)
 ├── PreparednessLevelsDoughnutChart.tsx    # Production Chart.js chart (preparedness donut)
+├── AdequateResponseBarChart.tsx           # Production Chart.js chart (adequate response bar)
 ├── ChartJsSmokeTest.tsx                   # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
@@ -72,6 +74,18 @@ Uses `transformPrePostToComparison` from `chartTransformers.ts`.
 Integrated into `EmergencyAnalysisPage.tsx` (migrated from CSS CategoricalBarChart in Block 22). Shows a doughnut chart with proportional distribution of emergency preparedness levels (baja/media/alta).
 
 Uses `transformPreparednessLevels` from `chartTransformers.ts` and color tones from `chartTheme.ts` (highRisk, moderateRisk, lowRisk).
+
+### EmergencyIndicatorsBarChart
+
+Integrated into `EmergencyAnalysisPage.tsx` (migrated from CSS CategoricalBarChart in Block 23). Shows a horizontal bar chart with percentage indicators for emergency preparedness dimensions (conoce número, llama inmediatamente, actúa inmediatamente, apoyo adecuado, capacitación previa).
+
+Uses `transformEmergencyPreparedness` from `chartTransformers.ts` and individual bar colors from `chartTheme.ts` via each item's tone.
+
+### AdequateResponseBarChart
+
+Integrated into `EmergencyAnalysisPage.tsx` (migrated from CSS CategoricalBarChart in Block 24). Shows a horizontal bar chart comparing adequate vs. non-adequate emergency response counts with percentages in tooltip.
+
+Uses `transformAdequateResponseDistribution` from `chartTransformers.ts` with adequate (green) and notAdequate (red) tones.
 
 ## CSS Chart Fallback
 

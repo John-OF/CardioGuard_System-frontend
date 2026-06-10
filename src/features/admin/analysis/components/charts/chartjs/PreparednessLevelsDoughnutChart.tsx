@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import type { ChartOptions } from 'chart.js';
 import './ChartJsRegistry';
 import { BaseChartJsCard } from './BaseChartJsCard';
-import { CHARTJS_DEFAULT_OPTIONS } from './ChartJsTheme';
 import { CHART_TONE_HEX } from '../chartTheme';
 import { transformPreparednessLevels } from '../chartTransformers';
 import type { PreparednessLevel } from '@/types/analysis';
@@ -11,15 +11,6 @@ import type { CategoricalBarItem } from '../CategoricalBarChart';
 interface PreparednessLevelsDoughnutChartProps {
   levels: PreparednessLevel[];
 }
-
-const TONE_MAP: Record<string, keyof typeof CHART_TONE_HEX> = {
-  baja: 'highRisk',
-  bajo: 'highRisk',
-  media: 'moderateRisk',
-  moderada: 'moderateRisk',
-  alta: 'lowRisk',
-  alto: 'lowRisk',
-};
 
 export function PreparednessLevelsDoughnutChart({
   levels,
@@ -45,17 +36,14 @@ export function PreparednessLevelsDoughnutChart({
   const values = items.map((item) => item.value);
   const percentages = items.map((item) => item.percentage);
 
-  const toneKeys = items.map((item) => {
-    const lower = item.label.toLowerCase();
-    return TONE_MAP[lower] ?? 'neutral';
-  });
-
-  const backgroundColors = toneKeys.map((k) => {
-    const hex = CHART_TONE_HEX[k];
+  const backgroundColors = items.map((item) => {
+    const hex = item.tone ? CHART_TONE_HEX[item.tone] : undefined;
     return hex ? `${hex}CC` : '#94a3b8CC';
   });
 
-  const borderColors = toneKeys.map((k) => CHART_TONE_HEX[k] ?? '#94a3b8');
+  const borderColors = items.map((item) => {
+    return item.tone ? CHART_TONE_HEX[item.tone] : '#94a3b8';
+  });
 
   const doughnutData = {
     labels,
@@ -69,20 +57,25 @@ export function PreparednessLevelsDoughnutChart({
     ],
   };
 
-  const options = {
-    ...CHARTJS_DEFAULT_OPTIONS,
+  const options: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '55%',
     plugins: {
-      ...CHARTJS_DEFAULT_OPTIONS.plugins,
       legend: {
-        ...CHARTJS_DEFAULT_OPTIONS.plugins.legend,
         display: true,
-        position: 'bottom' as const,
+        position: 'bottom',
+        labels: {
+          color: '#475569',
+          font: { family: 'Inter, system-ui, sans-serif', size: 12 },
+        },
       },
       tooltip: {
-        ...CHARTJS_DEFAULT_OPTIONS.plugins.tooltip,
+        titleFont: { family: 'Inter, system-ui, sans-serif' },
+        bodyFont: { family: 'Inter, system-ui, sans-serif' },
         callbacks: {
-          label(ctx: { dataset: { data?: number[] }; dataIndex: number; label?: string }) {
-            const val = ctx.dataset.data?.[ctx.dataIndex];
+          label(ctx) {
+            const val = ctx.dataset.data?.[ctx.dataIndex] as number | undefined;
             const pct = percentages[ctx.dataIndex];
             const label = ctx.label ?? '';
             if (val == null) return `${label}: —`;
@@ -92,7 +85,6 @@ export function PreparednessLevelsDoughnutChart({
         },
       },
     },
-    cutout: '55%',
   };
 
   return (
@@ -102,7 +94,7 @@ export function PreparednessLevelsDoughnutChart({
       dataAvailable
       methodologicalNote="Este gráfico resume niveles de preparación educativa y de simulación. No representa diagnóstico clínico."
     >
-      <div className="mx-auto" style={{ maxWidth: 360, height: 300 }}>
+      <div className="mx-auto flex items-center justify-center" style={{ maxWidth: 360, height: 300 }}>
         <Doughnut data={doughnutData} options={options} />
       </div>
     </BaseChartJsCard>

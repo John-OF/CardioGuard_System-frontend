@@ -142,10 +142,10 @@ Los transformadores retornan arreglos vacíos cuando los datos de API no están 
 ## Páginas con gráficos integrados
 
 ### /admin/analisis/emergencias (EmergencyAnalysisPage)
-Tres gráficos (dos CSS, uno Chart.js):
-1. **Indicadores de preparación ante emergencias** — CategoricalBarChart CSS (5 barras del perfil de acción)
-2. **Distribución de niveles de preparación** — PreparednessLevelsDoughnutChart Chart.js (proporción por nivel)
-3. **Respuesta adecuada ante emergencia** — CategoricalBarChart CSS (adecuado vs no adecuado)
+Tres gráficos (todos Chart.js):
+1. **Indicadores de preparación ante emergencias** — EmergencyIndicatorsBarChart (barras horizontales de porcentajes)
+2. **Distribución de niveles de preparación** — PreparednessLevelsDoughnutChart (dona proporcional por nivel)
+3. **Respuesta adecuada ante emergencia** — AdequateResponseBarChart (barras horizontales con conteos y porcentajes)
 
 ### /admin/analisis/pre-post (PrePostAnalysisPage)
 Un gráfico Chart.js (vía PrePostScoreChart):
