@@ -9,6 +9,7 @@ import { NoticeBox } from './components/NoticeBox';
 import { DataQualityCard } from './components/DataQualityCard';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
+import { PrePostScoreChart } from './components/charts/PrePostScoreChart';
 
 export function PrePostAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -72,6 +73,8 @@ export function PrePostAnalysisPage() {
       )}
 
       <CycleCountCards cycles={d.cycle_counts} />
+
+      <PrePostScoreChart data={d} />
 
       {d.education && <ScoreSection title="Educación" data={d.education} />}
       {d.emergency && <ScoreSection title="Emergencia" data={d.emergency} />}
