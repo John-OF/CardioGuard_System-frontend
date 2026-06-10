@@ -1,6 +1,7 @@
 import type { CategoricalBarItem } from './CategoricalBarChart';
 import type { HorizontalMetricItem } from './HorizontalMetricChart';
 import type { ComparisonBarItem } from './ComparisonBarChart';
+import type { ChartTone } from './chartTheme';
 
 export interface ChartPoint {
   time: string | number;
@@ -86,6 +87,43 @@ export function transformCorrelationStrengths(data: unknown): HorizontalMetricIt
 export function transformLogisticOddsRatios(data: unknown): HorizontalMetricItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
+}
+
+export function transformPreparednessLevels(data: unknown): CategoricalBarItem[] {
+  if (!data || !Array.isArray(data)) return [];
+
+  const toneMap: Record<string, ChartTone> = {
+    baja: 'highRisk',
+    bajo: 'highRisk',
+    media: 'moderateRisk',
+    moderada: 'moderateRisk',
+    alta: 'lowRisk',
+    alto: 'lowRisk',
+  };
+
+  const labelMap: Record<string, string> = {
+    baja: 'Preparación baja',
+    bajo: 'Preparación baja',
+    media: 'Preparación media',
+    moderada: 'Preparación media',
+    alta: 'Preparación alta',
+    alto: 'Preparación alta',
+  };
+
+  return data
+    .map((item: Record<string, unknown>) => {
+      const level = String(item.level ?? '');
+      const count = item.count;
+      const percentage = item.percentage;
+      if (typeof count !== 'number') return null;
+      return {
+        label: labelMap[level.toLowerCase()] ?? level,
+        value: count,
+        percentage: typeof percentage === 'number' ? percentage : undefined,
+        tone: toneMap[level.toLowerCase()] ?? 'neutral',
+      } as CategoricalBarItem;
+    })
+    .filter((item): item is CategoricalBarItem => item !== null);
 }
 
 export function transformContingencyTable(data: unknown): CategoricalBarItem[] {

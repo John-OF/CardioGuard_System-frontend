@@ -11,7 +11,7 @@ import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { CategoricalBarChart } from './components/charts/CategoricalBarChart';
-import { transformEmergencyPreparedness } from './components/charts/chartTransformers';
+import { transformEmergencyPreparedness, transformPreparednessLevels } from './components/charts/chartTransformers';
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
@@ -71,6 +71,7 @@ export function EmergencyAnalysisPage() {
       <SummarySection d={d} />
       <ScoreSection d={d} />
       <EmergencyIndicatorsSection profile={d.emergency_action_profile} />
+      <PreparednessLevelsChartSection levels={d.preparedness_levels} />
       <PreparednessLevelsSection levels={d.preparedness_levels} />
       <AdequateResponseSection ar={d.adequate_response} />
       <FieldFrequenciesSection ff={d.field_frequencies} />
@@ -133,6 +134,25 @@ function EmergencyIndicatorsSection({
       valueLabel="%"
       emptyMessage="No hay datos suficientes para generar este gráfico."
       methodologicalNote="Este gráfico resume respuestas educativas y de simulación. No representa diagnóstico clínico."
+    />
+  );
+}
+
+function PreparednessLevelsChartSection({
+  levels,
+}: {
+  levels: EmergencyAnalysisData['preparedness_levels'];
+}) {
+  const chartData = transformPreparednessLevels(levels);
+  return (
+    <CategoricalBarChart
+      title="Distribución de niveles de preparación"
+      subtitle="Muestra la clasificación global de preparación ante emergencias según los resultados registrados."
+      data={chartData}
+      valueLabel="casos"
+      showPercentages
+      emptyMessage="No hay datos suficientes para generar este gráfico."
+      methodologicalNote="Este gráfico resume niveles de preparación educativa y de simulación. No representa diagnóstico clínico."
     />
   );
 }
