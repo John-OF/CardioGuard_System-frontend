@@ -9,7 +9,15 @@ CardioGuard usa dos enfoques de visualización:
 | **CSS Charts** | Principal — gráficos académicos categóricos (barras categorizadas, comparaciones agrupadas, métricas horizontales) | Componentes React + Tailwind CSS |
 | **Lightweight Charts** | Secundario — series de tiempo, tendencias, histogramas numéricos, evolución por fecha (uso futuro) | `lightweight-charts` |
 
-~~Recharts~~ fue eliminado (Block 11F) por incompatibilidad en tiempo de ejecución (`require_isUnsafeProperty is not a function`) derivada de su dependencia `es-toolkit` al ser pre-bundled por Vite.
+~~Recharts~~ fue eliminado (Block 11F) por incompatibilidad en tiempo de ejecución (`require_isUnsafeProperty is not a function`) derivada de su dependencia `es-toolkit` al ser pre-bundled por Vite. No debe reintroducirse.
+
+## Historial de integración
+
+- **Block 11F**: Componentes CSS reutilizables creados (CategoricalBarChart, ComparisonBarChart, HorizontalMetricChart, ChartLegend, chartTheme).
+- **Block 12**: EmergencyIndicatorsSection integrado en EmergencyAnalysisPage (CategoricalBarChart con emergency_action_profile).
+- **Block 13**: PreparednessLevelsChartSection integrado en EmergencyAnalysisPage (CategoricalBarChart con preparedness_levels).
+- **Block 14**: AdequateResponseChartSection integrado en EmergencyAnalysisPage (CategoricalBarChart con adequate_response).
+- **Block 15**: PrePostScoreChart refactorizado para usar ComparisonBarChart mediante transformPrePostToComparison.
 
 ## Componentes CSS reutilizables
 
@@ -25,7 +33,7 @@ src/features/admin/analysis/components/charts/
 ├── chartTheme.ts                # Paleta de colores semánticos (ChartTone) para barras
 ├── chartTypes.ts                # Tipos compartidos para Lightweight Charts
 ├── chartTransformers.ts         # Transformadores de datos API → formato de gráfico
-├── PrePostScoreChart.tsx        # Gráfico específico pre-test/post-test (CSS, estable)
+├── PrePostScoreChart.tsx        # Wrapper que delega en ComparisonBarChart (pre-test/post-test)
 └── README.md                    # Este archivo
 ```
 
@@ -121,3 +129,15 @@ Los componentes CSS no agregan dependencias nuevas. Usan solo React y Tailwind C
 
 ### Sin datos mock
 Los transformadores retornan arreglos vacíos cuando los datos de API no están disponibles. No se usan valores inventados en páginas de producción.
+
+## Páginas con gráficos integrados
+
+### /admin/analisis/emergencias (EmergencyAnalysisPage)
+Tres gráficos CategoricalBarChart:
+1. **Indicadores de preparación ante emergencias** — 5 barras del perfil de acción (porcentajes)
+2. **Distribución de niveles de preparación** — niveles bajo/media/alto (conteo + porcentaje)
+3. **Respuesta adecuada ante emergencia** — adecuado vs no adecuado (conteo + porcentaje)
+
+### /admin/analisis/pre-post (PrePostAnalysisPage)
+Un gráfico ComparisonBarChart (vía PrePostScoreChart wrapper):
+- **Comparación pre-test/post-test** — Educación, Emergencia y Total combinado
