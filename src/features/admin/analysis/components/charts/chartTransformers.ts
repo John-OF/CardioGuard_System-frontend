@@ -153,6 +153,15 @@ function methodLabel(method: string): string {
   return method;
 }
 
+function shortenLabel(label: string): string {
+  return label
+    .replace(/^ML:\s*/i, 'ML ')
+    .replace(/^Fuzzy:\s*/i, 'Fuzzy ')
+    .replace(/\s+probabilidad$/i, '')
+    .replace(/\s+significativamente/i, '')
+    .trim();
+}
+
 export function transformLogisticOddsRatios(data: unknown): HorizontalMetricItem[] {
   if (!data || typeof data !== 'object') return [];
 
@@ -293,9 +302,82 @@ export function transformAdequateResponseDistribution(data: unknown): Categorica
   return result;
 }
 
+export interface ChiSquareChartData {
+  labels: string[];
+  observed: number[];
+  expected: number[];
+  titleContext?: string;
+}
+
 export function transformContingencyTable(data: unknown): CategoricalBarItem[] {
   if (!data || !Array.isArray(data)) return [];
   return [];
+}
+
+export function transformChiSquareObservedExpectedChart(data: unknown): ChiSquareChartData | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const d = data as Record<string, unknown>;
+  const tests = d.tests;
+  if (!Array.isArray(tests)) return null;
+
+  const validTest = tests.find(
+    (t): t is Record<string, unknown> =>
+      t !== null && typeof t === 'object' && (t as Record<string, unknown>).valid === true,
+  );
+  if (!validTest) return null;
+
+  const observedTable = validTest.observed_table as Record<string, unknown> | undefined;
+  if (!observedTable) return null;
+
+  const columns = observedTable.column_headers;
+  const rows = observedTable.rows;
+  if (!Array.isArray(columns) || !Array.isArray(rows)) return null;
+
+  const labels: string[] = [];
+  const observed: number[] = [];
+  const expected: number[] = [];
+
+  const expectedTable = validTest.expected_table as Record<string, unknown> | undefined;
+  const expectedRows = expectedTable?.rows;
+
+    for (let ri = 0; ri < rows.length; ri++) {
+    const row = rows[ri] as { label?: string; cells?: number[] };
+    const rowLabel = shortenLabel(String(row.label ?? ''));
+    const cells = row.cells;
+    if (!Array.isArray(cells)) continue;
+
+    for (let ci = 0; ci < cells.length; ci++) {
+      const colLabel = shortenLabel(
+        ci < columns.length
+          ? String((columns[ci] as { label?: string }).label ?? '')
+          : `Col ${ci + 1}`,
+      );
+      labels.push(`${rowLabel} / ${colLabel}`);
+      observed.push(cells[ci]);
+
+      if (Array.isArray(expectedRows) && ri < expectedRows.length) {
+        const expRow = expectedRows[ri] as { cells?: number[] };
+        const expCells = expRow.cells;
+        if (Array.isArray(expCells) && ci < expCells.length) {
+          expected.push(expCells[ci]);
+        }
+      }
+    }
+  }
+
+  if (observed.length === 0) return null;
+
+  const variables = validTest.variables as Record<string, unknown> | undefined;
+  const xLabel = String(
+    (variables?.x as Record<string, unknown> | undefined)?.label ?? '',
+  );
+  const yLabel = String(
+    (variables?.y as Record<string, unknown> | undefined)?.label ?? '',
+  );
+  const titleContext = xLabel && yLabel ? `${xLabel} vs ${yLabel}` : undefined;
+
+  return { labels, observed, expected, titleContext };
 }
 
 export function transformPrePostToComparison(data: unknown): ComparisonBarItem[] {

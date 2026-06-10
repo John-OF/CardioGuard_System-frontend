@@ -10,7 +10,7 @@ export interface BaseChartJsCardProps {
   emptyReason?: ChartEmptyReason;
   emptyMessage?: string;
   methodologicalNote?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export function BaseChartJsCard({

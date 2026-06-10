@@ -12,6 +12,7 @@ import { LoadingState } from './components/LoadingState';
 import { MetricCard } from './components/MetricCard';
 import { NoticeBox } from './components/NoticeBox';
 import { StatusBadge } from './components/StatusBadge';
+import { ChiSquareObservedExpectedChart } from './components/charts/chartjs/ChiSquareObservedExpectedChart';
 
 function asArray<T>(value: T[] | undefined | null): T[] {
   return Array.isArray(value) ? value : [];
@@ -73,6 +74,8 @@ export function ChiSquareAnalysisPage() {
       )}
 
       <SummaryCards data={data} />
+
+      <ChiSquareObservedExpectedChart data={data} />
 
       {validTests.length === 0 && (
         <NoticeBox variant="warning">

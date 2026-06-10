@@ -150,3 +150,15 @@ Tres gráficos CategoricalBarChart:
 ### /admin/analisis/pre-post (PrePostAnalysisPage)
 Un gráfico ComparisonBarChart (vía PrePostScoreChart wrapper):
 - **Comparación pre-test/post-test** — Educación, Emergencia y Total combinado
+
+### /admin/analisis/correlaciones (CorrelationAnalysisPage)
+Un gráfico HorizontalMetricChart:
+- **Fuerza de correlación entre variables** — coeficientes con soporte de valores positivos y negativos
+
+### /admin/analisis/regresion-logistica (LogisticRegressionAnalysisPage)
+Un gráfico HorizontalMetricChart:
+- **Razón de momios por variable** — odds ratios transformados mediante log(OR) centrado en cero
+
+### /admin/analisis/chi-cuadrado (ChiSquareAnalysisPage)
+Un gráfico Chart.js:
+- **Frecuencias observadas y esperadas** — barras agrupadas para la primera prueba válida, con conteos reales vs. esperados bajo H0

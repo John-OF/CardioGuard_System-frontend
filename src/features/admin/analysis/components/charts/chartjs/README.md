@@ -21,12 +21,13 @@ Do NOT install from GitHub or use CDN.
 
 ```
 src/features/admin/analysis/components/charts/chartjs/
-├── BaseChartJsCard.tsx      # Wrapper with ChartCard + empty state
-├── ChartJsEmptyState.tsx    # Delegates to CSS ChartEmptyState
-├── ChartJsTheme.ts          # Map project ChartTone to Chart.js colors
-├── ChartJsRegistry.ts       # Central Chart.js component registration
-├── ChartJsSmokeTest.tsx     # Minimal isolated verification (not in production)
-└── README.md                # This file
+├── BaseChartJsCard.tsx                # Wrapper with ChartCard + empty state
+├── ChartJsEmptyState.tsx              # Delegates to CSS ChartEmptyState
+├── ChartJsTheme.ts                    # Map project ChartTone to Chart.js colors
+├── ChartJsRegistry.ts                 # Central Chart.js component registration
+├── ChiSquareObservedExpectedChart.tsx # First production Chart.js chart
+├── ChartJsSmokeTest.tsx               # Minimal isolated verification (not in production)
+└── README.md                          # This file
 ```
 
 ## Registration
@@ -50,6 +51,14 @@ import { BaseChartJsCard } from './chartjs/BaseChartJsCard';
   <Bar data={data} options={options} />
 </BaseChartJsCard>
 ```
+
+## Production charts
+
+### ChiSquareObservedExpectedChart
+
+Integrated into `ChiSquareAnalysisPage.tsx`. Shows a grouped bar chart comparing observed vs. expected frequencies from the first valid chi-square test.
+
+Transformer: `transformChiSquareObservedExpectedChart` in `chartTransformers.ts`
 
 ## CSS Chart Fallback
 
