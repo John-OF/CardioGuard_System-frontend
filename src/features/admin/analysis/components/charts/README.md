@@ -1,17 +1,22 @@
-# Charts — CardioGuard / CSS + Lightweight Charts
+# Charts — CardioGuard / CSS + Chart.js
 
-## Estrategia de gráficos (Block 11F)
+## Estrategia de gráficos (Block 19)
 
 CardioGuard usa dos enfoques de visualización:
 
 | Enfoque | Propósito | Implementación |
 |---------|-----------|----------------|
-| **CSS Charts** | Principal — gráficos académicos categóricos (barras categorizadas, comparaciones agrupadas, métricas horizontales) | Componentes React + Tailwind CSS |
-| **Lightweight Charts** | Secundario — series de tiempo, tendencias, histogramas numéricos, evolución por fecha (uso futuro) | `lightweight-charts` |
+| **CSS Charts** | Fallback — gráficos académicos categóricos simples (barras, comparaciones, métricas horizontales) | Componentes React + Tailwind CSS |
+| **Chart.js** | Principal — gráficos profesionales académicos/estadísticos (barras, líneas, dona, dispersión, mixtos) | `chart.js` + `react-chartjs-2` |
 
-~~Recharts~~ fue eliminado (Block 11F) por incompatibilidad en tiempo de ejecución (`require_isUnsafeProperty is not a function`) derivada de su dependencia `es-toolkit` al ser pre-bundled por Vite. No debe reintroducirse.
+### Historial
 
-## Historial de integración
+- **Recharts** fue eliminado (Block 11F) por incompatibilidad en tiempo de ejecución (`require_isUnsafeProperty is not a function`). No debe reintroducirse.
+- **Lightweight Charts** fue eliminado (Block 19) porque no se alineaba con las necesidades de visualización académica/estadística del proyecto.
+- **Chart.js** fue adoptado (Block 19) como biblioteca principal para gráficos profesionales.
+- **CSS Charts** se mantienen como fallback y para visualizaciones simples y controladas.
+
+### Historial de integración CSS
 
 - **Block 11F**: Componentes CSS reutilizables creados (CategoricalBarChart, ComparisonBarChart, HorizontalMetricChart, ChartLegend, chartTheme).
 - **Block 12**: EmergencyIndicatorsSection integrado en EmergencyAnalysisPage (CategoricalBarChart con emergency_action_profile).
@@ -23,7 +28,6 @@ CardioGuard usa dos enfoques de visualización:
 
 ```
 src/features/admin/analysis/components/charts/
-├── BaseLightweightChart.tsx     # Wrapper base para Lightweight Charts
 ├── CategoricalBarChart.tsx      # Barras horizontales categóricas (nivel, frecuencia, porcentaje)
 ├── ComparisonBarChart.tsx       # Barras agrupadas para comparación por pares (pre/post, antes/después)
 ├── HorizontalMetricChart.tsx    # Barras de métricas numéricas con soporte centerAtZero (correlaciones, odds ratios)
@@ -31,9 +35,16 @@ src/features/admin/analysis/components/charts/
 ├── ChartEmptyState.tsx          # Estado vacío para gráficos sin datos
 ├── ChartLegend.tsx              # Leyenda reutilizable con códigos de color semánticos
 ├── chartTheme.ts                # Paleta de colores semánticos (ChartTone) para barras
-├── chartTypes.ts                # Tipos compartidos para Lightweight Charts
+├── chartTypes.ts                # Tipos compartidos
 ├── chartTransformers.ts         # Transformadores de datos API → formato de gráfico
 ├── PrePostScoreChart.tsx        # Wrapper que delega en ComparisonBarChart (pre-test/post-test)
+├── chartjs/                     # Infraestructura Chart.js
+│   ├── BaseChartJsCard.tsx
+│   ├── ChartJsEmptyState.tsx
+│   ├── ChartJsTheme.ts
+│   ├── ChartJsRegistry.ts
+│   ├── ChartJsSmokeTest.tsx     # Solo para verificación manual (no importado en producción)
+│   └── README.md
 └── README.md                    # Este archivo
 ```
 
@@ -99,15 +110,13 @@ import { ChartLegend } from './charts/ChartLegend';
 />
 ```
 
-## Cuándo usar cada componente
+## Cuándo usar cada componente CSS
 
 | Componente | Caso de uso |
 |------------|-------------|
 | `CategoricalBarChart` | Distribuciones de frecuencia, niveles (bajo/medio/alto), respuestas (adecuado/no adecuado), porcentajes por categoría |
 | `ComparisonBarChart` | Comparación pre-test/post-test, antes/después, dos grupos por categoría |
 | `HorizontalMetricChart` | Correlaciones, odds ratios, importancia de características, métricas numéricas con soporte de valores negativos |
-| `BaseLightweightChart` | Series de tiempo, tendencias, histogramas numéricos, evolución temporal |
-| `ChartEmptyState` | Estado vacío para cualquier gráfico sin datos |
 
 ## Reglas
 
@@ -124,8 +133,8 @@ Todo texto visible al usuario debe estar en español, incluyendo títulos, etiqu
 ### Nota metodológica no diagnóstica
 Los gráficos académicos deben incluir una nota metodológica que aclare el propósito no clínico de la visualización.
 
-### Sin dependencias externas
-Los componentes CSS no agregan dependencias nuevas. Usan solo React y Tailwind CSS.
+### Sin dependencias externas adicionales
+Los componentes CSS no agregan dependencias nuevas. Solo usan React y Tailwind CSS.
 
 ### Sin datos mock
 Los transformadores retornan arreglos vacíos cuando los datos de API no están disponibles. No se usan valores inventados en páginas de producción.

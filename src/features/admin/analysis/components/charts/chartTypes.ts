@@ -25,9 +25,3 @@ export type ChartEmptyReason =
   | 'insufficient_data'
   | 'endpoint_not_ready'
   | 'feature_not_implemented';
-
-export type LightweightChartKind =
-  | 'line'
-  | 'area'
-  | 'histogram'
-  | 'bar';
