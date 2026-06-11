@@ -32,6 +32,7 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── MLPredictionDoughnutChart.tsx                # Production Chart.js chart (ML prediction donut)
 ├── MLProbabilityBucketsBarChart.tsx          # Production Chart.js chart (ML probability buckets bar)
 ├── CorrelationStrengthBarChart.tsx           # Production Chart.js chart (correlation strength bar)
+├── LogisticOddsRatioBarChart.tsx             # Production Chart.js chart (logistic odds ratio bar)
 ├── ChartJsSmokeTest.tsx                   # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
@@ -125,6 +126,20 @@ Scale: X axis from -1 to 1 with 0.5 step ticks.
 Colors: Mapped from each item's tone (success/primary/danger/info) via `chartTheme.ts`.
 
 Tooltip: `r = {coefficient} · {strength} · {direction} · p={p-value} · ({method})`.
+
+### LogisticOddsRatioBarChart
+
+Integrated into `LogisticRegressionAnalysisPage.tsx` (Block 28). Migrated from CSS `HorizontalMetricChart` to Chart.js. Shows a horizontal bar chart with log(odds ratio) values centered at zero (OR=1), with per-bar semantic colors based on direction.
+
+Data source: `GET /api/admin/analysis/logistic-regression` via `transformLogisticOddsRatios` in `chartTransformers.ts`.
+
+Transformer: `transformLogisticOddsRatios` in `chartTransformers.ts`.
+
+Scale: Symmetric X axis centered at zero, range = ±maxAbs(log(OR)) with 0.5 minimum.
+
+Colors: OR > 1.2 → danger (red), OR < 0.85 → success (green), near OR=1 → neutral (grey) from `chartTheme.ts`.
+
+Tooltip: `log(OR) = {value} · OR={odds_ratio} · {interpretation}`.
 
 ## CSS Chart Fallback
 

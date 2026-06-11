@@ -46,6 +46,7 @@ src/features/admin/analysis/components/charts/
 │   ├── MLPredictionDoughnutChart.tsx           # Dona de predicción ML (descriptivo)
 │   ├── MLProbabilityBucketsBarChart.tsx      # Barras de probabilidad ML (descriptivo)
 │   ├── CorrelationStrengthBarChart.tsx         # Barras de correlación (correlaciones)
+│   ├── LogisticOddsRatioBarChart.tsx            # Barras de razón de momios (regresión logística)
 │   ├── ChartJsSmokeTest.tsx     # Solo para verificación manual (no importado en producción)
 │   └── README.md
 └── README.md                    # Este archivo
@@ -159,8 +160,8 @@ Un gráfico Chart.js (migrado desde CSS HorizontalMetricChart en Block 27):
 - **Fuerza de correlación entre variables** — CorrelationStrengthBarChart (barras horizontales con coefientes de -1 a 1, colores por dirección/fuerza, tooltip con r, p-valor y método)
 
 ### /admin/analisis/regresion-logistica (LogisticRegressionAnalysisPage)
-Un gráfico HorizontalMetricChart:
-- **Razón de momios por variable** — odds ratios transformados mediante log(OR) centrado en cero
+Un gráfico Chart.js (migrado desde CSS HorizontalMetricChart en Block 28):
+- **Razón de momios por variable** — LogisticOddsRatioBarChart (barras horizontales con log(OR) centrado en OR=1, colores por dirección, tooltip con OR original e interpretación)
 
 ### /admin/analisis/chi-cuadrado (ChiSquareAnalysisPage)
 Un gráfico Chart.js:
