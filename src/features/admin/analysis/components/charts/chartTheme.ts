@@ -12,8 +12,7 @@ export type ChartTone =
   | 'postTest'
   | 'adequate'
   | 'notAdequate'
-  | 'ml'
-  | 'fuzzy';
+  | 'ml';
 
 export const CHART_TONE_CLASS: Record<ChartTone, string> = {
   neutral: 'bg-slate-400',
@@ -30,7 +29,6 @@ export const CHART_TONE_CLASS: Record<ChartTone, string> = {
   adequate: 'bg-emerald-500',
   notAdequate: 'bg-red-500',
   ml: 'bg-purple-500',
-  fuzzy: 'bg-orange-500',
 };
 
 export const CHART_TONE_HEX: Record<ChartTone, string> = {
@@ -48,5 +46,4 @@ export const CHART_TONE_HEX: Record<ChartTone, string> = {
   adequate: '#10b981',
   notAdequate: '#ef4444',
   ml: '#8b5cf6',
-  fuzzy: '#f97316',
 };

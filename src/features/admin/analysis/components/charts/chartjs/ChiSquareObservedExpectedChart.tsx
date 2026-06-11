@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 import './ChartJsRegistry';
 import { BaseChartJsCard } from './BaseChartJsCard';
@@ -13,8 +14,10 @@ interface ChiSquareObservedExpectedChartProps {
 export function ChiSquareObservedExpectedChart({
   data,
 }: ChiSquareObservedExpectedChartProps) {
-  const chartData: ChiSquareChartData | null =
-    transformChiSquareObservedExpectedChart(data);
+  const chartData: ChiSquareChartData | null = useMemo(
+    () => transformChiSquareObservedExpectedChart(data),
+    [data],
+  );
 
   const hasExpected =
     chartData !== null && chartData.expected.length === chartData.observed.length;

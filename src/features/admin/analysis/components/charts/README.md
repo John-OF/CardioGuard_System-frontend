@@ -37,7 +37,7 @@ src/features/admin/analysis/components/charts/
 ├── chartTheme.ts                # Paleta de colores semánticos (ChartTone) para barras
 ├── chartTypes.ts                # Tipos compartidos
 ├── chartTransformers.ts         # Transformadores de datos API → formato de gráfico
-├── PrePostScoreChart.tsx        # Wrapper que delega en ComparisonBarChart (pre-test/post-test)
+├── PrePostScoreChart.tsx        # Chart.js horizontal grouped bar (pre-test/post-test), no delega en ComparisonBarChart
 ├── chartjs/                     # Infraestructura Chart.js
 │   ├── BaseChartJsCard.tsx
 │   ├── ChartJsEmptyState.tsx

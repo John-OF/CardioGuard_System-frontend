@@ -117,9 +117,7 @@ export function AdequateResponseBarChart({
       dataAvailable
       methodologicalNote="Este gráfico resume criterios de actuación ante emergencia dentro del simulador. No representa diagnóstico clínico."
     >
-      <div style={{ height: 200 }}>
-        <Bar data={barData} options={options} />
-      </div>
+      <Bar data={barData} options={options} />
     </BaseChartJsCard>
   );
 }

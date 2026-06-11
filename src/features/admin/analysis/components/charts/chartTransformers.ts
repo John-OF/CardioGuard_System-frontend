@@ -15,16 +15,6 @@ export interface PrePostScoreSet {
   postMean: number;
 }
 
-export function transformRiskLevelDistribution(data: unknown): CategoricalBarItem[] {
-  if (!data || !Array.isArray(data)) return [];
-  return [];
-}
-
-export function transformMLProbabilityBuckets(data: unknown): CategoricalBarItem[] {
-  if (!data || !Array.isArray(data)) return [];
-  return [];
-}
-
 export function transformPrePostScores(data: unknown): PrePostScoreSet[] {
   if (!data || typeof data !== 'object') return [];
 
@@ -308,11 +298,6 @@ export interface ChiSquareChartData {
   observed: number[];
   expected: number[];
   titleContext?: string;
-}
-
-export function transformContingencyTable(data: unknown): CategoricalBarItem[] {
-  if (!data || !Array.isArray(data)) return [];
-  return [];
 }
 
 export function transformChiSquareObservedExpectedChart(data: unknown): ChiSquareChartData | null {
