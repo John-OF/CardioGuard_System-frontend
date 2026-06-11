@@ -80,7 +80,7 @@ export function PreparednessLevelsDoughnutChart({
             const label = ctx.label ?? '';
             if (val == null) return `${label}: —`;
             const pctStr = pct != null ? ` (${pct.toFixed(1)}%)` : '';
-            return `${label}: ${val} casos${pctStr}`;
+            return `${label}: ${val} evaluaciones${pctStr}`;
           },
         },
       },

@@ -10,6 +10,8 @@ import { DataQualityCard } from './components/DataQualityCard';
 import { NoticeBox } from './components/NoticeBox';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
+import { MLPredictionDoughnutChart } from './components/charts/chartjs/MLPredictionDoughnutChart';
+import { MLProbabilityBucketsBarChart } from './components/charts/chartjs/MLProbabilityBucketsBarChart';
 
 const GROUP_LABELS: Record<string, string> = {
   evaluations: 'Evaluaciones',
@@ -70,6 +72,7 @@ export function DescriptiveAnalysisPage() {
       <SummaryCards d={d} />
       <EvaluationTypeDist rows={d.evaluation_type_distribution} />
       <CycleCounts cycles={d.cycle_counts} />
+      <DescriptiveChartsSection d={d} />
       <CategoricalSection cf={d.categorical_frequencies} />
       <ContinuousSection cs={d.continuous_stats} />
       <DataQualityTab d={d} />
@@ -145,6 +148,20 @@ function CycleCounts({ cycles }: { cycles: DescriptiveAnalysisData['cycle_counts
         <MetricCard label="Post-tests" value={cycles.total_post_tests} />
         <MetricCard label="Completos" value={cycles.complete_cycles} />
         <MetricCard label="Incompletos" value={cycles.incomplete_cycles} />
+      </div>
+    </section>
+  );
+}
+
+function DescriptiveChartsSection({ d }: { d: DescriptiveAnalysisData }) {
+  return (
+    <section>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+        Visualizaciones
+      </h2>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <MLPredictionDoughnutChart data={d} />
+        <MLProbabilityBucketsBarChart data={d} />
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import type { CategoricalBarItem } from './CategoricalBarChart';
 import type { HorizontalMetricItem } from './HorizontalMetricChart';
 import type { ComparisonBarItem } from './ComparisonBarChart';
+import { CHART_TONE_HEX } from './chartTheme';
 import type { ChartTone } from './chartTheme';
 
 export interface ChartPoint {
@@ -389,4 +390,109 @@ export function transformPrePostToComparison(data: unknown): ComparisonBarItem[]
     secondLabel: 'Post-test',
     secondValue: s.postMean,
   }));
+}
+
+export interface ChartJsBucketData {
+  labels: string[];
+  values: number[];
+  percentages?: number[];
+  colors?: string[];
+}
+
+const ML_PREDICTION_LABEL_MAP: Record<string, string> = {
+  '0': 'Menor probabilidad ML',
+  '1': 'Mayor probabilidad ML',
+  bajo: 'Menor probabilidad ML',
+  alto: 'Mayor probabilidad ML',
+  low: 'Menor probabilidad ML',
+  high: 'Mayor probabilidad ML',
+  'menor probabilidad': 'Menor probabilidad ML',
+  'mayor probabilidad': 'Mayor probabilidad ML',
+};
+
+const ML_PREDICTION_COLOR_MAP: Record<string, string> = {
+  '0': CHART_TONE_HEX.lowRisk,
+  '1': CHART_TONE_HEX.highRisk,
+  bajo: CHART_TONE_HEX.lowRisk,
+  alto: CHART_TONE_HEX.highRisk,
+  low: CHART_TONE_HEX.lowRisk,
+  high: CHART_TONE_HEX.highRisk,
+  'menor probabilidad': CHART_TONE_HEX.lowRisk,
+  'mayor probabilidad': CHART_TONE_HEX.highRisk,
+};
+
+export function transformRiskLevelDistributionChartJs(data: unknown): ChartJsBucketData | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const d = data as Record<string, unknown>;
+  const cf = d.categorical_frequencies as Record<string, unknown> | undefined;
+  if (!cf) return null;
+
+  const system = cf.system as Record<string, unknown> | undefined;
+  if (!system) return null;
+
+  const mlPrediction = system.ml_prediction;
+  if (!Array.isArray(mlPrediction) || mlPrediction.length === 0) return null;
+
+  const labels: string[] = [];
+  const values: number[] = [];
+  const percentages: number[] = [];
+  const colors: string[] = [];
+
+  for (const row of mlPrediction) {
+    const r = row as { value?: string | number; count?: number; percentage?: number };
+    if (typeof r.count !== 'number') continue;
+
+    const rawKey = String(r.value ?? '').toLowerCase().trim();
+    const mappedLabel = ML_PREDICTION_LABEL_MAP[rawKey] ?? String(r.value ?? '');
+
+    labels.push(mappedLabel);
+    values.push(r.count);
+    percentages.push(typeof r.percentage === 'number' ? r.percentage : 0);
+
+    const color = ML_PREDICTION_COLOR_MAP[rawKey];
+    colors.push(color ?? CHART_TONE_HEX.highRisk);
+  }
+
+  if (labels.length === 0) return null;
+  return { labels, values, percentages, colors };
+}
+
+export function transformMLProbabilityBucketsChartJs(data: unknown): ChartJsBucketData | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const d = data as Record<string, unknown>;
+  const histograms = d.histograms as Record<string, unknown> | undefined;
+  if (!histograms) return null;
+
+  const bins = histograms.ml_probability;
+  if (!Array.isArray(bins) || bins.length === 0) return null;
+
+  const total = bins.reduce((s: number, b: unknown) => {
+    const bin = b as { count?: number };
+    return s + (typeof bin.count === 'number' ? bin.count : 0);
+  }, 0);
+
+  if (total === 0) return null;
+
+  const labels: string[] = [];
+  const values: number[] = [];
+  const percentages: number[] = [];
+  const colors: string[] = [];
+
+  for (const bin of bins) {
+    const b = bin as { bin_start?: number; bin_end?: number; count?: number };
+    if (typeof b.bin_start !== 'number' || typeof b.bin_end !== 'number' || typeof b.count !== 'number') continue;
+    if (b.count === 0) continue;
+
+    const startPct = (b.bin_start * 100).toFixed(0);
+    const endPct = (b.bin_end * 100).toFixed(0);
+    labels.push(`${startPct}% - ${endPct}%`);
+    values.push(b.count);
+    percentages.push((b.count / total) * 100);
+    colors.push(CHART_TONE_HEX.ml);
+  }
+
+  if (labels.length === 0) return null;
+  return { labels, values, percentages, colors };
 }

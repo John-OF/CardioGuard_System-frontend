@@ -43,6 +43,8 @@ src/features/admin/analysis/components/charts/
 │   ├── ChartJsEmptyState.tsx
 │   ├── ChartJsTheme.ts
 │   ├── ChartJsRegistry.ts
+│   ├── MLPredictionDoughnutChart.tsx           # Dona de predicción ML (descriptivo)
+│   ├── MLProbabilityBucketsBarChart.tsx      # Barras de probabilidad ML (descriptivo)
 │   ├── ChartJsSmokeTest.tsx     # Solo para verificación manual (no importado en producción)
 │   └── README.md
 └── README.md                    # Este archivo
@@ -162,3 +164,10 @@ Un gráfico HorizontalMetricChart:
 ### /admin/analisis/chi-cuadrado (ChiSquareAnalysisPage)
 Un gráfico Chart.js:
 - **Frecuencias observadas y esperadas** — barras agrupadas para la primera prueba válida, con conteos reales vs. esperados bajo H0
+
+### /admin/analisis/descriptivo (DescriptiveAnalysisPage)
+Dos gráficos Chart.js (Block 25):
+1. **Distribución de predicción ML** — MLPredictionDoughnutChart (dona proporcional con clasificación menor/mayor probabilidad ML) usando frecuencias de `ml_prediction` del sistema. No representa niveles de riesgo reales — el backend descriptivo no expone `risk_level_distribution` para ese fin.
+2. **Distribución de probabilidad ML** — MLProbabilityBucketsBarChart (barras horizontales con intervalos de probabilidad) usando `histograms.ml_probability`.
+
+Ambos gráficos se renderizan en una grilla responsiva de 2 columnas después de las tarjetas de resumen y antes de las tablas de frecuencias detalladas. Usan datos reales del endpoint `GET /api/admin/analysis/descriptive` sin valores mock.

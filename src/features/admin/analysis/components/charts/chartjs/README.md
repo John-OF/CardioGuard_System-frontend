@@ -29,6 +29,8 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── EmergencyIndicatorsBarChart.tsx        # Production Chart.js chart (emergency indicators bar)
 ├── PreparednessLevelsDoughnutChart.tsx    # Production Chart.js chart (preparedness donut)
 ├── AdequateResponseBarChart.tsx           # Production Chart.js chart (adequate response bar)
+├── MLPredictionDoughnutChart.tsx                # Production Chart.js chart (ML prediction donut)
+├── MLProbabilityBucketsBarChart.tsx          # Production Chart.js chart (ML probability buckets bar)
 ├── ChartJsSmokeTest.tsx                   # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
@@ -86,6 +88,28 @@ Uses `transformEmergencyPreparedness` from `chartTransformers.ts` and individual
 Integrated into `EmergencyAnalysisPage.tsx` (migrated from CSS CategoricalBarChart in Block 24). Shows a horizontal bar chart comparing adequate vs. non-adequate emergency response counts with percentages in tooltip.
 
 Uses `transformAdequateResponseDistribution` from `chartTransformers.ts` with adequate (green) and notAdequate (red) tones.
+
+### MLPredictionDoughnutChart
+
+Integrated into `DescriptiveAnalysisPage.tsx` (Block 25). Shows a doughnut chart with proportional distribution of ML model predictions (Menor probabilidad / Mayor probabilidad). Uses binary classification from `ml_prediction` — not a true risk level distribution (the backend does not expose `risk_level_distribution` or `fuzzy_risk_level` data in the descriptive endpoint).
+
+Data source: `categorical_frequencies.system.ml_prediction` from `GET /api/admin/analysis/descriptive`.
+
+Transformer: `transformRiskLevelDistributionChartJs` in `chartTransformers.ts`.
+
+Labels: `0` → "Menor probabilidad ML", `1` → "Mayor probabilidad ML" (also supports string variants: low/high, bajo/alto).
+
+Colors: Menor probabilidad → lowRisk (green), Mayor probabilidad → highRisk (red) from `chartTheme.ts`.
+
+### MLProbabilityBucketsBarChart
+
+Integrated into `DescriptiveAnalysisPage.tsx` (Block 25). Shows a horizontal bar chart with ML probability distribution bucketed into interpretable intervals.
+
+Data source: `histograms.ml_probability` from `GET /api/admin/analysis/descriptive`.
+
+Transformer: `transformMLProbabilityBucketsChartJs` in `chartTransformers.ts`.
+
+Color: ml (purple) from `chartTheme.ts`.
 
 ## CSS Chart Fallback
 
