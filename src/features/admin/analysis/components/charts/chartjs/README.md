@@ -31,6 +31,7 @@ src/features/admin/analysis/components/charts/chartjs/
 ├── AdequateResponseBarChart.tsx           # Production Chart.js chart (adequate response bar)
 ├── MLPredictionDoughnutChart.tsx                # Production Chart.js chart (ML prediction donut)
 ├── MLProbabilityBucketsBarChart.tsx          # Production Chart.js chart (ML probability buckets bar)
+├── CorrelationStrengthBarChart.tsx           # Production Chart.js chart (correlation strength bar)
 ├── ChartJsSmokeTest.tsx                   # Minimal isolated verification (not in production)
 └── README.md                          # This file
 ```
@@ -110,6 +111,20 @@ Data source: `histograms.ml_probability` from `GET /api/admin/analysis/descripti
 Transformer: `transformMLProbabilityBucketsChartJs` in `chartTransformers.ts`.
 
 Color: ml (purple) from `chartTheme.ts`.
+
+### CorrelationStrengthBarChart
+
+Integrated into `CorrelationAnalysisPage.tsx` (Block 27). Migrated from CSS `HorizontalMetricChart` to Chart.js. Shows a horizontal bar chart with correlation coefficients ranging from -1 to 1, with per-bar semantic colors based on strength and direction.
+
+Data source: `GET /api/admin/analysis/correlations` via `transformCorrelationStrengths` in `chartTransformers.ts`.
+
+Transformer: `transformCorrelationStrengths` in `chartTransformers.ts`.
+
+Scale: X axis from -1 to 1 with 0.5 step ticks.
+
+Colors: Mapped from each item's tone (success/primary/danger/info) via `chartTheme.ts`.
+
+Tooltip: `r = {coefficient} · {strength} · {direction} · p={p-value} · ({method})`.
 
 ## CSS Chart Fallback
 

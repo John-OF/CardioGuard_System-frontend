@@ -45,6 +45,7 @@ src/features/admin/analysis/components/charts/
 │   ├── ChartJsRegistry.ts
 │   ├── MLPredictionDoughnutChart.tsx           # Dona de predicción ML (descriptivo)
 │   ├── MLProbabilityBucketsBarChart.tsx      # Barras de probabilidad ML (descriptivo)
+│   ├── CorrelationStrengthBarChart.tsx         # Barras de correlación (correlaciones)
 │   ├── ChartJsSmokeTest.tsx     # Solo para verificación manual (no importado en producción)
 │   └── README.md
 └── README.md                    # Este archivo
@@ -154,8 +155,8 @@ Un gráfico Chart.js (vía PrePostScoreChart):
 - **Comparación pre-test/post-test** — barras agrupadas horizontales con puntajes promedio pre-test y post-test para Educación, Emergencia y Total combinado
 
 ### /admin/analisis/correlaciones (CorrelationAnalysisPage)
-Un gráfico HorizontalMetricChart:
-- **Fuerza de correlación entre variables** — coeficientes con soporte de valores positivos y negativos
+Un gráfico Chart.js (migrado desde CSS HorizontalMetricChart en Block 27):
+- **Fuerza de correlación entre variables** — CorrelationStrengthBarChart (barras horizontales con coefientes de -1 a 1, colores por dirección/fuerza, tooltip con r, p-valor y método)
 
 ### /admin/analisis/regresion-logistica (LogisticRegressionAnalysisPage)
 Un gráfico HorizontalMetricChart:
