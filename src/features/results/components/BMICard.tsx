@@ -11,7 +11,7 @@ export function BMICard({ bmi, category }: BMICardProps) {
   return (
     <section className="card" aria-labelledby="bmi-title">
       <h2 id="bmi-title" className="text-xl font-semibold text-slate-900">
-        Su Índice de Masa Corporal
+        Su IMC aproximado
       </h2>
       <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-5xl font-bold text-slate-900">{bmi.toFixed(1)}</p>

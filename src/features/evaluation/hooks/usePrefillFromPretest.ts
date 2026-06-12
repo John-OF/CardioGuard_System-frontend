@@ -17,6 +17,8 @@ const PREFILL_KEYS: (keyof EvaluationRequest)[] = [
   'fasting_glucose',
   'chest_pain_effort',
   'chest_pain_type',
+  'weight_range',
+  'height_range',
   'weight_kg',
   'height_cm',
   // Paso 2 - Hábitos

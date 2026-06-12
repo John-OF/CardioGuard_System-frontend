@@ -69,12 +69,8 @@ export function useEvaluationForm(): UseEvaluationFormReturn {
         required('fasting_glucose');
         required('chest_pain_effort');
         required('chest_pain_type');
-        if (formData.weight_kg === undefined) e.weight_kg = 'Ingrese el peso';
-        else if (formData.weight_kg < 30 || formData.weight_kg > 180)
-          e.weight_kg = 'El peso debe estar entre 30 y 180 kg';
-        if (formData.height_cm === undefined) e.height_cm = 'Ingrese la talla';
-        else if (formData.height_cm < 120 || formData.height_cm > 220)
-          e.height_cm = 'La talla debe estar entre 120 y 220 cm';
+        required('weight_range', 'Seleccione el rango de peso');
+        required('height_range', 'Seleccione el rango de estatura');
         break;
 
       case 2:

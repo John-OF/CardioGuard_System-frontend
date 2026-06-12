@@ -1,7 +1,10 @@
 import type { EvaluationType } from './results';
+import type { WeightRange, HeightRange } from '@/features/evaluation/utils/rangeMapping';
 
 // Espejo exacto del schema Pydantic del backend (evaluation.py)
 // Si cambia el backend, este es el primer archivo a actualizar.
+
+export type { WeightRange, HeightRange };
 
 export type ResponderType =
   | 'El participante responde directamente'
@@ -85,6 +88,8 @@ export interface EvaluationRequest {
   fasting_glucose: FastingGlucose;
   chest_pain_effort: ChestPainEffort;
   chest_pain_type: ChestPainType;
+  weight_range: WeightRange;
+  height_range: HeightRange;
   weight_kg: number;
   height_cm: number;
 

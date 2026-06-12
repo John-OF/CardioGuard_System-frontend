@@ -21,6 +21,8 @@ import type {
   EmergencyAction,
   ReactionTime,
   EmergencySupportAction,
+  WeightRange,
+  HeightRange,
 } from '@/types/evaluation';
 
 export interface Option<T extends string> {
@@ -170,4 +172,23 @@ export const EMERGENCY_SUPPORT_OPTIONS: Option<EmergencySupportAction>[] = [
   { value: 'Buscaría ayuda de otra persona cercana', label: 'Buscaría ayuda de otra persona cercana' },
   { value: 'Esperaría a que llegue la ambulancia sin intervenir', label: 'Esperaría a que llegue la ambulancia sin intervenir' },
   { value: 'No sabría qué hacer', label: 'No sabría qué hacer' },
+];
+
+export const WEIGHT_RANGE_OPTIONS: Option<WeightRange>[] = [
+  { value: 'LT_50', label: 'Menos de 50 kg' },
+  { value: '50_59', label: '50–59 kg' },
+  { value: '60_69', label: '60–69 kg' },
+  { value: '70_79', label: '70–79 kg' },
+  { value: '80_89', label: '80–89 kg' },
+  { value: '90_99', label: '90–99 kg' },
+  { value: 'GTE_100', label: '100 kg o más' },
+];
+
+export const HEIGHT_RANGE_OPTIONS: Option<HeightRange>[] = [
+  { value: 'LT_140', label: 'Menos de 140 cm' },
+  { value: '140_149', label: '140–149 cm' },
+  { value: '150_159', label: '150–159 cm' },
+  { value: '160_169', label: '160–169 cm' },
+  { value: '170_179', label: '170–179 cm' },
+  { value: 'GTE_180', label: '180 cm o más' },
 ];
