@@ -413,9 +413,6 @@ function FuzzyExclusionSection({
       <p className="mt-1 text-sm text-slate-600">
         {exclusion.excluded.join(', ')} — {exclusion.reason}
       </p>
-      <p className="mt-0.5 text-xs text-slate-400 italic">
-        {exclusion.future_block}
-      </p>
     </section>
   );
 }

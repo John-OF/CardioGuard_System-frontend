@@ -243,8 +243,9 @@ function DataQualityTab({ d }: { d: DescriptiveAnalysisData }) {
           Campos excluidos
         </h4>
         <p className="text-sm text-slate-500">
-          fuzzy_risk_level y fuzzy_risk_score no se incluyen en este análisis
-          porque la lógica difusa está pendiente de formalización.
+          fuzzy_risk_level y fuzzy_risk_score no se incluyen en este resumen
+          descriptivo. La lógica Mamdani permanece activa como capa interpretativa
+          del flujo de predicción.
         </p>
       </div>
     </section>

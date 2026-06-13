@@ -25,14 +25,6 @@ function HomeIcon() {
   );
 }
 
-function BarChartIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-  );
-}
-
 function DatabaseIcon() {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -57,46 +49,6 @@ function HeartPulseIcon() {
   );
 }
 
-function ChiSquareIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 7h14M5 12h14M5 17h14M8 4l8 16M16 4L8 20" />
-    </svg>
-  );
-}
-
-function CorrelationIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 18c4 0 5-12 8-12s4 12 8 12M4 6h.01M20 18h.01" />
-    </svg>
-  );
-}
-
-function LogisticIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 17h4l3-10 3 10h6M7 13h10" />
-    </svg>
-  );
-}
-
-function BrainIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
-  return (
-    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
 function LogOutIcon() {
   return (
     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -110,15 +62,9 @@ const navItems = [
 ];
 
 const analysisItems = [
-  { to: '/admin/analisis', label: 'Resumen', icon: BarChartIcon, end: true },
-  { to: '/admin/analisis/descriptivo', label: 'Descriptivo', icon: DatabaseIcon },
+  { to: '/admin/analisis/descriptivo', label: 'Estadística descriptiva', icon: DatabaseIcon },
   { to: '/admin/analisis/pre-post', label: 'Pre-test / Post-test', icon: FlaskIcon },
   { to: '/admin/analisis/emergencias', label: 'Emergencias', icon: HeartPulseIcon },
-  { to: '/admin/analisis/chi-cuadrado', label: 'Chi-cuadrado', icon: ChiSquareIcon },
-  { to: '/admin/analisis/correlaciones', label: 'Correlaciones', icon: CorrelationIcon },
-  { to: '/admin/analisis/regresion-logistica', label: 'Regresión logística', icon: LogisticIcon },
-  { to: '/admin/analisis/modelos', label: 'Modelos ML', icon: BrainIcon },
-  { to: '/admin/analisis/pendientes', label: 'Pendientes', icon: ClockIcon },
 ];
 
 interface AdminSidebarProps {
@@ -165,7 +111,6 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
                 isActive

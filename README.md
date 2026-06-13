@@ -80,9 +80,20 @@ La app queda disponible en `http://localhost:5173`.
 | `/usabilidad` | `UsabilidadPage` | Completo |
 | `/aviso-legal` | `AvisoLegalPage` | Completo |
 | `/admin` | `AdminPage` | Completo (protegido por token) |
+| `/admin/analisis` | Redirección | Redirige a `/admin/analisis/descriptivo` |
+| `/admin/analisis/descriptivo` | `DescriptiveAnalysisPage` | Completo |
+| `/admin/analisis/pre-post` | `PrePostAnalysisPage` | Completo |
+| `/admin/analisis/emergencias` | `EmergencyAnalysisPage` | Completo |
 | `*` | `NotFoundPage` | Completo |
 
 > `/admin` se monta **fuera** de `AppLayout`, sin cabecera ni navegación pública. Solo se accede escribiendo la URL.
+
+El módulo administrativo de análisis conserva únicamente estadística descriptiva,
+comparación pre-test/post-test y preparación ante emergencias. Las páginas de
+chi-cuadrado, correlaciones, regresión logística, modelos administrativos y
+análisis pendientes se retiraron por ajuste metodológico. Las páginas públicas
+de modelos predictivos (`/modelos/*`) y el flujo ML/Mamdani permanecen activos.
+Chart.js continúa instalado y se usa en las visualizaciones vigentes.
 
 ### Flujo completo del ciclo educativo
 

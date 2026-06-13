@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { HomePage } from '@/pages/HomePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -18,15 +18,9 @@ import { AvisoLegalPage } from '@/features/aviso-legal/AvisoLegalPage';
 import { AdminPage } from '@/features/admin/AdminPage';
 import { AdminDashboard } from '@/features/admin/AdminDashboard';
 import { AnalysisLayout } from '@/features/admin/analysis/AnalysisLayout';
-import { AnalysisOverviewPage } from '@/features/admin/analysis/AnalysisOverviewPage';
 import { DescriptiveAnalysisPage } from '@/features/admin/analysis/DescriptiveAnalysisPage';
 import { PrePostAnalysisPage } from '@/features/admin/analysis/PrePostAnalysisPage';
 import { EmergencyAnalysisPage } from '@/features/admin/analysis/EmergencyAnalysisPage';
-import { ChiSquareAnalysisPage } from '@/features/admin/analysis/ChiSquareAnalysisPage';
-import { CorrelationAnalysisPage } from '@/features/admin/analysis/CorrelationAnalysisPage';
-import { LogisticRegressionAnalysisPage } from '@/features/admin/analysis/LogisticRegressionAnalysisPage';
-import { ModelosRedirectPage } from '@/features/admin/analysis/ModelosRedirectPage';
-import { PendingAnalysisPage } from '@/features/admin/analysis/PendingAnalysisPage';
 
 export function AppRouter() {
   return (
@@ -37,15 +31,10 @@ export function AppRouter() {
         <Route path="/admin" element={<AdminPage />}>
           <Route index element={<AdminDashboard />} />
           <Route path="analisis" element={<AnalysisLayout />}>
-            <Route index element={<AnalysisOverviewPage />} />
+            <Route index element={<Navigate to="descriptivo" replace />} />
             <Route path="descriptivo" element={<DescriptiveAnalysisPage />} />
             <Route path="pre-post" element={<PrePostAnalysisPage />} />
             <Route path="emergencias" element={<EmergencyAnalysisPage />} />
-            <Route path="chi-cuadrado" element={<ChiSquareAnalysisPage />} />
-            <Route path="correlaciones" element={<CorrelationAnalysisPage />} />
-            <Route path="regresion-logistica" element={<LogisticRegressionAnalysisPage />} />
-            <Route path="modelos" element={<ModelosRedirectPage />} />
-            <Route path="pendientes" element={<PendingAnalysisPage />} />
           </Route>
         </Route>
         <Route element={<AppLayout />}>

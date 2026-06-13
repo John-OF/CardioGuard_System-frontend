@@ -1,15 +1,9 @@
 import { apiClient } from './client';
 import type {
   AnalysisApiResponse,
-  AnalysisOverviewData,
-  AnalysisReadinessData,
   DescriptiveAnalysisData,
   PrePostAnalysisData,
   EmergencyAnalysisData,
-  ChiSquareAnalysisData,
-  CorrelationAnalysisData,
-  LogisticRegressionAnalysisData,
-  FuzzyPendingData,
 } from '@/types/analysis';
 import { AdminUnauthorizedError } from './admin';
 
@@ -36,14 +30,6 @@ async function getWithToken<T>(url: string, token: string): Promise<T> {
   }
 }
 
-export function fetchAnalysisOverview(token: string) {
-  return getWithToken<AnalysisOverviewData>('/api/admin/analysis/overview', token);
-}
-
-export function fetchAnalysisReadiness(token: string) {
-  return getWithToken<AnalysisReadinessData>('/api/admin/analysis/readiness', token);
-}
-
 export function fetchDescriptiveAnalysis(token: string) {
   return getWithToken<DescriptiveAnalysisData>('/api/admin/analysis/descriptive', token);
 }
@@ -54,20 +40,4 @@ export function fetchPrePostAnalysis(token: string) {
 
 export function fetchEmergencyAnalysis(token: string) {
   return getWithToken<EmergencyAnalysisData>('/api/admin/analysis/emergency', token);
-}
-
-export function fetchChiSquareAnalysis(token: string) {
-  return getWithToken<ChiSquareAnalysisData>('/api/admin/analysis/chi-square', token);
-}
-
-export function fetchCorrelationAnalysis(token: string) {
-  return getWithToken<CorrelationAnalysisData>('/api/admin/analysis/correlations', token);
-}
-
-export function fetchLogisticRegressionAnalysis(token: string) {
-  return getWithToken<LogisticRegressionAnalysisData>('/api/admin/analysis/logistic-regression', token);
-}
-
-export function fetchFuzzyPending(token: string) {
-  return getWithToken<FuzzyPendingData>('/api/admin/analysis/fuzzy-pending', token);
 }
