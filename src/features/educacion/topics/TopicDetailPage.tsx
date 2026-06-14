@@ -6,6 +6,7 @@ import { TopicContent } from '../components/TopicContent';
 import { TopicTip } from '../components/TopicTip';
 import { GlosarioView } from '../components/GlosarioView';
 import { RecognizeSymptomsContent } from '../components/RecognizeSymptomsContent';
+import { HeartAttackIntroContent } from '../components/HeartAttackIntroContent';
 
 /**
  * Navegación secuencial entre temas: botón izquierdo al tema anterior,
@@ -154,6 +155,33 @@ export function TopicDetailPage() {
         />
 
         <RecognizeSymptomsContent />
+
+        <TopicPagination prev={prevTopic} next={nextTopic} />
+      </article>
+    );
+  }
+
+  if (topic.slug === 'que-es-infarto') {
+    return (
+      <article className="space-y-6">
+        <header className="space-y-3">
+          <span
+            className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary"
+            aria-hidden="true"
+          >
+            <topic.Icon className="w-8 h-8" />
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">{topic.title}</h1>
+          <p className="text-lg text-slate-600 italic max-w-3xl">{topic.subtitle}</p>
+        </header>
+
+        <TopicTip
+          variant="warning"
+          title={topic.importantNote.title}
+          text={topic.importantNote.text}
+        />
+
+        <HeartAttackIntroContent />
 
         <TopicPagination prev={prevTopic} next={nextTopic} />
       </article>
