@@ -13,6 +13,7 @@ import { FirstAidTrainingContent } from '../components/FirstAidTrainingContent';
 import { EmergencyNumberContent } from '../components/EmergencyNumberContent';
 import { EmergencyActionContent } from '../components/EmergencyActionContent';
 import { ReactionTimeContent } from '../components/ReactionTimeContent';
+import { WaitingAmbulanceContent } from '../components/WaitingAmbulanceContent';
 
 /**
  * Navegación secuencial entre temas: botón izquierdo al tema anterior,
@@ -350,6 +351,33 @@ export function TopicDetailPage() {
         />
 
         <ReactionTimeContent />
+
+        <TopicPagination prev={prevTopic} next={nextTopic} />
+      </article>
+    );
+  }
+
+  if (topic.slug === 'mientras-llega-ayuda') {
+    return (
+      <article className="space-y-6">
+        <header className="space-y-3">
+          <span
+            className="inline-flex w-16 h-16 rounded-2xl bg-primary-light items-center justify-center text-primary"
+            aria-hidden="true"
+          >
+            <topic.Icon className="w-8 h-8" />
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">{topic.title}</h1>
+          <p className="text-lg text-slate-600 italic max-w-3xl">{topic.subtitle}</p>
+        </header>
+
+        <TopicTip
+          variant="warning"
+          title={topic.importantNote.title}
+          text={topic.importantNote.text}
+        />
+
+        <WaitingAmbulanceContent />
 
         <TopicPagination prev={prevTopic} next={nextTopic} />
       </article>
