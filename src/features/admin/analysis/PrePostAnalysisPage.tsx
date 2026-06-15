@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchPrePostAnalysis } from '@/api/analysis';
@@ -13,10 +14,8 @@ import { PrePostScoreChart } from './components/charts/PrePostScoreChart';
 
 export function PrePostAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
-  const query = useAnalysisQuery(
-    () => fetchPrePostAnalysis(token),
-    [token],
-  );
+  const fetchAnalysis = useCallback(() => fetchPrePostAnalysis(token), [token]);
+  const query = useAnalysisQuery(fetchAnalysis);
 
   if (query.status === 'error') {
     if (query.error?.includes('Token') || query.error?.includes('401')) {

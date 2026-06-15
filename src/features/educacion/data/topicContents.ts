@@ -832,7 +832,7 @@ const CONTENT_BY_SLUG: Record<
       'Esperar a la ambulancia no es estar pasivo. Es acompañar, cuidar y actuar dentro de lo que se puede. Cuando llegue el personal médico, su preparación les permitirá trabajar más rápido. Esa ayuda que usted dio en esos minutos vale más de lo que imagina.',
   },
 
-  // El glosario usa GlosarioView; estos campos son requeridos por el tipo pero no se renderizan.
+  // El glosario usa KeyConceptsContent; estos campos son requeridos por el tipo pero no se renderizan.
   'conceptos-clave': {
     importantNote: { title: '', text: '' },
     blocks: [],

@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchDescriptiveAnalysis } from '@/api/analysis';
@@ -26,10 +27,8 @@ const EXCLUDED_GROUPS = ['system'];
 
 export function DescriptiveAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
-  const query = useAnalysisQuery(
-    () => fetchDescriptiveAnalysis(token),
-    [token],
-  );
+  const fetchAnalysis = useCallback(() => fetchDescriptiveAnalysis(token), [token]);
+  const query = useAnalysisQuery(fetchAnalysis);
 
   if (query.status === 'error') {
     if (query.error?.includes('Token') || query.error?.includes('401')) {
@@ -193,7 +192,7 @@ function CategoricalSection({
                 <FrequencyTable
                   key={varName}
                   title={varName}
-                  rows={rows as any}
+                  rows={rows}
                 />
               ))}
             </div>

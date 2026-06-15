@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useAnalysisQuery } from './hooks/useAnalysisQuery';
 import { fetchEmergencyAnalysis } from '@/api/analysis';
@@ -16,10 +17,8 @@ import { AdequateResponseBarChart } from './components/charts/chartjs/AdequateRe
 
 export function EmergencyAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
-  const query = useAnalysisQuery(
-    () => fetchEmergencyAnalysis(token),
-    [token],
-  );
+  const fetchAnalysis = useCallback(() => fetchEmergencyAnalysis(token), [token]);
+  const query = useAnalysisQuery(fetchAnalysis);
 
   if (query.status === 'error') {
     if (query.error?.includes('Token') || query.error?.includes('401')) {

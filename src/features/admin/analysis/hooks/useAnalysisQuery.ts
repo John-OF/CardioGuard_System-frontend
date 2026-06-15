@@ -10,7 +10,6 @@ export interface QueryResult<T> {
 
 export function useAnalysisQuery<T>(
   fetcher: () => Promise<T>,
-  deps: unknown[],
 ): QueryResult<T> {
   const [status, setStatus] = useState<QueryStatus>('idle');
   const [data, setData] = useState<T | null>(null);
@@ -45,7 +44,7 @@ export function useAnalysisQuery<T>(
     return () => {
       cancelled = true;
     };
-  }, deps);
+  }, [fetcher]);
 
   useEffect(() => {
     return () => {

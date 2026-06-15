@@ -3,7 +3,6 @@ import type {
   HistoryResponse,
   LastCycleResponse,
   HistoryItem,
-  LastCycleResponse as _LastCycleResponse,
 } from '@/types/results';
 
 /**

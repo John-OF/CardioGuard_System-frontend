@@ -140,7 +140,7 @@ Sección de contenido educativo cardiovascular de consulta libre (renombrada des
 - El submenú "Educación" del sidebar lista todos los temas del catálogo (`data/topicCatalog.ts`).
 - Página de detalle por tema (`TopicDetailPage`) con contenido estructurado, nota de advertencia médica y sección de cierre.
 - **Navegación secuencial** entre temas (botón izquierdo al anterior, derecho "Continúe aprendiendo" al siguiente), siguiendo el orden del catálogo; el último paso es el glosario.
-- Vista de glosario para términos cardiovasculares de uso frecuente (`GlosarioView`).
+- Vista de glosario para términos cardiovasculares de uso frecuente (`KeyConceptsContent`).
 
 ### Capacitación (`/capacitacion`) — Completo
 
@@ -316,7 +316,7 @@ frontend/src/
 │   │   │                      #   ResultsActions
 │   │   └── ResultsPage.tsx
 │   ├── educacion/
-│   │   ├── components/        # EducationLayout, TopicContent, TopicTip, GlosarioView
+│   │   ├── components/        # EducationLayout, TopicContent, TopicTip, KeyConceptsContent
 │   │   ├── data/              # topicCatalog.ts (metadata) + topicContents.ts (currículo)
 │   │   ├── topics/TopicDetailPage.tsx
 │   │   ├── types.ts
