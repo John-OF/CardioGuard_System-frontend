@@ -138,7 +138,7 @@ export function EmergencyNumberContent() {
       >
         <div className="p-5 sm:p-6">
           <h2 id="emergency-infographic-title" className="text-2xl font-bold text-slate-900">
-            Infografía: actuar en emergencia
+            Infografía: Linea 911
           </h2>
           <p className="mt-2 text-lg text-slate-700">
             Revise esta guía visual con calma y recuerde los pasos principales.
