@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useAnonymousUser } from '@/hooks/useAnonymousUser';
 import { useAdvancedMode } from '@/hooks/useAdvancedMode';
@@ -32,24 +32,36 @@ export function AppLayout() {
 
   const isEducacionRoute = location.pathname.startsWith('/educacion');
   const isModelosRoute = location.pathname.startsWith('/modelos');
-  const [educacionOpen, setEducacionOpen] = useState(isEducacionRoute);
-  const [modelosOpen, setModelosOpen] = useState(isModelosRoute);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [educacionMenu, setEducacionMenu] = useState({
+    open: isEducacionRoute,
+    routeActive: isEducacionRoute,
+  });
+  const [modelosMenu, setModelosMenu] = useState({
+    open: isModelosRoute,
+    routeActive: isModelosRoute,
+  });
+  const [mobileOpenPath, setMobileOpenPath] = useState<string | null>(null);
 
   // Si el usuario navega a una ruta de educación, abrir el dropdown.
-  useEffect(() => {
-    if (isEducacionRoute) setEducacionOpen(true);
-  }, [isEducacionRoute]);
+  if (educacionMenu.routeActive !== isEducacionRoute) {
+    setEducacionMenu({
+      open: isEducacionRoute ? true : educacionMenu.open,
+      routeActive: isEducacionRoute,
+    });
+  }
 
   // Si el usuario navega a una ruta de modelos, abrir el dropdown.
-  useEffect(() => {
-    if (isModelosRoute) setModelosOpen(true);
-  }, [isModelosRoute]);
+  if (modelosMenu.routeActive !== isModelosRoute) {
+    setModelosMenu({
+      open: isModelosRoute ? true : modelosMenu.open,
+      routeActive: isModelosRoute,
+    });
+  }
 
   // Cerrar el drawer móvil al cambiar de ruta.
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [location.pathname]);
+  const educacionOpen = educacionMenu.open;
+  const modelosOpen = modelosMenu.open;
+  const mobileOpen = mobileOpenPath === location.pathname;
 
   const sidebarContent = (
     <div className="w-72 h-full bg-[#1a1f35] flex flex-col">
@@ -113,7 +125,9 @@ export function AppLayout() {
             </NavLink>
             <button
               type="button"
-              onClick={() => setEducacionOpen((v) => !v)}
+              onClick={() =>
+                setEducacionMenu((current) => ({ ...current, open: !current.open }))
+              }
               aria-expanded={educacionOpen}
               aria-controls="educacion-submenu"
               aria-label="Mostrar temas de educación"
@@ -177,7 +191,9 @@ export function AppLayout() {
             </NavLink>
             <button
               type="button"
-              onClick={() => setModelosOpen((v) => !v)}
+              onClick={() =>
+                setModelosMenu((current) => ({ ...current, open: !current.open }))
+              }
               aria-expanded={modelosOpen}
               aria-controls="modelos-submenu"
               aria-label="Mostrar modelos predictivos"
@@ -292,7 +308,7 @@ export function AppLayout() {
         <>
           <div
             className="fixed inset-0 z-40 bg-slate-900/40 md:hidden"
-            onClick={() => setMobileOpen(false)}
+            onClick={() => setMobileOpenPath(null)}
             aria-hidden
           />
           <aside className="fixed inset-y-0 left-0 z-50 md:hidden shadow-xl">
@@ -306,7 +322,7 @@ export function AppLayout() {
         <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setMobileOpen(true)}
+            onClick={() => setMobileOpenPath(location.pathname)}
             aria-label="Abrir menú"
             className="p-2 rounded-lg hover:bg-slate-100 text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40"
           >

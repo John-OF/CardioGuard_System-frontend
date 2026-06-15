@@ -8,17 +8,9 @@ import { LessonCard } from './components/LessonCard';
 export function CapacitacionPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Guard: only reachable after a pre_test result in this session.
-    const result = storage.getLastResult();
-    if (result?.evaluation_type === 'pre_test') {
-      setAllowed(true);
-    } else {
-      setAllowed(false);
-    }
-  }, []);
+  const [allowed] = useState(
+    () => storage.getLastResult()?.evaluation_type === 'pre_test'
+  );
 
   useEffect(() => {
     if (allowed === false) {
@@ -40,7 +32,7 @@ export function CapacitacionPage() {
     navigate('/simulador');
   }
 
-  if (allowed === null) return null;
+  if (!allowed) return null;
 
   return (
     <div className="space-y-5">

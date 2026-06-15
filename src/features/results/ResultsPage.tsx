@@ -16,16 +16,13 @@ import { ResultsActions } from './components/ResultsActions';
 
 export function ResultsPage() {
   const navigate = useNavigate();
-  const [result, setResult] = useState<StoredPredictResponseData | null>(null);
+  const [result] = useState<StoredPredictResponseData | null>(() => storage.getLastResult());
 
   useEffect(() => {
-    const stored = storage.getLastResult();
-    if (!stored) {
+    if (!result) {
       navigate('/evaluacion', { replace: true });
-      return;
     }
-    setResult(stored);
-  }, [navigate]);
+  }, [navigate, result]);
 
   if (!result) {
     return (

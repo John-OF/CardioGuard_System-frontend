@@ -16,16 +16,15 @@ export type HistoryDataState =
   | { status: 'error' };
 
 export function useHistoryData(): HistoryDataState {
-  const [state, setState] = useState<HistoryDataState>({ status: 'loading' });
+  const [userId] = useState(() => storage.getUserId());
+  const [state, setState] = useState<HistoryDataState>(() =>
+    userId ? { status: 'loading' } : { status: 'no_user' }
+  );
 
   useEffect(() => {
     let cancelled = false;
-    const userId = storage.getUserId();
 
-    if (!userId) {
-      setState({ status: 'no_user' });
-      return;
-    }
+    if (!userId) return;
 
     Promise.all([getUserCycles(userId), getUserHistory(userId)])
       .then(([cycles, history]) => {
@@ -70,7 +69,7 @@ export function useHistoryData(): HistoryDataState {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [userId]);
 
   return state;
 }

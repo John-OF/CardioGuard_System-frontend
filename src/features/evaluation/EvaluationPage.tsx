@@ -62,11 +62,10 @@ export function EvaluationPage() {
 
     setField('evaluation_type', auto.recommendedType);
     setField('previous_evaluation_id', auto.recommendedPreviousId);
-
-    if (auto.flow.type === 'first_time' || auto.flow.type === 'error') {
-      setView('form');
-    }
   }, [auto.flow.type, auto.recommendedType, auto.recommendedPreviousId, setField]);
+
+  const activeView =
+    auto.flow.type === 'first_time' || auto.flow.type === 'error' ? 'form' : view;
 
   const isLastStep = currentStep === totalSteps - 1;
   const isPostTest = formData.evaluation_type === 'post_test';
@@ -133,7 +132,7 @@ export function EvaluationPage() {
     );
   }
 
-  if (view === 'intro') {
+  if (activeView === 'intro') {
     return (
       <FlowIntro
         flow={auto.flow}

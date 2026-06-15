@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { storage } from '@/utils/storage';
 import type {
   EvaluationFormState,
@@ -43,15 +43,15 @@ export function usePrefillFromPretest({
   evaluationType,
   setField,
 }: UsePrefillFromPretestParams): { isPrefilled: boolean } {
-  const [isPrefilled, setIsPrefilled] = useState(false);
   // Garantiza que el efecto solo aplique una vez por montaje
   const appliedRef = useRef(false);
+  const pretestForm = useMemo(
+    () => evaluationType === 'post_test' ? storage.getLastPretestForm() : null,
+    [evaluationType]
+  );
 
   useEffect(() => {
     if (appliedRef.current) return;
-    if (evaluationType !== 'post_test') return;
-
-    const pretestForm = storage.getLastPretestForm();
     if (!pretestForm) {
       // No hay datos guardados — caso raro (cerró el navegador entre pre y post).
       // No hacemos nada: el usuario completa los campos como si fuese nuevo.
@@ -65,8 +65,7 @@ export function usePrefillFromPretest({
         setField(key, value as EvaluationFormState[typeof key]);
       }
     }
-    setIsPrefilled(true);
-  }, [evaluationType, setField]);
+  }, [pretestForm, setField]);
 
-  return { isPrefilled };
+  return { isPrefilled: pretestForm !== null };
 }

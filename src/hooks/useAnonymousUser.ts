@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { storage } from '@/utils/storage';
 import { generateUUIDv4 } from '@/utils/uuid';
 
@@ -7,15 +7,14 @@ import { generateUUIDv4 } from '@/utils/uuid';
  * Al montarse, crea el ID si no existe.
  */
 export function useAnonymousUser() {
-  const [userId, setUserId] = useState<string | null>(() => storage.getUserId());
+  const [userId] = useState(() => {
+    const existingId = storage.getUserId();
+    if (existingId) return existingId;
 
-  useEffect(() => {
-    if (!userId) {
-      const newId = generateUUIDv4();
-      storage.setUserId(newId);
-      setUserId(newId);
-    }
-  }, [userId]);
+    const newId = generateUUIDv4();
+    storage.setUserId(newId);
+    return newId;
+  });
 
   return { userId };
 }

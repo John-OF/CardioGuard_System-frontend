@@ -18,18 +18,17 @@ export interface AutoDetectResult {
 }
 
 export function useAutoDetectEvaluationType(): AutoDetectResult {
-  const [flow, setFlow] = useState<DetectedFlow>({ type: 'loading' });
   const [searchParams] = useSearchParams();
   const continueId = searchParams.get('continue');
+  const [userId] = useState(() => storage.getUserId());
+  const [flow, setFlow] = useState<DetectedFlow>(() =>
+    userId ? { type: 'loading' } : { type: 'first_time' }
+  );
 
   useEffect(() => {
     let cancelled = false;
-    const userId = storage.getUserId();
 
-    if (!userId) {
-      setFlow({ type: 'first_time' });
-      return;
-    }
+    if (!userId) return;
 
     getUserHistory(userId)
       .then((history) => {
@@ -99,7 +98,7 @@ export function useAutoDetectEvaluationType(): AutoDetectResult {
     return () => {
       cancelled = true;
     };
-  }, [continueId]);
+  }, [continueId, userId]);
 
   let recommendedType: EvaluationType = 'pre_test';
   let recommendedPreviousId: string | null = null;

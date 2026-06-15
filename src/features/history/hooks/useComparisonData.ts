@@ -9,21 +9,26 @@ export type ComparisonState =
   | { status: 'invalid' }      // 400: el id no es post_test o no tiene previous
   | { status: 'error' };
 
+interface ComparisonRequestState {
+  postId: string;
+  result: ComparisonState;
+}
+
 export function useComparisonData(postId: string | undefined): ComparisonState {
-  const [state, setState] = useState<ComparisonState>({ status: 'loading' });
+  const [request, setRequest] = useState<ComparisonRequestState | null>(() =>
+    postId ? { postId, result: { status: 'loading' } } : null
+  );
 
   useEffect(() => {
-    if (!postId) {
-      setState({ status: 'not_found' });
-      return;
-    }
+    if (!postId) return;
 
     let cancelled = false;
-    setState({ status: 'loading' });
 
     getEvaluationComparison(postId)
       .then((data) => {
-        if (!cancelled) setState({ status: 'ready', data });
+        if (!cancelled) {
+          setRequest({ postId, result: { status: 'ready', data } });
+        }
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -33,9 +38,9 @@ export function useComparisonData(postId: string | undefined): ComparisonState {
           'response' in err &&
           (err as { response?: { status?: number } }).response?.status;
 
-        if (status === 404) setState({ status: 'not_found' });
-        else if (status === 400) setState({ status: 'invalid' });
-        else setState({ status: 'error' });
+        if (status === 404) setRequest({ postId, result: { status: 'not_found' } });
+        else if (status === 400) setRequest({ postId, result: { status: 'invalid' } });
+        else setRequest({ postId, result: { status: 'error' } });
       });
 
     return () => {
@@ -43,5 +48,7 @@ export function useComparisonData(postId: string | undefined): ComparisonState {
     };
   }, [postId]);
 
-  return state;
+  if (!postId) return { status: 'not_found' };
+  if (!request || request.postId !== postId) return { status: 'loading' };
+  return request.result;
 }

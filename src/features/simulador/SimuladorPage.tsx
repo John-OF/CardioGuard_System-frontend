@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { storage } from '@/utils/storage';
 import { IconAlertTriangle } from '@/components/ui/icons';
@@ -12,19 +12,44 @@ import { useSimuladorSubmit, type SimuladorAnswers } from './hooks/useSimuladorS
 type Phase = 'intro' | 'scenario';
 
 type Session =
-  | { status: 'resolving' }
+  | { status: 'redirect'; to: string }
   | {
       status: 'ready';
       pretestForm: EvaluationRequest;
       previousEvaluationId: string;
     };
 
+function resolveSession(continueId: string | null): Session {
+  if (continueId) {
+    const form = storage.getPretestFormById(continueId);
+    return form
+      ? {
+          status: 'ready',
+          pretestForm: form,
+          previousEvaluationId: continueId,
+        }
+      : { status: 'redirect', to: `/evaluacion?continue=${continueId}` };
+  }
+
+  const result = storage.getLastResult();
+  const pretest = storage.getLastPretestForm();
+  if (result?.evaluation_type === 'pre_test' && pretest && result.evaluation_id) {
+    return {
+      status: 'ready',
+      pretestForm: pretest,
+      previousEvaluationId: result.evaluation_id,
+    };
+  }
+
+  return { status: 'redirect', to: '/evaluacion' };
+}
+
 export function SimuladorPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const continueId = params.get('continue');
 
-  const [session, setSession] = useState<Session>({ status: 'resolving' });
+  const session = useMemo(() => resolveSession(continueId), [continueId]);
   const [phase, setPhase] = useState<Phase>('intro');
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<SimuladorAnswers>({});
@@ -35,13 +60,7 @@ export function SimuladorPage() {
     // Modo B — ciclo huérfano desde Historial (?continue=<preId>).
     if (continueId) {
       const form = storage.getPretestFormById(continueId);
-      if (form) {
-        setSession({
-          status: 'ready',
-          pretestForm: form,
-          previousEvaluationId: continueId,
-        });
-      } else {
+      if (!form) {
         // Pre-test no está en este navegador (otro dispositivo / storage
         // limpiado). Fallback honesto: formulario normal, que reingresa datos.
         navigate(`/evaluacion?continue=${continueId}`, { replace: true });
@@ -52,13 +71,7 @@ export function SimuladorPage() {
     // Modo A — flujo normal: pre_test recién hecho en esta pestaña.
     const result = storage.getLastResult();
     const pretest = storage.getLastPretestForm();
-    if (result?.evaluation_type === 'pre_test' && pretest && result.evaluation_id) {
-      setSession({
-        status: 'ready',
-        pretestForm: pretest,
-        previousEvaluationId: result.evaluation_id,
-      });
-    } else {
+    if (!(result?.evaluation_type === 'pre_test' && pretest && result.evaluation_id)) {
       navigate('/evaluacion', { replace: true });
     }
   }, [continueId, navigate]);
