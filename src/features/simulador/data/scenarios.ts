@@ -87,10 +87,10 @@ export const SCENARIOS: Scenario[] = [
     field: 'infarction_knowledge',
     kind: 'single',
     Icon: IconHeart,
-    title: 'Una conversación en la sala de espera',
+    title: 'Me preguntan qué es un infarto',
     situation:
-      'En la sala de espera del centro de salud, una señora comenta: "Dicen que a mi vecino le dio un infarto, pero la verdad yo no sé bien qué es eso".',
-    question: 'Y usted, ¿sabría explicar qué es un infarto?',
+      'Estoy en una sala de espera y escucho que una persona comenta que su vecino tuvo un infarto. Me doy cuenta de que podría ser importante saber explicarlo con palabras sencillas.',
+    question: 'Si alguien me preguntara en ese momento, ¿sabría explicar qué es un infarto?',
     options: [
       { value: 'Sí', label: 'Sí, sé explicar qué es un infarto' },
       { value: 'No estoy seguro', label: 'No estoy seguro de poder explicarlo bien' },
@@ -101,10 +101,10 @@ export const SCENARIOS: Scenario[] = [
     field: 'symptom_self_assessment',
     kind: 'single',
     Icon: IconEye,
-    title: 'Si pasara frente a usted',
+    title: 'Alguien empieza a sentirse mal cerca de mí',
     situation:
-      'Imagine que alguien cerca de usted empieza a sentirse mal y podría estar sufriendo un infarto en ese momento.',
-    question: '¿Cree que reconocería los síntomas de un infarto si los viera?',
+      'Estoy cerca de una persona que se ve pálida, incómoda y preocupada. Pienso que podría estar presentando señales de un problema del corazón.',
+    question: 'En una situación como esta, ¿cree que reconocería los síntomas de un infarto si los viera?',
     options: [
       { value: 'Sí', label: 'Sí, creo que los reconocería' },
       { value: 'Algunos', label: 'Reconocería algunos, no todos' },
@@ -115,10 +115,10 @@ export const SCENARIOS: Scenario[] = [
     field: 'symptoms',
     kind: 'multi',
     Icon: IconAlertTriangle,
-    title: 'Las señales del cuerpo',
+    title: 'Observo las señales del cuerpo',
     situation:
-      'Una persona mayor comienza a sentirse mal de repente. Usted observa con atención para decidir si pedir ayuda.',
-    question: '¿Cuáles de estas señales considera que indican un posible infarto?',
+      'Una persona mayor empieza a sentirse mal de repente. Antes de pedir ayuda, intento reconocer cuáles señales podrían indicar una emergencia cardíaca.',
+    question: '¿Cuáles de estas señales considera que pueden indicar un posible infarto?',
     options: [
       { value: 'Dolor o presión fuerte en el pecho', label: 'Dolor o presión fuerte en el pecho' },
       { value: 'Dificultad para respirar', label: 'Dificultad para respirar' },
@@ -135,9 +135,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'prevention_knowledge',
     kind: 'single',
     Icon: IconShield,
-    title: 'Cuidarse antes de que pase',
+    title: 'Pienso en cómo cuidarme antes de una emergencia',
     situation:
-      'En una charla del barrio se habla de cómo evitar problemas del corazón antes de que ocurran.',
+      'Después de aprender sobre salud cardiovascular, reflexiono sobre las acciones que puedo realizar para reducir el riesgo de un problema del corazón.',
     question: '¿Sabe cómo se puede prevenir un infarto?',
     options: [
       { value: 'Sí', label: 'Sí, sé cómo prevenirlo' },
@@ -149,9 +149,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'risk_factor_knowledge',
     kind: 'single',
     Icon: IconStethoscope,
-    title: 'Lo que aumenta el riesgo',
+    title: 'Reconozco lo que puede aumentar el riesgo',
     situation:
-      'El médico menciona que ciertos factores —presión alta, colesterol alto, tabaquismo, sedentarismo— hacen más probable un problema del corazón.',
+      'En una conversación sobre salud, escucho que la presión alta, el colesterol alto, el tabaquismo y el sedentarismo pueden afectar al corazón.',
     question: '¿Conoce los factores de riesgo de las enfermedades del corazón?',
     options: [
       { value: 'Sí', label: 'Sí, los conozco' },
@@ -163,10 +163,10 @@ export const SCENARIOS: Scenario[] = [
     field: 'rcp_knowledge',
     kind: 'single',
     Icon: IconHeartPulse,
-    title: 'Esa palabra: RCP',
+    title: 'Escucho la palabra RCP durante una emergencia',
     situation:
-      'En la televisión muestran cómo alguien salva a una persona haciendo "RCP" mientras llega la ambulancia.',
-    question: '¿Sabe qué es la RCP (reanimación cardiopulmonar)?',
+      'Veo que una persona no responde y alguien menciona que podría necesitar RCP mientras llega la ambulancia.',
+    question: '¿Sabe qué es la RCP o reanimación cardiopulmonar?',
     options: [
       { value: 'Sí', label: 'Sí, sé qué es la RCP' },
       { value: 'No está seguro', label: 'No estoy seguro de qué es' },
@@ -179,9 +179,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'prior_training',
     kind: 'single',
     Icon: IconGraduationCap,
-    title: 'Su preparación previa',
+    title: 'Recuerdo si ya recibí preparación',
     situation:
-      'Antes de practicar con los escenarios, conviene saber con qué preparación cuenta usted.',
+      'Antes de actuar en una emergencia, es importante reconocer si alguna vez he recibido capacitación práctica en primeros auxilios o RCP.',
     question: '¿Ha recibido entrenamiento previo en primeros auxilios o RCP?',
     options: [
       { value: 'Sí', label: 'Sí, he recibido entrenamiento' },
@@ -192,9 +192,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'emergency_number_knowledge',
     kind: 'single',
     Icon: IconPhone,
-    title: 'El teléfono en la mano',
+    title: 'Tengo que pedir ayuda rápidamente',
     situation:
-      'Hay una emergencia y usted tiene el teléfono en la mano. Debe pedir ayuda de inmediato.',
+      'Estoy frente a una emergencia médica y tengo el teléfono en la mano. Sé que llamar al número correcto puede ahorrar tiempo valioso.',
     question: '¿Sabe a qué número llamar en caso de emergencia médica?',
     options: [
       { value: 'Sí', label: 'Sí, sé a qué número llamar' },
@@ -205,10 +205,10 @@ export const SCENARIOS: Scenario[] = [
     field: 'emergency_action',
     kind: 'single',
     Icon: IconAlertCircle,
-    title: 'Dolor fuerte en el pecho',
+    title: 'Una persona siente presión fuerte en el pecho',
     situation:
-      'Está acompañando a una persona mayor. De pronto dice que siente presión fuerte en el pecho y le cuesta respirar.',
-    question: '¿Qué haría primero?',
+      'Estoy acompañando a una persona mayor. De pronto me dice que siente una presión fuerte en el pecho y noto que le cuesta respirar.',
+    question: 'En ese momento, ¿qué haría primero?',
     options: [
       { value: 'Llamar inmediatamente a emergencias', label: 'Llamar inmediatamente a emergencias' },
       {
@@ -227,9 +227,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'reaction_time',
     kind: 'single',
     Icon: IconClock,
-    title: 'El tiempo que tardaría',
+    title: 'Cada minuto puede ser importante',
     situation:
-      'Las señales son claras y graves. Cada minuto cuenta para la persona afectada.',
+      'Las señales son claras y la persona necesita ayuda. Sé que en una emergencia no conviene esperar demasiado.',
     question: '¿Qué tan rápido cree que reaccionaría ante esta emergencia?',
     options: [
       { value: 'Inmediatamente', label: 'Reaccionaría inmediatamente' },
@@ -242,9 +242,9 @@ export const SCENARIOS: Scenario[] = [
     field: 'emergency_support_action',
     kind: 'single',
     Icon: IconActivity,
-    title: 'La persona pierde el conocimiento',
+    title: 'La persona deja de responder',
     situation:
-      'La persona deja de responder y pierde el conocimiento mientras espera la ayuda.',
+      'Mientras espero ayuda, la persona pierde el conocimiento y no responde cuando le hablo o intento llamar su atención.',
     question: '¿Qué haría usted en ese momento?',
     options: [
       {
