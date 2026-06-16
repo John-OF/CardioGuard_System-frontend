@@ -4,9 +4,13 @@ interface NumericStatsCardProps {
   title: string;
   stats: NumericStats | null;
   maxScore?: number;
+  decimals?: number;
+  stdDecimals?: number;
 }
 
-export function NumericStatsCard({ title, stats, maxScore }: NumericStatsCardProps) {
+export function NumericStatsCard({ title, stats, maxScore, decimals = 2, stdDecimals }: NumericStatsCardProps) {
+  const fmt = (v: number | null | undefined, d?: number) => v != null ? v.toFixed(d ?? decimals) : '—';
+
   if (!stats) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -31,31 +35,31 @@ export function NumericStatsCard({ title, stats, maxScore }: NumericStatsCardPro
         <dd className="text-right tabular-nums text-slate-900">{stats.count}</dd>
         <dt className="text-slate-500">Media</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.mean?.toFixed(2) ?? '—'}
+          {fmt(stats.mean)}
         </dd>
         <dt className="text-slate-500">Mediana</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.median?.toFixed(2) ?? '—'}
+          {fmt(stats.median)}
         </dd>
         <dt className="text-slate-500">DE</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.std?.toFixed(2) ?? '—'}
+          {fmt(stats.std, stdDecimals)}
         </dd>
         <dt className="text-slate-500">Mín</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.min?.toFixed(2) ?? '—'}
+          {fmt(stats.min)}
         </dd>
         <dt className="text-slate-500">Máx</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.max?.toFixed(2) ?? '—'}
+          {fmt(stats.max)}
         </dd>
         <dt className="text-slate-500">Q1</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.q1?.toFixed(2) ?? '—'}
+          {fmt(stats.q1)}
         </dd>
         <dt className="text-slate-500">Q3</dt>
         <dd className="text-right tabular-nums text-slate-900">
-          {stats.q3?.toFixed(2) ?? '—'}
+          {fmt(stats.q3)}
         </dd>
       </dl>
     </div>

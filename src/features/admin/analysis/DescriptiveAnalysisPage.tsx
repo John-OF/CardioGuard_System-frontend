@@ -203,6 +203,17 @@ function CategoricalSection({
   );
 }
 
+function isAgeField(name: string): boolean {
+  const key = name.toLowerCase();
+  return key.includes('edad') || key === 'age';
+}
+
+function decimalsForContinuousField(name: string): number {
+  if (isAgeField(name)) return 0;
+  if (name.toLowerCase().includes('imc') || name.toLowerCase() === 'bmi') return 1;
+  return 2;
+}
+
 function ContinuousSection({
   cs,
 }: {
@@ -219,7 +230,7 @@ function ContinuousSection({
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {entries.map(([name, stats]) => (
-          <NumericStatsCard key={name} title={name} stats={stats} />
+          <NumericStatsCard key={name} title={name} stats={stats} decimals={decimalsForContinuousField(name)} stdDecimals={isAgeField(name) ? 1 : undefined} />
         ))}
       </div>
     </section>

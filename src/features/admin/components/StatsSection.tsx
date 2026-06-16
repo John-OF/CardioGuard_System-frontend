@@ -1,7 +1,7 @@
 import type { AdminStats } from '@/types/admin';
 import { StatCard } from './StatCard';
 import { DistributionBar } from './DistributionBar';
-import { pct, pctRaw, deltaPts, deltaSign } from '../utils/format';
+import { pct, pctRaw, deltaPts, deltaSign, formatAge } from '../utils/format';
 
 const BMI_LABEL: Record<string, string> = {
   bajo_peso: 'Bajo peso',
@@ -109,7 +109,7 @@ export function StatsSection({ stats }: { stats: AdminStats }) {
         <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-4">
           <StatCard
             label="Edad promedio"
-            value={`${demographics.avg_age} años`}
+            value={formatAge(demographics.avg_age)}
           />
           <DistributionBar
             title="Grupos de edad"

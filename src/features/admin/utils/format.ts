@@ -35,6 +35,24 @@ export function shortDate(iso: string): string {
   }).format(d);
 }
 
+/** Entero redondeado. null/undefined → fallback */
+export function formatInteger(value: number | null | undefined, fallback = 'Sin datos'): string {
+  if (value == null) return fallback;
+  return Math.round(value).toString();
+}
+
+/** Edad promedio redondeada → "67 años". null → "Sin datos" */
+export function formatAge(value: number | null | undefined): string {
+  if (value == null) return 'Sin datos';
+  return `${Math.round(value)} años`;
+}
+
+/** Decimal con dígitos controlados. null → fallback */
+export function formatDecimal(value: number | null | undefined, digits = 1, fallback = 'Sin datos'): string {
+  if (value == null) return fallback;
+  return value.toFixed(digits);
+}
+
 export const RISK_LABEL: Record<RiskLevel, string> = {
   bajo: 'Bajo',
   moderado: 'Moderado',
