@@ -7,6 +7,12 @@
 // ⚠️ Mientras no exista el endpoint GET /api/models/metrics (ver Cambio #7 del MD), esta
 // es una COPIA estática. Si se reentrena el modelo, volver a copiar el JSON aquí.
 // No contiene ROC/AUC ni importancia de características (no se calculan en el backend).
+//
+// NOTA (corrección de etiqueta): el target del UCI venía invertido (en el CSV, target=1 = sano).
+// Ahora se corrige en train.py (1 - target) de modo que la clase positiva (1) = "Con Riesgo
+// Cardíaco" / enfermo. El accuracy de cada modelo es idéntico al anterior (es simétrico al
+// relabeling); cambian precision/recall/F1 y la matriz de confusión, que ahora describen la
+// detección de riesgo (clase 1) en lugar de la clase "sano".
 
 export interface ModelMetrics {
   accuracy: number;
@@ -58,20 +64,20 @@ export const REAL_MODEL_METRICS: Record<string, RealModelData> = {
   RandomForest: {
     metrics: {
       accuracy: 0.8360655737704918,
-      precision: 0.8108108108108109,
-      recall: 0.9090909090909091,
-      f1Score: 0.8571428571428571,
-      cvMeanF1: 0.7560111896463318,
-      cvStdF1: 0.07421795328949184,
+      precision: 0.875,
+      recall: 0.75,
+      f1Score: 0.8076923076923077,
+      cvMeanF1: 0.6802426650495611,
+      cvStdF1: 0.13940996552601995,
     },
     confusionMatrix: [
-      [21, 7],
-      [3, 30],
+      [30, 3],
+      [7, 21],
     ],
     report: {
       classes: {
-        [CLASS_0]: { precision: 0.875, recall: 0.75, f1Score: 0.8076923076923077, support: 28 },
-        [CLASS_1]: { precision: 0.8108108108108109, recall: 0.9090909090909091, f1Score: 0.8571428571428571, support: 33 },
+        [CLASS_0]: { precision: 0.8108108108108109, recall: 0.9090909090909091, f1Score: 0.8571428571428571, support: 33 },
+        [CLASS_1]: { precision: 0.875, recall: 0.75, f1Score: 0.8076923076923077, support: 28 },
       },
       accuracy: 0.8360655737704918,
       macroAvg: { precision: 0.8429054054054055, recall: 0.8295454545454546, f1Score: 0.8324175824175823, support: 61 },
@@ -84,20 +90,20 @@ export const REAL_MODEL_METRICS: Record<string, RealModelData> = {
   XGBoost: {
     metrics: {
       accuracy: 0.7213114754098361,
-      precision: 0.7,
-      recall: 0.8484848484848485,
-      f1Score: 0.7671232876712328,
-      cvMeanF1: 0.7641613871802552,
-      cvStdF1: 0.0741803685499916,
+      precision: 0.7619047619047619,
+      recall: 0.5714285714285714,
+      f1Score: 0.6530612244897959,
+      cvMeanF1: 0.6978566149297857,
+      cvStdF1: 0.11076975482179334,
     },
     confusionMatrix: [
-      [16, 12],
-      [5, 28],
+      [28, 5],
+      [12, 16],
     ],
     report: {
       classes: {
-        [CLASS_0]: { precision: 0.7619047619047619, recall: 0.5714285714285714, f1Score: 0.6530612244897959, support: 28 },
-        [CLASS_1]: { precision: 0.7, recall: 0.8484848484848485, f1Score: 0.7671232876712328, support: 33 },
+        [CLASS_0]: { precision: 0.7, recall: 0.8484848484848485, f1Score: 0.7671232876712328, support: 33 },
+        [CLASS_1]: { precision: 0.7619047619047619, recall: 0.5714285714285714, f1Score: 0.6530612244897959, support: 28 },
       },
       accuracy: 0.7213114754098361,
       macroAvg: { precision: 0.7309523809523809, recall: 0.7099567099567099, f1Score: 0.7100922560805143, support: 61 },
@@ -110,20 +116,20 @@ export const REAL_MODEL_METRICS: Record<string, RealModelData> = {
   SVM: {
     metrics: {
       accuracy: 0.7213114754098361,
-      precision: 0.7222222222222222,
-      recall: 0.7878787878787878,
-      f1Score: 0.7536231884057971,
-      cvMeanF1: 0.7810475415757682,
-      cvStdF1: 0.06193931913239499,
+      precision: 0.72,
+      recall: 0.6428571428571429,
+      f1Score: 0.6792452830188679,
+      cvMeanF1: 0.7098185228417787,
+      cvStdF1: 0.11858272832281382,
     },
     confusionMatrix: [
-      [18, 10],
-      [7, 26],
+      [26, 7],
+      [10, 18],
     ],
     report: {
       classes: {
-        [CLASS_0]: { precision: 0.72, recall: 0.6428571428571429, f1Score: 0.6792452830188679, support: 28 },
-        [CLASS_1]: { precision: 0.7222222222222222, recall: 0.7878787878787878, f1Score: 0.7536231884057971, support: 33 },
+        [CLASS_0]: { precision: 0.7222222222222222, recall: 0.7878787878787878, f1Score: 0.7536231884057971, support: 33 },
+        [CLASS_1]: { precision: 0.72, recall: 0.6428571428571429, f1Score: 0.6792452830188679, support: 28 },
       },
       accuracy: 0.7213114754098361,
       macroAvg: { precision: 0.721111111111111, recall: 0.7153679653679654, f1Score: 0.7164342357123326, support: 61 },
@@ -136,24 +142,24 @@ export const REAL_MODEL_METRICS: Record<string, RealModelData> = {
   MLPClassifier: {
     metrics: {
       accuracy: 0.7049180327868853,
-      precision: 0.7419354838709677,
-      recall: 0.696969696969697,
-      f1Score: 0.71875,
-      cvMeanF1: 0.730917748917749,
-      cvStdF1: 0.03656567661050144,
+      precision: 0.6785714285714286,
+      recall: 0.6785714285714286,
+      f1Score: 0.6785714285714286,
+      cvMeanF1: 0.6835363842506699,
+      cvStdF1: 0.08935210355009625,
     },
     confusionMatrix: [
-      [20, 8],
-      [10, 23],
+      [24, 9],
+      [9, 19],
     ],
     report: {
       classes: {
-        [CLASS_0]: { precision: 0.6666666666666666, recall: 0.7142857142857143, f1Score: 0.6896551724137931, support: 28 },
-        [CLASS_1]: { precision: 0.7419354838709677, recall: 0.696969696969697, f1Score: 0.71875, support: 33 },
+        [CLASS_0]: { precision: 0.7272727272727273, recall: 0.7272727272727273, f1Score: 0.7272727272727273, support: 33 },
+        [CLASS_1]: { precision: 0.6785714285714286, recall: 0.6785714285714286, f1Score: 0.6785714285714286, support: 28 },
       },
       accuracy: 0.7049180327868853,
-      macroAvg: { precision: 0.7043010752688172, recall: 0.7056277056277056, f1Score: 0.7042025862068966, support: 61 },
-      weightedAvg: { precision: 0.7073858628591574, recall: 0.7049180327868853, f1Score: 0.7053949971735444, support: 61 },
+      macroAvg: { precision: 0.702922077922078, recall: 0.702922077922078, f1Score: 0.702922077922078, support: 61 },
+      weightedAvg: { precision: 0.7049180327868853, recall: 0.7049180327868853, f1Score: 0.7049180327868853, support: 61 },
     },
     rocAuc: 0.7673160173160173,
     rocCurve: {"fpr":[0,0,0,0.07142857142857142,0.07142857142857142,0.14285714285714285,0.14285714285714285,0.21428571428571427,0.21428571428571427,0.2857142857142857,0.2857142857142857,0.35714285714285715,0.35714285714285715,0.39285714285714285,0.39285714285714285,0.42857142857142855,0.42857142857142855,0.4642857142857143,0.4642857142857143,0.7857142857142857,0.7857142857142857,0.9642857142857143,0.9642857142857143,1],"tpr":[0,0.030303030303030304,0.2727272727272727,0.2727272727272727,0.45454545454545453,0.45454545454545453,0.48484848484848486,0.48484848484848486,0.5757575757575758,0.5757575757575758,0.7575757575757576,0.7575757575757576,0.7878787878787878,0.7878787878787878,0.8484848484848485,0.8484848484848485,0.8787878787878788,0.8787878787878788,0.9090909090909091,0.9090909090909091,0.9393939393939394,0.9393939393939394,1,1],"thresholds":[null,0.9999999534687414,0.9999916454432359,0.9999161682405792,0.9989423723990971,0.9935680171585421,0.9933060896005311,0.9725425545571214,0.9507850488493185,0.9207042852736764,0.43922333168037087,0.2404797192073938,0.23988328754614496,0.21500211964448998,0.12543462619142326,0.11936494233677383,0.08386752838855407,0.058638661233800043,0.03480252084686403,0.0015651621453793996,0.000358420472716513,0.00002781111104151587,0.0000043769905732159275,2.598109328307803e-11]},
