@@ -26,8 +26,7 @@ const methodologicalConsiderations = [
   'Los datos son anónimos y de uso exclusivamente académico.',
   'Los resultados no reemplazan la evaluación médica profesional.',
   'El tiempo de reacción ante emergencias corresponde a una respuesta ordinal/autodeclarada, no a una medición cronometrada en segundos.',
-  'Los registros históricos pueden combinar resultados generados antes y después de la validación Mamdani; para análisis definitivos se recomienda usar registros posteriores a dicha validación o recalcular los valores difusos históricos.',
-  'El análisis inferencial mediante chi-cuadrado, correlaciones y regresión logística fue retirado por ajuste metodológico, para evitar forzar variables cualitativas o educativas en pruebas no alineadas con el enfoque final.',
+  'Los registros históricos pueden combinar resultados generados antes y después de la validación Mamdani; para análisis definitivos se recomienda usar registros posteriores a dicha validación o recalcular los valores difusos históricos.'
 ];
 
 function MethodologyList({ title, items }: { title: string; items: string[] }) {
