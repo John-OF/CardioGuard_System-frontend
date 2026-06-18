@@ -4,6 +4,7 @@ import { useAdminCycles } from './hooks/useAdminCycles';
 import type { AdminOutletContext } from '@/types/admin';
 import { StatsSection } from './components/StatsSection';
 import { CyclesTable } from './components/CyclesTable';
+import { ExportSection } from './components/ExportSection';
 
 const thesisAlignment = [
   'El modelo de Machine Learning estima una probabilidad de riesgo cardiovascular a partir de variables clínicas y conductuales.',
@@ -81,6 +82,8 @@ export function AdminDashboard() {
           No se pudo cargar la tabla de ciclos.
         </div>
       )}
+
+      <ExportSection token={token} onUnauthorized={logout} />
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">

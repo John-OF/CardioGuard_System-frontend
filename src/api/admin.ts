@@ -40,6 +40,47 @@ export async function fetchAdminStats(token: string): Promise<AdminStats> {
   }
 }
 
+export type AdminExportKind = 'joined' | 'tables';
+
+const EXPORT_PATHS: Record<AdminExportKind, string> = {
+  joined: '/api/admin/export/joined.csv',
+  tables: '/api/admin/export/tables.zip',
+};
+
+const EXPORT_FALLBACK_NAMES: Record<AdminExportKind, string> = {
+  joined: 'cardioguard_dataset.csv',
+  tables: 'cardioguard_tablas.zip',
+};
+
+function filenameFromDisposition(header: unknown): string | null {
+  if (typeof header !== 'string') return null;
+  const match = header.match(/filename="?([^"]+)"?/i);
+  return match ? match[1] : null;
+}
+
+/**
+ * Descarga un export de datos (CSV unido o ZIP de tablas) como Blob.
+ * Lanza AdminUnauthorizedError si el token es inválido (401).
+ */
+export async function downloadAdminExport(
+  token: string,
+  kind: AdminExportKind
+): Promise<{ blob: Blob; filename: string }> {
+  try {
+    const res = await apiClient.get(EXPORT_PATHS[kind], {
+      headers: { [TOKEN_HEADER]: token },
+      responseType: 'blob',
+    });
+    const filename =
+      filenameFromDisposition(res.headers['content-disposition']) ??
+      EXPORT_FALLBACK_NAMES[kind];
+    return { blob: res.data as Blob, filename };
+  } catch (err: unknown) {
+    if (isUnauthorized(err)) throw new AdminUnauthorizedError();
+    throw err;
+  }
+}
+
 interface FetchCyclesParams {
   token: string;
   limit?: number;
