@@ -38,6 +38,26 @@ export interface DescriptiveAnalysisData {
     complete_cycles: number;
     incomplete_cycles: number;
   };
+  ml_prediction_distribution: {
+    unit: 'complete_cycle_pretest';
+    unit_label: string;
+    total: number;
+    items: FrequencyRow[];
+    excluded_evaluations: {
+      total: number;
+      post_tests: number;
+      regular: number;
+      incomplete_pre_tests: number;
+      complete_cycle_pretests_without_system_result: number;
+      duplicate_complete_cycle_pretests_by_anonymous_user: number;
+    };
+    deduplicated_by_anonymous_user_id: boolean;
+    methodological_note: string;
+  };
+  scope_notes: {
+    total_evaluations: string;
+    ml_prediction_distribution: string;
+  };
   categorical_frequencies: Record<string, Record<string, FrequencyRow[]>>;
   continuous_stats: Record<string, NumericStats | null>;
   histograms: Record<string, HistogramBin[]>;

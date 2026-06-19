@@ -187,13 +187,10 @@ export function transformRiskLevelDistributionChartJs(data: unknown): ChartJsBuc
   if (!data || typeof data !== 'object') return null;
 
   const d = data as Record<string, unknown>;
-  const cf = d.categorical_frequencies as Record<string, unknown> | undefined;
-  if (!cf) return null;
+  const distribution = d.ml_prediction_distribution as Record<string, unknown> | undefined;
+  if (!distribution) return null;
 
-  const system = cf.system as Record<string, unknown> | undefined;
-  if (!system) return null;
-
-  const mlPrediction = system.ml_prediction;
+  const mlPrediction = distribution.items;
   if (!Array.isArray(mlPrediction) || mlPrediction.length === 0) return null;
 
   const labels: string[] = [];

@@ -5,12 +5,14 @@ import './ChartJsRegistry';
 import { BaseChartJsCard } from './BaseChartJsCard';
 import { transformRiskLevelDistributionChartJs } from '../chartTransformers';
 import type { ChartJsBucketData } from '../chartTransformers';
+import type { DescriptiveAnalysisData } from '../../../../../../types/analysis';
 
 interface MLPredictionDoughnutChartProps {
-  data: unknown;
+  data: DescriptiveAnalysisData;
 }
 
 export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartProps) {
+  const distribution = data.ml_prediction_distribution;
   const chartData: ChartJsBucketData | null = useMemo(
     () => transformRiskLevelDistributionChartJs(data),
     [data],
@@ -19,11 +21,11 @@ export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartPro
   if (!chartData) {
     return (
       <BaseChartJsCard
-        title="Distribución de predicción ML"
-        subtitle="Muestra la proporción de evaluaciones clasificadas por el modelo ML."
+        title="Distribución de predicción ML en ciclos completos"
+        subtitle="Muestra la proporción de adultos mayores con ciclo completo según la predicción ML obtenida en la evaluación inicial."
         dataAvailable={false}
         emptyMessage="No hay datos suficientes para generar este gráfico."
-        methodologicalNote="La predicción ML es un apoyo preventivo del sistema. No representa diagnóstico clínico."
+        methodologicalNote={distribution.methodological_note}
       />
     );
   }
@@ -66,7 +68,7 @@ export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartPro
             const label = ctx.label ?? '';
             if (val == null) return `${label}: —`;
             const pctStr = pct != null ? ` (${pct.toFixed(1)}%)` : '';
-            return `${label}: ${val} evaluaciones${pctStr}`;
+            return `${label}: ${val} ciclos completos${pctStr}`;
           },
         },
       },
@@ -75,10 +77,14 @@ export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartPro
 
   return (
     <BaseChartJsCard
-      title="Distribución de predicción ML"
-      subtitle="Muestra la proporción de evaluaciones clasificadas por el modelo ML."
+      title="Distribución de predicción ML en ciclos completos"
+      subtitle="Muestra la proporción de adultos mayores con ciclo completo según la predicción ML obtenida en la evaluación inicial."
       dataAvailable
-      methodologicalNote="La predicción ML es un apoyo preventivo del sistema. No representa diagnóstico clínico."
+      methodologicalNote={`${distribution.methodological_note} Unidad de análisis: ${
+        distribution.deduplicated_by_anonymous_user_id
+          ? 'usuario anónimo con ciclo completo'
+          : 'ciclo completo'
+      }. N = ${distribution.total}.`}
     >
       <div className="mx-auto flex items-center justify-center" style={{ maxWidth: 360, height: 300 }}>
         <Doughnut data={doughnutData} options={options} />
