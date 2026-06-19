@@ -8,18 +8,22 @@ interface Segment {
 interface DistributionBarProps {
   title: string;
   segments: Segment[];
+  emptyMessage?: string;
 }
 
 /**
  * Lista de filas etiqueta + barra proporcional + conteo.
  * Mantiene una paleta apagada (slate/zinc) acorde al panel de tesistas.
  */
-export function DistributionBar({ title, segments }: DistributionBarProps) {
+export function DistributionBar({ title, segments, emptyMessage }: DistributionBarProps) {
   const total = segments.reduce((acc, s) => acc + s.value, 0);
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4">
       <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
+      {total === 0 && emptyMessage ? (
+        <p className="mt-3 text-xs leading-5 text-slate-500">{emptyMessage}</p>
+      ) : (
       <ul className="mt-3 space-y-2">
         {segments.map((s) => {
           const ratio = total > 0 ? s.value / total : 0;
@@ -44,6 +48,7 @@ export function DistributionBar({ title, segments }: DistributionBarProps) {
           );
         })}
       </ul>
+      )}
     </div>
   );
 }

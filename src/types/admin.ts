@@ -10,6 +10,14 @@ export interface AdminStats {
     post_tests: number;
     complete_cycles: number;
   };
+  profile_cohort: {
+    unit: 'unique_user_complete_cycle_pretest';
+    unit_label: string;
+    total: number;
+    risk_records_analyzed: number;
+    excluded_missing_system_results: number;
+    methodological_note: string;
+  };
   risk_distribution: Record<RiskLevel, number>;
   improvement: {
     avg_education_score_pre: number;   // 0..1 (normalizado)

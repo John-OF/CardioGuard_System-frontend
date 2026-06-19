@@ -45,15 +45,21 @@ function ImprovementRow({ label, pre, post, improvedPct }: ImprovementRowProps) 
 }
 
 export function StatsSection({ stats }: { stats: AdminStats }) {
-  const { totals, risk_distribution, improvement, demographics, completion_rate } =
-    stats;
+  const {
+    totals,
+    profile_cohort,
+    risk_distribution,
+    improvement,
+    demographics,
+    completion_rate,
+  } = stats;
 
   return (
     <div className="space-y-8">
       {/* Totales */}
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          Totales
+          Totales operativos
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <StatCard label="Evaluaciones" value={totals.evaluations} />
@@ -65,10 +71,27 @@ export function StatsSection({ stats }: { stats: AdminStats }) {
         </div>
       </section>
 
+      <div className="rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm text-cyan-900">
+        <p className="font-semibold">
+          Unidad metodológica: {profile_cohort.unit_label.toLowerCase()} (N = {profile_cohort.total}).
+        </p>
+        <p className="mt-1 text-xs leading-5 text-cyan-800">
+          {profile_cohort.methodological_note}
+          {profile_cohort.excluded_missing_system_results > 0 && (
+            <> Resultados de riesgo excluidos por falta de SystemResult: {profile_cohort.excluded_missing_system_results}.</>
+          )}
+        </p>
+      </div>
+
       {/* Riesgo + Completación */}
       <section className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <DistributionBar
           title="Distribución de riesgo"
+          emptyMessage={
+            profile_cohort.total === 0
+              ? 'No hay usuarios con ciclo completo para construir la cohorte metodológica.'
+              : 'No hay resultados de sistema suficientes para calcular la distribución de riesgo en la cohorte metodológica.'
+          }
           segments={[
             { label: 'Bajo', value: risk_distribution.bajo, colorClass: 'bg-emerald-500' },
             { label: 'Moderado', value: risk_distribution.moderado, colorClass: 'bg-amber-500' },
