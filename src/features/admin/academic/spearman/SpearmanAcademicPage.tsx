@@ -111,6 +111,17 @@ function format(value: number | null, decimals = 4) {
   return value == null ? 'No disponible' : value.toFixed(decimals);
 }
 
+function formatPValue(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return 'No calculable';
+  if (value < 0.001) return 'p < 0.001';
+  return `p = ${value.toFixed(6)}`;
+}
+
+function formatExactPValue(value: number | null | undefined): string | null {
+  if (value == null || Number.isNaN(value) || value >= 0.001) return null;
+  return `Valor exacto: ${value.toExponential(3)}`;
+}
+
 function StatsBlock({ title, stats }: { title: string; stats: SpearmanStats }) {
   const items = [['n', String(stats.n)], ['Media', format(stats.mean)], ['Mediana', format(stats.median)], ['DE', format(stats.std)], ['Mínimo', format(stats.min)], ['Máximo', format(stats.max)], ['Q1', format(stats.q1)], ['Q3', format(stats.q3)]];
   return <div className="rounded-lg border border-slate-200 p-4"><h3 className="font-semibold text-slate-800">{title}</h3><dl className="mt-3 grid grid-cols-2 gap-2 text-sm">{items.map(([label, value]) => <div key={label} className="contents"><dt className="text-slate-500">{label}</dt><dd className="text-right tabular-nums text-slate-900">{value}</dd></div>)}</dl></div>;
@@ -126,8 +137,19 @@ function Formula({ data }: { data: AcademicSpearmanData }) {
 
 function Results({ data }: { data: AcademicSpearmanData }) {
   const result = data.results;
-  const items = [['ρ de Spearman', format(result.rho, 6)], ['p-valor', format(result.p_value, 6)], ['n', String(result.n)], ['Fuerza', result.strength], ['Dirección', result.direction], ['Empates ML / fuzzy', `${data.ties.ml_probability} / ${data.ties.fuzzy_risk_score}`]];
-  return <Card title="Resultados"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{items.map(([label, value]) => <div key={label} className="rounded-lg border border-slate-200 p-4"><p className="text-xs font-semibold uppercase text-slate-500">{label}</p><p className="mt-1 text-lg font-bold tabular-nums text-slate-900">{value}</p></div>)}</div><div className="mt-4 rounded-lg bg-slate-900 p-4 text-white"><p className="text-xs uppercase tracking-wide text-slate-300">Decisión</p><p className="mt-1 text-lg font-semibold">{result.decision}</p></div></Card>;
+  const items = [
+    { label: 'ρ DE SPEARMAN', value: format(result.rho, 6) },
+    { label: 'P-VALOR', value: formatPValue(result.p_value), secondary: formatExactPValue(result.p_value) },
+    { label: 'N', value: String(result.n) },
+    { label: 'FUERZA', value: result.strength },
+    { label: 'DIRECCIÓN', value: result.direction },
+    {
+      label: 'VALORES REPETIDOS',
+      value: `ML: ${data.ties.ml_probability} · Difuso: ${data.ties.fuzzy_risk_score}`,
+      secondary: 'Los valores repetidos se manejaron mediante rangos promedio.',
+    },
+  ];
+  return <Card title="Resultados"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{items.map((item) => <div key={item.label} className="rounded-lg border border-slate-200 p-4"><p className="text-xs font-semibold uppercase text-slate-500">{item.label}</p><p className="mt-1 text-lg font-bold tabular-nums text-slate-900">{item.value}</p>{item.secondary && <p className="mt-2 text-xs leading-5 text-slate-500">{item.secondary}</p>}</div>)}</div><div className="mt-4 rounded-lg bg-slate-900 p-4 text-white"><p className="text-xs uppercase tracking-wide text-slate-300">Decisión</p><p className="mt-1 text-lg font-semibold">{result.decision}</p></div></Card>;
 }
 
 function ScatterPlot({ data }: { data: AcademicSpearmanData }) {
