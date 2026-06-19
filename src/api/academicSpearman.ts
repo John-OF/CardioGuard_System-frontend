@@ -65,8 +65,8 @@ export interface AcademicSpearmanData {
   results: {
     rho: number | null;
     p_value: number | null;
-    p_value_display: string;
-    p_value_exact_display: string | null;
+    p_value_display?: string | null;
+    p_value_exact_display?: string | null;
     n: number;
     decision: string;
     strength: string;
