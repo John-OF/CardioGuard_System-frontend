@@ -21,10 +21,10 @@ export function MLProbabilityBucketsBarChart({ data }: MLProbabilityBucketsBarCh
     return (
       <BaseChartJsCard
         title="Distribución de probabilidad ML"
-        subtitle="Agrupa las probabilidades generadas por el modelo en intervalos interpretables."
+        subtitle="Agrupa la probabilidad ML del perfil inicial de la cohorte metodológica."
         dataAvailable={false}
-        emptyMessage="No hay datos suficientes para generar este gráfico."
-        methodologicalNote="La probabilidad ML es un apoyo preventivo y no sustituye una evaluación médica."
+        emptyMessage="No existen resultados del sistema suficientes para calcular esta métrica en la cohorte metodológica."
+        methodologicalNote="La probabilidad ML usa el primer pre-test con ciclo completo por usuario anónimo."
       />
     );
   }
@@ -37,7 +37,7 @@ export function MLProbabilityBucketsBarChart({ data }: MLProbabilityBucketsBarCh
     labels: chartData.labels,
     datasets: [
       {
-        label: 'Evaluaciones',
+        label: 'Usuarios con ciclo completo',
         data: chartData.values,
         backgroundColor: bgColor,
         borderColor: borderColor,
@@ -64,7 +64,7 @@ export function MLProbabilityBucketsBarChart({ data }: MLProbabilityBucketsBarCh
             if (val == null) return '—';
             const pct = chartData.percentages?.[ctx.dataIndex];
             const pctStr = pct != null ? ` (${pct.toFixed(1)}%)` : '';
-            return `${val} evaluaciones${pctStr}`;
+            return `${val} usuarios con ciclo completo${pctStr}`;
           },
         },
       },
@@ -81,7 +81,7 @@ export function MLProbabilityBucketsBarChart({ data }: MLProbabilityBucketsBarCh
         grid: { color: '#f1f5f9' },
         title: {
           display: true,
-          text: 'Evaluaciones',
+          text: 'Usuarios con ciclo completo',
           color: '#64748b',
           font: { family: 'Inter, system-ui, sans-serif', size: 12 },
         },
@@ -105,9 +105,9 @@ export function MLProbabilityBucketsBarChart({ data }: MLProbabilityBucketsBarCh
   return (
     <BaseChartJsCard
       title="Distribución de probabilidad ML"
-      subtitle="Agrupa las probabilidades generadas por el modelo en intervalos interpretables."
+      subtitle="Agrupa la probabilidad ML del perfil inicial de la cohorte metodológica."
       dataAvailable
-      methodologicalNote="La probabilidad ML es un apoyo preventivo y no sustituye una evaluación médica."
+      methodologicalNote="La probabilidad ML usa el primer pre-test con ciclo completo por usuario anónimo."
     >
       <div style={{ height: 280 }}>
         <Bar data={barData} options={options} />

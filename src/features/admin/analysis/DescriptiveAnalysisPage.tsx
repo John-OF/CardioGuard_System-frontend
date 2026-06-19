@@ -23,8 +23,6 @@ const GROUP_LABELS: Record<string, string> = {
   system: 'Sistema',
 };
 
-const EXCLUDED_GROUPS = ['system'];
-
 export function DescriptiveAnalysisPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
   const fetchAnalysis = useCallback(() => fetchDescriptiveAnalysis(token), [token]);
@@ -55,6 +53,15 @@ export function DescriptiveAnalysisPage() {
     );
   }
 
+  const displayedCategoricalFrequencies = {
+    ...d.categorical_frequencies,
+    ...d.profile_descriptive.categorical_frequencies,
+  };
+  const displayedContinuousStats = {
+    ...d.continuous_stats,
+    ...d.profile_descriptive.continuous_stats,
+  };
+
   return (
     <div className="space-y-8">
       <header>
@@ -68,12 +75,25 @@ export function DescriptiveAnalysisPage() {
         CardioGuard es un prototipo académico. Los resultados no constituyen diagnóstico clínico.
       </NoticeBox>
 
+      <NoticeBox variant="info">
+        Unidad metodológica: {d.profile_cohort.unit_label.toLowerCase()} (N = {d.profile_cohort.total}).{' '}
+        Las variables de perfil inicial se calculan usando el primer pre-test completo por usuario;
+        no se contabilizan nuevamente post-tests ni evaluaciones regulares.
+      </NoticeBox>
+
+      {d.profile_descriptive.excluded.missing_system_results > 0 && (
+        <NoticeBox variant="warning">
+          No existen resultados del sistema suficientes para calcular ML, lógica difusa y riesgo
+          en la cohorte metodológica. Registros excluidos: {d.profile_descriptive.excluded.missing_system_results}.
+        </NoticeBox>
+      )}
+
       <SummaryCards d={d} />
       <EvaluationTypeDist rows={d.evaluation_type_distribution} />
       <CycleCounts cycles={d.cycle_counts} />
       <DescriptiveChartsSection d={d} />
-      <CategoricalSection cf={d.categorical_frequencies} />
-      <ContinuousSection cs={d.continuous_stats} />
+      <CategoricalSection cf={displayedCategoricalFrequencies} />
+      <ContinuousSection cs={displayedContinuousStats} />
       <DataQualityTab d={d} />
     </div>
   );
@@ -83,7 +103,7 @@ function SummaryCards({ d }: { d: DescriptiveAnalysisData }) {
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
-        Resumen
+        Registros internos del sistema
       </h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <MetricCard label="Evaluaciones totales" value={d.total_evaluations} />
@@ -171,9 +191,7 @@ function CategoricalSection({
 }: {
   cf: DescriptiveAnalysisData['categorical_frequencies'];
 }) {
-  const groups = Object.entries(cf).filter(
-    ([key]) => !EXCLUDED_GROUPS.includes(key),
-  );
+  const groups = Object.entries(cf);
   if (groups.length === 0) return null;
 
   return (
@@ -243,19 +261,19 @@ function DataQualityTab({ d }: { d: DescriptiveAnalysisData }) {
       <DataQualityCard
         entries={[
           { label: 'Evaluaciones totales', value: d.total_evaluations },
+          { label: 'Cohorte metodológica', value: d.profile_cohort.total },
           { label: 'Ciclos completos', value: d.cycle_counts.complete_cycles },
-          { label: 'Pre-tests', value: d.cycle_counts.total_pre_tests },
-          { label: 'Post-tests', value: d.cycle_counts.total_post_tests },
+          { label: 'Sin SystemResult', value: d.profile_descriptive.excluded.missing_system_results },
         ]}
       />
       <div className="rounded-lg border border-slate-200 bg-white p-4">
         <h4 className="mb-2 text-sm font-semibold text-slate-700">
-          Campos excluidos
+          Alcance de la fase 1
         </h4>
         <p className="text-sm text-slate-500">
-          fuzzy_risk_level y fuzzy_risk_score no se incluyen en este resumen
-          descriptivo. La lógica Mamdani permanece activa como capa interpretativa
-          del flujo de predicción.
+          Salud, hábitos, ML y lógica difusa usan la cohorte metodológica. Educación
+          y emergencia conservan temporalmente el alcance descriptivo anterior y se
+          separarán por momento de medición en una fase posterior.
         </p>
       </div>
     </section>

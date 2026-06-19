@@ -24,7 +24,7 @@ export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartPro
         title="Distribución de predicción ML en ciclos completos"
         subtitle="Muestra la proporción de adultos mayores con ciclo completo según la predicción ML obtenida en la evaluación inicial."
         dataAvailable={false}
-        emptyMessage="No hay datos suficientes para generar este gráfico."
+        emptyMessage="No existen resultados del sistema suficientes para calcular esta métrica en la cohorte metodológica."
         methodologicalNote={distribution.methodological_note}
       />
     );
@@ -68,7 +68,7 @@ export function MLPredictionDoughnutChart({ data }: MLPredictionDoughnutChartPro
             const label = ctx.label ?? '';
             if (val == null) return `${label}: —`;
             const pctStr = pct != null ? ` (${pct.toFixed(1)}%)` : '';
-            return `${label}: ${val} ciclos completos${pctStr}`;
+            return `${label}: ${val} usuarios con ciclo completo${pctStr}`;
           },
         },
       },

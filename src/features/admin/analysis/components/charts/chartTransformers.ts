@@ -213,7 +213,7 @@ export function transformRiskLevelDistributionChartJs(data: unknown): ChartJsBuc
     colors.push(color ?? CHART_TONE_HEX.highRisk);
   }
 
-  if (labels.length === 0) return null;
+  if (labels.length === 0 || values.every((value) => value === 0)) return null;
   return { labels, values, percentages, colors };
 }
 
@@ -221,7 +221,8 @@ export function transformMLProbabilityBucketsChartJs(data: unknown): ChartJsBuck
   if (!data || typeof data !== 'object') return null;
 
   const d = data as Record<string, unknown>;
-  const histograms = d.histograms as Record<string, unknown> | undefined;
+  const profile = d.profile_descriptive as Record<string, unknown> | undefined;
+  const histograms = profile?.histograms as Record<string, unknown> | undefined;
   if (!histograms) return null;
 
   const bins = histograms.ml_probability;
