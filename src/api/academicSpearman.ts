@@ -23,14 +23,17 @@ export interface SpearmanStats {
 export interface SpearmanRankRow {
   evaluation_id: string;
   anonymous_user_id: string;
-  ml_probability: number;
-  rank_ml_probability: number;
+  ml_probability?: number;
+  rank_ml_probability?: number;
+  age?: number;
+  rank_age?: number;
   fuzzy_risk_score: number;
   rank_fuzzy_risk_score: number;
   d: number;
   d_squared: number;
-  ml_prediction: number;
+  ml_prediction?: number;
   fuzzy_risk_level: string;
+  [key: string]: string | number | undefined;
 }
 
 export interface AcademicSpearmanData {
@@ -44,17 +47,16 @@ export interface AcademicSpearmanData {
   alpha: number;
   can_calculate: boolean;
   calculation_blockers: string[];
-  exclusions: {
-    missing_system_result: number;
-    null_ml_probability: number;
-    null_fuzzy_risk_score: number;
-    invalid_range: number;
+  exclusions: Record<string, number>;
+  descriptive_stats: Record<string, SpearmanStats>;
+  ties: {
+    x?: number;
+    y?: number;
+    method: string;
+    ml_probability?: number;
+    age?: number;
+    fuzzy_risk_score?: number;
   };
-  descriptive_stats: {
-    ml_probability: SpearmanStats;
-    fuzzy_risk_score: SpearmanStats;
-  };
-  ties: { ml_probability: number; fuzzy_risk_score: number; method: string };
   rank_table: SpearmanRankRow[];
   formula: {
     display: string;
@@ -92,6 +94,19 @@ export async function fetchSpearmanMlFuzzy(token: string) {
   try {
     const response = await apiClient.get<{ data: AcademicSpearmanData }>(
       '/api/academic/correlation/spearman-ml-fuzzy',
+      { headers: { [TOKEN_HEADER]: token } },
+    );
+    return response.data.data;
+  } catch (error: unknown) {
+    if (isUnauthorized(error)) throw new AdminUnauthorizedError();
+    throw error;
+  }
+}
+
+export async function fetchSpearmanAgeFuzzy(token: string) {
+  try {
+    const response = await apiClient.get<{ data: AcademicSpearmanData }>(
+      '/api/academic/correlation/spearman-age-fuzzy',
       { headers: { [TOKEN_HEADER]: token } },
     );
     return response.data.data;

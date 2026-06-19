@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { Scatter } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import {
+  fetchSpearmanAgeFuzzy,
   fetchSpearmanMlFuzzy,
   type AcademicSpearmanData,
   type SpearmanStats,
@@ -15,16 +16,50 @@ import '../../analysis/components/charts/chartjs/ChartJsRegistry';
 
 export function SpearmanAcademicPage() {
   const { token, logout } = useOutletContext<AdminOutletContext>();
-  const fetchAnalysis = useCallback(() => fetchSpearmanMlFuzzy(token), [token]);
-  const query = useAnalysisQuery(fetchAnalysis);
+  const fetchMlAnalysis = useCallback(() => fetchSpearmanMlFuzzy(token), [token]);
+  const fetchAgeAnalysis = useCallback(() => fetchSpearmanAgeFuzzy(token), [token]);
+  const mlQuery = useAnalysisQuery(fetchMlAnalysis);
+  const ageQuery = useAnalysisQuery(fetchAgeAnalysis);
 
-  if (query.status === 'loading' || query.status === 'idle') return <LoadingState />;
+  return (
+    <div className="space-y-8 pb-10">
+      <header>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">Módulo oculto</p>
+        <h1 className="mt-1 text-3xl font-bold text-slate-900">Análisis académico: Correlaciones de Spearman</h1>
+        <p className="mt-2 text-base text-slate-600">Relaciones monótonas dentro de la cohorte metodológica.</p>
+      </header>
+      <AnalysisQuerySection
+        subtitle="Análisis académico de coherencia interna entre ML y lógica difusa."
+        query={mlQuery}
+        logout={logout}
+      />
+      <AnalysisQuerySection
+        subtitle="Análisis académico de relación entre edad y puntaje de riesgo difuso."
+        query={ageQuery}
+        logout={logout}
+      />
+    </div>
+  );
+}
+
+function AnalysisQuerySection({
+  subtitle,
+  query,
+  logout,
+}: {
+  subtitle: string;
+  query: { status: string; data: AcademicSpearmanData | null; error: string | null };
+  logout: () => void;
+}) {
+  if (query.status === 'loading' || query.status === 'idle') {
+    return <section className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-6"><LoadingState /></section>;
+  }
   if (query.status === 'error') {
     if (query.error?.includes('Token') || query.error?.includes('401')) {
       logout();
       return null;
     }
-    return <ErrorState message="No se pudo cargar el análisis académico de Spearman." />;
+    return <section className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-6"><ErrorState message="No se pudo cargar este análisis académico de Spearman." /></section>;
   }
   if (!query.data) return <ErrorState message="No se recibieron datos." />;
 
@@ -35,11 +70,11 @@ export function SpearmanAcademicPage() {
     data.exclusions.missing_system_result === data.cohort.total;
 
   return (
-    <div className="space-y-6 pb-10">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700">Módulo oculto</p>
-        <h1 className="mt-1 text-3xl font-bold text-slate-900">{data.title}</h1>
-        <p className="mt-2 text-base text-slate-600">Análisis académico de coherencia interna entre ML y lógica difusa.</p>
+    <section className="space-y-6 rounded-2xl border-2 border-slate-300 bg-slate-50 p-5 shadow-sm sm:p-7">
+      <header className="border-b border-slate-300 pb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700">Análisis independiente</p>
+        <h2 className="mt-1 text-2xl font-bold text-slate-900">{data.title}</h2>
+        <p className="mt-2 text-sm text-slate-600">{subtitle}</p>
       </header>
 
       <Notice>{data.methodological_note}</Notice>
@@ -67,10 +102,10 @@ export function SpearmanAcademicPage() {
       <RankTable data={data} />
       <Card title="Interpretación"><p className="text-sm leading-7 text-slate-700">{data.interpretation}</p></Card>
       <Notice warning>
-        La correlación no implica causalidad. Debido a que la probabilidad ML es una entrada de la lógica difusa,
+        La correlación no implica causalidad. Debido a que {data.variables.x.label.toLowerCase()} forma parte de las entradas de la lógica difusa,
         este resultado describe coherencia interna y no una validación clínica independiente.
       </Notice>
-    </div>
+    </section>
   );
 }
 
@@ -131,7 +166,12 @@ function StatsBlock({ title, stats }: { title: string; stats: SpearmanStats }) {
 }
 
 function DescriptiveStats({ data }: { data: AcademicSpearmanData }) {
-  return <Card title="Estadística descriptiva"><div className="grid gap-4 md:grid-cols-2"><StatsBlock title="Probabilidad ML" stats={data.descriptive_stats.ml_probability} /><StatsBlock title="Puntaje difuso" stats={data.descriptive_stats.fuzzy_risk_score} /></div><p className="mt-4 text-xs text-slate-500">Exclusiones: sin SystemResult {data.exclusions.missing_system_result}; ML nulo {data.exclusions.null_ml_probability}; fuzzy nulo {data.exclusions.null_fuzzy_risk_score}; fuera de rango {data.exclusions.invalid_range}.</p></Card>;
+  const xStats = data.descriptive_stats[data.variables.x.field];
+  const yStats = data.descriptive_stats[data.variables.y.field];
+  const exclusions = Object.entries(data.exclusions)
+    .map(([key, value]) => key.replaceAll('_', ' ') + ': ' + value)
+    .join(' · ');
+  return <Card title="Estadística descriptiva"><div className="grid gap-4 md:grid-cols-2"><StatsBlock title={data.variables.x.label} stats={xStats} /><StatsBlock title={data.variables.y.label} stats={yStats} /></div><p className="mt-4 text-xs text-slate-500">Exclusiones: {exclusions}.</p></Card>;
 }
 
 function Formula({ data }: { data: AcademicSpearmanData }) {
@@ -140,6 +180,9 @@ function Formula({ data }: { data: AcademicSpearmanData }) {
 
 function Results({ data }: { data: AcademicSpearmanData }) {
   const result = data.results;
+  const repeatedXLabel = data.analysis_id === 'spearman_ml_fuzzy' ? 'ML' : 'Edad';
+  const repeatedX = data.ties.x ?? data.ties.ml_probability ?? data.ties.age ?? 0;
+  const repeatedY = data.ties.y ?? data.ties.fuzzy_risk_score ?? 0;
   const pValueDisplay = result.p_value_display?.trim() || formatPValue(result.p_value);
   const pValueExactDisplay =
     result.p_value_exact_display?.trim() || formatExactPValue(result.p_value);
@@ -151,7 +194,7 @@ function Results({ data }: { data: AcademicSpearmanData }) {
     { label: 'DIRECCIÓN', value: result.direction },
     {
       label: 'VALORES REPETIDOS',
-      value: `ML: ${data.ties.ml_probability} · Difuso: ${data.ties.fuzzy_risk_score}`,
+      value: repeatedXLabel + ': ' + repeatedX + ' · Difuso: ' + repeatedY,
       secondary: 'Los valores repetidos se manejaron mediante rangos promedio.',
     },
   ];
@@ -160,10 +203,76 @@ function Results({ data }: { data: AcademicSpearmanData }) {
 
 function ScatterPlot({ data }: { data: AcademicSpearmanData }) {
   const chartData = useMemo(() => ({ datasets: [{ label: 'Usuario de la cohorte', data: data.scatter_points, backgroundColor: '#0891b2', borderColor: '#0e7490', pointRadius: 5, pointHoverRadius: 7 }] }), [data.scatter_points]);
-  const options: ChartOptions<'scatter'> = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label(context) { const point = data.scatter_points[context.dataIndex]; return `ML ${point.x.toFixed(4)} · Difuso ${point.y.toFixed(4)} · ${point.anonymous_user_id.slice(0, 8)}…`; } } } }, scales: { x: { min: 0, max: 1, title: { display: true, text: 'Probabilidad ML' } }, y: { min: 0, max: 1, title: { display: true, text: 'Puntaje de riesgo difuso' } } } };
+  const options: ChartOptions<'scatter'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label(context) {
+            const point = data.scatter_points[context.dataIndex];
+            return data.variables.x.label + ' ' + point.x.toFixed(4) + ' · ' +
+              data.variables.y.label + ' ' + point.y.toFixed(4) + ' · ' +
+              point.anonymous_user_id.slice(0, 8) + '…';
+          },
+        },
+      },
+    },
+    scales: {
+      x: { title: { display: true, text: data.variables.x.label } },
+      y: { min: 0, max: 1, title: { display: true, text: data.variables.y.label } },
+    },
+  };
   return <Card title="Diagrama de dispersión">{data.scatter_points.length === 0 ? <p className="text-sm text-slate-500">No hay pares válidos para representar.</p> : <div className="h-[360px]"><Scatter data={chartData} options={options} /></div>}</Card>;
 }
 
 function RankTable({ data }: { data: AcademicSpearmanData }) {
-  return <Card title="Tabla didáctica de rangos"><div className="max-h-[520px] overflow-auto"><table className="w-full min-w-[1050px] text-sm"><thead className="sticky top-0 bg-slate-50 text-xs uppercase text-slate-600"><tr><th className="px-3 py-3 text-left">Usuario</th><th className="px-3 py-3 text-right">ML</th><th className="px-3 py-3 text-right">Rango ML</th><th className="px-3 py-3 text-right">Difuso</th><th className="px-3 py-3 text-right">Rango difuso</th><th className="px-3 py-3 text-right">d</th><th className="px-3 py-3 text-right">d²</th><th className="px-3 py-3 text-right">Predicción</th><th className="px-3 py-3 text-left">Nivel fuzzy</th></tr></thead><tbody>{data.rank_table.length === 0 ? <tr><td colSpan={9} className="px-3 py-8 text-center text-slate-500">No hay pares válidos.</td></tr> : data.rank_table.map(row => <tr key={row.evaluation_id} className="border-t border-slate-100"><td className="px-3 py-2 font-mono text-xs">{row.anonymous_user_id.slice(0, 8)}…</td><td className="px-3 py-2 text-right tabular-nums">{row.ml_probability.toFixed(4)}</td><td className="px-3 py-2 text-right">{row.rank_ml_probability.toFixed(2)}</td><td className="px-3 py-2 text-right tabular-nums">{row.fuzzy_risk_score.toFixed(4)}</td><td className="px-3 py-2 text-right">{row.rank_fuzzy_risk_score.toFixed(2)}</td><td className="px-3 py-2 text-right">{row.d.toFixed(2)}</td><td className="px-3 py-2 text-right">{row.d_squared.toFixed(2)}</td><td className="px-3 py-2 text-right">{row.ml_prediction}</td><td className="px-3 py-2">{row.fuzzy_risk_level}</td></tr>)}</tbody></table></div></Card>;
+  const xField = data.variables.x.field;
+  const yField = data.variables.y.field;
+  const rankXField = 'rank_' + xField;
+  const rankYField = 'rank_' + yField;
+  const showPrediction = data.analysis_id === 'spearman_ml_fuzzy';
+  const columnCount = showPrediction ? 9 : 8;
+  const number = (value: string | number | undefined, decimals: number) =>
+    typeof value === 'number' ? value.toFixed(decimals) : '—';
+
+  return (
+    <Card title="Tabla didáctica de rangos">
+      <div className="max-h-[520px] overflow-auto">
+        <table className="w-full min-w-[980px] text-sm">
+          <thead className="sticky top-0 bg-slate-50 text-xs uppercase text-slate-600">
+            <tr>
+              <th className="px-3 py-3 text-left">Usuario</th>
+              <th className="px-3 py-3 text-right">{data.variables.x.label}</th>
+              <th className="px-3 py-3 text-right">Rango {data.variables.x.label}</th>
+              <th className="px-3 py-3 text-right">{data.variables.y.label}</th>
+              <th className="px-3 py-3 text-right">Rango difuso</th>
+              <th className="px-3 py-3 text-right">d</th>
+              <th className="px-3 py-3 text-right">d²</th>
+              {showPrediction && <th className="px-3 py-3 text-right">Predicción</th>}
+              <th className="px-3 py-3 text-left">Nivel fuzzy</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.rank_table.length === 0 ? (
+              <tr><td colSpan={columnCount} className="px-3 py-8 text-center text-slate-500">No hay pares válidos.</td></tr>
+            ) : data.rank_table.map((row) => (
+              <tr key={row.evaluation_id} className="border-t border-slate-100">
+                <td className="px-3 py-2 font-mono text-xs">{row.anonymous_user_id.slice(0, 8)}…</td>
+                <td className="px-3 py-2 text-right tabular-nums">{number(row[xField], xField === 'age' ? 0 : 4)}</td>
+                <td className="px-3 py-2 text-right">{number(row[rankXField], 2)}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{number(row[yField], 4)}</td>
+                <td className="px-3 py-2 text-right">{number(row[rankYField], 2)}</td>
+                <td className="px-3 py-2 text-right">{row.d.toFixed(2)}</td>
+                <td className="px-3 py-2 text-right">{row.d_squared.toFixed(2)}</td>
+                {showPrediction && <td className="px-3 py-2 text-right">{row.ml_prediction}</td>}
+                <td className="px-3 py-2">{row.fuzzy_risk_level}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
 }
