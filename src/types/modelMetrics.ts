@@ -46,11 +46,34 @@ export interface ModelMetricItem {
 
 export interface EvaluationProtocol {
   dataset: string;
+  features?: string[];
   test_size: number;
   random_state: number;
   stratify: string;
   positive_class: string;
   source: string;
+  hybrid_source?: string;
+  hybrid_variables?: string[];
+}
+
+export interface RocModelMetricItem {
+  name: string;
+  display_name: string;
+  auc: number;
+  roc_curve: RocCurveData;
+}
+
+export interface HybridModelMetricItem extends RocModelMetricItem {
+  base_model: string;
+}
+
+export interface HybridComparisonItem {
+  model: string;
+  display_name: string;
+  auc_ml: number;
+  auc_fuzzy: number;
+  delta_auc: number;
+  interpretation: string;
 }
 
 export interface ModelMetricsPayload {
@@ -58,6 +81,10 @@ export interface ModelMetricsPayload {
   features: string[];
   evaluation_protocol?: EvaluationProtocol;
   models: ModelMetricItem[];
+  pure_models?: RocModelMetricItem[];
+  hybrid_models?: HybridModelMetricItem[];
+  hybrid_comparison?: HybridComparisonItem[];
+  methodological_note?: string | null;
 }
 
 export interface ModelMetricsResponse {
@@ -78,9 +105,29 @@ export interface NormalizedModelMetricItem {
   testSupport: number;
 }
 
+export interface NormalizedHybridModelMetric {
+  name: string;
+  displayName: string;
+  baseModel: string;
+  rocAuc: number;
+  rocCurve: RocCurveData;
+}
+
+export interface NormalizedHybridComparison {
+  model: string;
+  displayName: string;
+  aucMl: number;
+  aucFuzzy: number;
+  deltaAuc: number;
+  interpretation: string;
+}
+
 export interface NormalizedModelMetricsPayload {
   selectedModel: string;
   features: string[];
   evaluationProtocol: EvaluationProtocol | null;
   models: NormalizedModelMetricItem[];
+  hybridModels: NormalizedHybridModelMetric[];
+  hybridComparison: NormalizedHybridComparison[];
+  methodologicalNote: string | null;
 }

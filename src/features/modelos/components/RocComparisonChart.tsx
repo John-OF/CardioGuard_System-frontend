@@ -10,6 +10,9 @@ export interface RocComparisonItem {
 
 interface RocComparisonChartProps {
   models: RocComparisonItem[];
+  title?: string;
+  description?: string;
+  ariaLabel?: string;
 }
 
 const COLORS = ['#059669', '#ea580c', '#0284c7', '#9333ea'];
@@ -42,7 +45,12 @@ function curvePath(curve: RocCurveData) {
     .join(' ');
 }
 
-export function RocComparisonChart({ models }: RocComparisonChartProps) {
+export function RocComparisonChart({
+  models,
+  title = 'Comparacion ROC de modelos',
+  description = 'La curva mas cercana a la esquina superior izquierda indica mejor discriminacion.',
+  ariaLabel = 'Curvas ROC comparativas de los modelos evaluados',
+}: RocComparisonChartProps) {
   const validModels = models.filter(
     (model): model is RocComparisonItem & { rocCurve: RocCurveData } =>
       hasValidCurve(model.rocCurve),
@@ -51,10 +59,8 @@ export function RocComparisonChart({ models }: RocComparisonChartProps) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6">
       <div className="mb-5">
-        <h3 className="text-2xl font-bold text-slate-900">Comparacion ROC de modelos</h3>
-        <p className="text-base text-slate-600 mt-1">
-          La curva mas cercana a la esquina superior izquierda indica mejor discriminacion.
-        </p>
+        <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
+        <p className="text-base text-slate-600 mt-1">{description}</p>
       </div>
 
       {validModels.length > 0 ? (
@@ -62,7 +68,7 @@ export function RocComparisonChart({ models }: RocComparisonChartProps) {
           <div className="overflow-x-auto">
             <svg
               role="img"
-              aria-label="Curvas ROC comparativas de los modelos evaluados"
+              aria-label={ariaLabel}
               viewBox="0 0 420 320"
               className="w-full min-w-[360px]"
             >

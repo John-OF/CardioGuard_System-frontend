@@ -4,6 +4,8 @@ import { MODEL_META_BY_BACKEND_NAME } from './data/models';
 import { useModelMetrics } from './hooks/useModelMetrics';
 import { RocComparisonChart } from './components/RocComparisonChart';
 import { AucSummaryTable } from './components/AucSummaryTable';
+import { HybridAucComparisonTable } from './components/HybridAucComparisonTable';
+import { HybridRocComparisonChart } from './components/HybridRocComparisonChart';
 
 // Documentación del sistema de inferencia difusa (Mamdani), espejo de
 // backend/app/services/fuzzy_service.py. La lógica difusa NO es un modelo
@@ -225,7 +227,7 @@ export function PipelinePage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">
-            Analisis ROC/AUC de los modelos evaluados
+            Comparacion ROC/AUC de modelos ML puros
           </h2>
           <p className="text-base text-slate-600">
             Esta comparacion muestra la capacidad de cada modelo para distinguir entre
@@ -236,11 +238,37 @@ export function PipelinePage() {
         <RocComparisonChart models={comparisonModels} />
         <AucSummaryTable models={comparisonModels} />
         <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-base text-blue-900">
-          El analisis ROC/AUC pertenece a los modelos de aprendizaje automatico
-          evaluados. La capa de logica difusa no tiene una curva ROC propia porque es
-          una capa interpretativa basada en reglas aplicada despues del modelo de ML
-          seleccionado.
+          Estas curvas corresponden exclusivamente a la probabilidad directa de los
+          modelos de aprendizaje automatico evaluados sobre el conjunto de prueba UCI.
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">
+            Comparacion ROC/AUC de modelos ML + postprocesamiento difuso
+          </h2>
+          <p className="text-base text-slate-600">
+            Esta evaluacion experimental aplica un score fuzzy offline a la probabilidad
+            de cada modelo usando solamente variables disponibles en UCI.
+          </p>
+        </div>
+        {metrics.hybridModels.length > 0 && metrics.hybridComparison.length > 0 ? (
+          <>
+            <HybridRocComparisonChart
+              models={metrics.hybridModels}
+              selectedModel={metrics.selectedModel}
+            />
+            <HybridAucComparisonTable rows={metrics.hybridComparison} />
+            <div className="rounded-2xl border border-purple-200 bg-purple-50 p-5 text-base text-purple-900">
+              {metrics.methodologicalNote}
+            </div>
+          </>
+        ) : (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-base text-slate-700">
+            La evaluacion hibrida offline no esta disponible en el artefacto de metricas.
+          </div>
+        )}
       </section>
 
       {/* Variables y conjuntos difusos */}
@@ -336,11 +364,11 @@ export function PipelinePage() {
           </svg>
           <div>
             <p className="text-base text-slate-700 leading-relaxed">
-              La lógica difusa <strong>no es un modelo entrenado</strong>: es un sistema
-              de reglas con inferencia difusa, por lo que no tiene métricas de desempeño
-              (exactitud, AUC) propias. Las métricas de aprendizaje automático
-              corresponden al <strong>Random Forest</strong>, que puede consultar en
-              su página.
+              La lógica difusa productiva <strong>no es un modelo entrenado</strong> y no
+              tiene métricas independientes. La comparación ROC/AUC anterior es una
+              evaluación offline del efecto de un postprocesamiento experimental sobre
+              cada score ML; no valida clínicamente la capa productiva. Las métricas del
+              <strong> Random Forest</strong> puro se pueden consultar en su página.
             </p>
             <Link
               to="/modelos/random-forest"

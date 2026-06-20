@@ -5,6 +5,8 @@ import type {
   ConfusionMatrix,
   EvaluationProtocol,
   ModelMetricsResponse,
+  NormalizedHybridComparison,
+  NormalizedHybridModelMetric,
   NormalizedModelMetricItem,
   NormalizedModelMetricsPayload,
   RocCurveData,
@@ -208,12 +210,56 @@ function normalizeEvaluationProtocol(value: unknown): EvaluationProtocol | null 
 
   return {
     dataset: value.dataset,
+    features:
+      Array.isArray(value.features) && value.features.every((item) => typeof item === 'string')
+        ? value.features
+        : undefined,
     test_size: value.test_size,
     random_state: value.random_state,
     stratify: value.stratify,
     positive_class: value.positive_class,
     source: value.source,
+    hybrid_source: typeof value.hybrid_source === 'string' ? value.hybrid_source : undefined,
+    hybrid_variables:
+      Array.isArray(value.hybrid_variables) &&
+      value.hybrid_variables.every((item) => typeof item === 'string')
+        ? value.hybrid_variables
+        : undefined,
   };
+}
+
+function normalizeHybridModel(value: unknown): NormalizedHybridModelMetric {
+  if (!isObject(value)) throw new Error('Modelo hibrido invalido');
+
+  return {
+    name: asString(value.name, 'hybrid_models[].name'),
+    displayName: asString(value.display_name, 'hybrid_models[].display_name'),
+    baseModel: asString(value.base_model, 'hybrid_models[].base_model'),
+    rocAuc: asNumber(value.auc, 'hybrid_models[].auc'),
+    rocCurve: normalizeRocCurve(value.roc_curve),
+  };
+}
+
+function normalizeHybridComparison(value: unknown): NormalizedHybridComparison {
+  if (!isObject(value)) throw new Error('Comparacion hibrida invalida');
+
+  return {
+    model: asString(value.model, 'hybrid_comparison[].model'),
+    displayName: asString(value.display_name, 'hybrid_comparison[].display_name'),
+    aucMl: asNumber(value.auc_ml, 'hybrid_comparison[].auc_ml'),
+    aucFuzzy: asNumber(value.auc_fuzzy, 'hybrid_comparison[].auc_fuzzy'),
+    deltaAuc: asNumber(value.delta_auc, 'hybrid_comparison[].delta_auc'),
+    interpretation: asString(value.interpretation, 'hybrid_comparison[].interpretation'),
+  };
+}
+
+function normalizeOptionalArray<T>(value: unknown, normalizer: (item: unknown) => T): T[] {
+  if (!Array.isArray(value)) return [];
+  try {
+    return value.map(normalizer);
+  } catch {
+    return [];
+  }
 }
 
 export function normalizeModelMetricsPayload(payload: unknown): NormalizedModelMetricsPayload {
@@ -226,6 +272,11 @@ export function normalizeModelMetricsPayload(payload: unknown): NormalizedModelM
     ? payload.features
     : [];
   const models = Array.isArray(payload.models) ? payload.models.map(normalizeModel) : [];
+  const hybridModels = normalizeOptionalArray(payload.hybrid_models, normalizeHybridModel);
+  const hybridComparison = normalizeOptionalArray(
+    payload.hybrid_comparison,
+    normalizeHybridComparison,
+  );
 
   if (models.length === 0) {
     throw new Error('Payload de metricas sin modelos validos');
@@ -239,6 +290,12 @@ export function normalizeModelMetricsPayload(payload: unknown): NormalizedModelM
       ...model,
       isSelected: model.name === selectedModel || model.isSelected,
     })),
+    hybridModels,
+    hybridComparison,
+    methodologicalNote:
+      typeof payload.methodological_note === 'string' && payload.methodological_note.trim() !== ''
+        ? payload.methodological_note
+        : null,
   };
 }
 

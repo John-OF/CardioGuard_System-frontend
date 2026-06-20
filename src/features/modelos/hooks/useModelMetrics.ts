@@ -22,6 +22,9 @@ function fallbackMetrics(): NormalizedModelMetricsPayload {
     selectedModel: PREDICTIVE_MODELS.find((model) => model.selected)?.backendName ?? 'RandomForest',
     features: DEFAULT_FEATURES,
     evaluationProtocol: null,
+    hybridModels: [],
+    hybridComparison: [],
+    methodologicalNote: null,
     models: PREDICTIVE_MODELS.map((model) => ({
       name: model.backendName,
       displayName: model.name,
