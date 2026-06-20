@@ -22,7 +22,7 @@ function triggerBrowserDownload(blob: Blob, filename: string): void {
 }
 
 /**
- * Exporta los datos crudos del sistema para análisis externo (chi-cuadrado, etc.).
+ * Exporta los datos crudos del sistema para análisis externo, respaldo académico o revisión metodológica.
  * Sirve contra la base a la que apunta el backend (en producción, Supabase).
  */
 export function ExportSection({ token, onUnauthorized }: ExportSectionProps) {
@@ -52,8 +52,8 @@ export function ExportSection({ token, onUnauthorized }: ExportSectionProps) {
         Exportar datos para análisis
       </h2>
       <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
-        Descarga los registros del sistema para análisis estadístico externo
-        (por ejemplo, pruebas de chi-cuadrado en pandas/SciPy). Los datos son
+        Descarga los registros del sistema para análisis estadístico externo,
+        respaldo académico o revisión metodológica. Los datos son
         anónimos y de uso exclusivamente académico.
       </p>
 

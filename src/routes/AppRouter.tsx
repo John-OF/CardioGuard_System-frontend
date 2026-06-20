@@ -21,8 +21,6 @@ import { AnalysisLayout } from '@/features/admin/analysis/AnalysisLayout';
 import { DescriptiveAnalysisPage } from '@/features/admin/analysis/DescriptiveAnalysisPage';
 import { PrePostAnalysisPage } from '@/features/admin/analysis/PrePostAnalysisPage';
 import { EmergencyAnalysisPage } from '@/features/admin/analysis/EmergencyAnalysisPage';
-import { ChiSquareAcademicPage } from '@/features/admin/academic/chi-square/ChiSquareAcademicPage';
-import { SpearmanAcademicPage } from '@/features/admin/academic/spearman/SpearmanAcademicPage';
 
 export function AppRouter() {
   return (
@@ -38,8 +36,6 @@ export function AppRouter() {
             <Route path="pre-post" element={<PrePostAnalysisPage />} />
             <Route path="emergencias" element={<EmergencyAnalysisPage />} />
           </Route>
-          <Route path="analisis-academico/chi-cuadrado" element={<ChiSquareAcademicPage />} />
-          <Route path="analisis-academico/correlacion" element={<SpearmanAcademicPage />} />
         </Route>
         <Route element={<AppLayout />}>
           <Route index element={<HomePage />} />
