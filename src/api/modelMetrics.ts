@@ -3,6 +3,7 @@ import type {
   ClassificationReport,
   ClassificationReportClass,
   ConfusionMatrix,
+  EvaluationProtocol,
   ModelMetricsResponse,
   NormalizedModelMetricItem,
   NormalizedModelMetricsPayload,
@@ -167,6 +168,10 @@ function normalizeModel(value: unknown): NormalizedModelMetricItem {
 
   return {
     name,
+    displayName:
+      typeof value.display_name === 'string' && value.display_name.trim() !== ''
+        ? value.display_name
+        : name,
     slug,
     isSelected: value.is_selected === true,
     metrics: {
@@ -182,6 +187,32 @@ function normalizeModel(value: unknown): NormalizedModelMetricItem {
     confusionMatrix: normalizeConfusionMatrix(value.confusion_matrix),
     report: viewReport,
     testSupport: viewReport.macroAvg.support,
+  };
+}
+
+function normalizeEvaluationProtocol(value: unknown): EvaluationProtocol | null {
+  if (!isObject(value)) return null;
+
+  if (
+    typeof value.dataset !== 'string' ||
+    typeof value.test_size !== 'number' ||
+    !Number.isFinite(value.test_size) ||
+    typeof value.random_state !== 'number' ||
+    !Number.isFinite(value.random_state) ||
+    typeof value.stratify !== 'string' ||
+    typeof value.positive_class !== 'string' ||
+    typeof value.source !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    dataset: value.dataset,
+    test_size: value.test_size,
+    random_state: value.random_state,
+    stratify: value.stratify,
+    positive_class: value.positive_class,
+    source: value.source,
   };
 }
 
@@ -203,6 +234,7 @@ export function normalizeModelMetricsPayload(payload: unknown): NormalizedModelM
   return {
     selectedModel,
     features,
+    evaluationProtocol: normalizeEvaluationProtocol(payload.evaluation_protocol),
     models: models.map((model) => ({
       ...model,
       isSelected: model.name === selectedModel || model.isSelected,

@@ -133,7 +133,7 @@ export function PipelinePage() {
   const { metrics, loading, source } = useModelMetrics();
   const comparisonModels = metrics.models.map((model) => ({
     name: model.name,
-    displayName: MODEL_META_BY_BACKEND_NAME[model.name]?.name ?? model.name,
+    displayName: model.displayName || MODEL_META_BY_BACKEND_NAME[model.name]?.name || model.name,
     rocAuc: model.rocAuc,
     rocCurve: model.rocCurve,
     selected: model.isSelected || model.name === metrics.selectedModel,

@@ -29,6 +29,7 @@ export interface ClassificationReport {
 
 export interface ModelMetricItem {
   name: string;
+  display_name: string;
   slug: string;
   is_selected: boolean;
   accuracy: number;
@@ -43,9 +44,19 @@ export interface ModelMetricItem {
   roc_curve: RocCurveData;
 }
 
+export interface EvaluationProtocol {
+  dataset: string;
+  test_size: number;
+  random_state: number;
+  stratify: string;
+  positive_class: string;
+  source: string;
+}
+
 export interface ModelMetricsPayload {
   selected_model: string;
   features: string[];
+  evaluation_protocol?: EvaluationProtocol;
   models: ModelMetricItem[];
 }
 
@@ -56,6 +67,7 @@ export interface ModelMetricsResponse {
 
 export interface NormalizedModelMetricItem {
   name: string;
+  displayName: string;
   slug: string;
   isSelected: boolean;
   metrics: ViewModelMetrics;
@@ -69,5 +81,6 @@ export interface NormalizedModelMetricItem {
 export interface NormalizedModelMetricsPayload {
   selectedModel: string;
   features: string[];
+  evaluationProtocol: EvaluationProtocol | null;
   models: NormalizedModelMetricItem[];
 }
